@@ -1,0 +1,37 @@
+{
+	"schemaVersion": 1,
+	"id": "luafy",
+	"version": "${version}",
+	"name": "Luafy",
+	"description": "Server-side mod adding Lua to Datapacks",
+	"authors": [
+		"DiamondDev"
+	],
+	"contact": {
+		"homepage": "https://diamonddevv.github.io/",
+		"sources": "https://github.com/diamonddevv/luafy"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/luafy/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"server": [
+            "dev.diamond.luafy.Luafy"
+		]
+	},
+	"mixins": [
+		{
+			"environment": "server",
+			"config": "luafy_server.mixins.json"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.15.10",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
