@@ -1,56 +1,57 @@
-package dev.diamond.luafy.lua.lib;
+package dev.diamond.luafy.lua.api;
 
 import dev.diamond.luafy.lua.ArrArgFunction;
-import dev.diamond.luafy.lua.LuaScriptManager;
+import dev.diamond.luafy.lua.LuaScript;
 import dev.diamond.luafy.lua.LuaTypeConversions;
+import dev.diamond.luafy.lua.object.StorageLuaObject;
 import net.minecraft.command.DataCommandStorage;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.Identifier;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.lib.OneArgFunction;
 
-public class StorageApi extends AbstractLib {
+public class StorageApi extends AbstractApi {
 
-    private final LuaScriptManager script;
+    private final LuaScript script;
 
-    public StorageApi(LuaScriptManager script) {
+    public StorageApi(LuaScript script) {
         super("storage");
         this.script = script;
     }
 
     @Override
     public void create(LuaTable table) {
-        table.set("read_implicit", new StorageApi.ReadImplicitFunc());
-        table.set("read", new StorageApi.ReadFunc());
-        table.set("write", new StorageApi.WriteFunc());
-        table.set("has", new StorageApi.HasFunc());
+        table.set("read_implicit", new ReadImplicitFunc());
+        table.set("read", new ReadFunc());
+        table.set("write", new WriteFunc());
+        table.set("has", new HasFunc());
+
+        table.set("object", new GetObjectFunc());
     }
 
 
-    public class ReadImplicitFunc extends ArrArgFunction {
+    private class ReadImplicitFunc extends ArrArgFunction {
         @Override
         public LuaValue call(LuaValue[] params) {
             return readStorage(params, true);
         }
     }
-
-    public class ReadFunc extends ArrArgFunction {
+    private class ReadFunc extends ArrArgFunction {
         @Override
         public LuaValue call(LuaValue[] params) {
             return readStorage(params, false);
         }
     }
-
-    public class WriteFunc extends ArrArgFunction {
+    private class WriteFunc extends ArrArgFunction {
         @Override
         public LuaValue call(LuaValue[] params) {
             writeStorage(params, true);
             return NIL;
         }
     }
-
-    public class HasFunc extends ArrArgFunction {
+    private class HasFunc extends ArrArgFunction {
         @Override
         public LuaValue call(LuaValue[] params) {
             LuaValue arg_id = params[0];
@@ -61,10 +62,19 @@ public class StorageApi extends AbstractLib {
         }
     }
 
+    private class GetObjectFunc extends OneArgFunction {
+
+        @Override
+        public LuaValue call(LuaValue arg) {
+            String[] splits = arg.checkjstring().split(":");
+            Identifier i = new Identifier(splits[0], splits[1]);
+            return new StorageLuaObject(script.source, i);
+        }
+    }
 
 
     // Global Executions
-    private LuaValue readStorage(LuaValue[] params, boolean implicit) {
+    public LuaValue readStorage(LuaValue[] params, boolean implicit) {
         LuaValue arg_id = params[0];
         LuaValue arg_path = params[1];
 
@@ -91,8 +101,8 @@ public class StorageApi extends AbstractLib {
 
         NbtCompound cmpnd = getDataStorage(script.source, arg_id);
 
-        if (arg_type == null) LuaTypeConversions.nbtPutObject(cmpnd, arg_path.tojstring(), LuaTypeConversions.luaToObj(arg_data));
-        else LuaTypeConversions.nbtPutObject(cmpnd, arg_path.tojstring(), LuaTypeConversions.luaToObj(arg_data), arg_type.tojstring());
+        if (arg_type == null) LuaTypeConversions.implicitNbtPutObject(cmpnd, arg_path.tojstring(), LuaTypeConversions.luaToObj(arg_data));
+        else LuaTypeConversions.explicitNbtPutObject(cmpnd, arg_path.tojstring(), LuaTypeConversions.luaToObj(arg_data), arg_type.tojstring());
 
         writeDataStorage(script.source, arg_id, cmpnd);
     }

@@ -1,7 +1,7 @@
 package dev.diamond.luafy.resource;
 
 import dev.diamond.luafy.Luafy;
-import dev.diamond.luafy.lua.LuaScriptManager;
+import dev.diamond.luafy.lua.LuaScript;
 import dev.diamond.luafy.lua.LuafyLua;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.ResourceManager;
@@ -33,7 +33,7 @@ public class LuaScriptResourceLoader implements SimpleSynchronousResourceReloadL
                     // Consume stream
                     byte[] bytes = stream.readAllBytes();
                     String s = new String(bytes, StandardCharsets.UTF_8);
-                    LuaScriptManager script = new LuaScriptManager(s);
+                    LuaScript script = new LuaScript(s);
 
                     int pfLen = (PATH + "/").length();
                     String fixedPath = id.getPath().substring(pfLen);

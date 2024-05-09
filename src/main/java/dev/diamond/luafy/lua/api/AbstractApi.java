@@ -1,12 +1,12 @@
-package dev.diamond.luafy.lua.lib;
+package dev.diamond.luafy.lua.api;
 
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.BaseLib;
 
-public abstract class AbstractLib extends BaseLib {
+public abstract class AbstractApi extends BaseLib {
 
-    public AbstractLib(String name) {
+    public AbstractApi(String name) {
         this.name = name;
     }
 

@@ -2,6 +2,7 @@ package dev.diamond.luafy.lua;
 
 import dev.diamond.luafy.Luafy;
 import net.minecraft.nbt.*;
+import org.apache.commons.lang3.ArrayUtils;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
@@ -16,40 +17,58 @@ public class LuaTypeConversions {
 
 
     public static LuaValue implicitNbtToLua(NbtCompound c, String key) {
-        NbtElement nbt = c.get(key);
+        return implicitNbtToLua(c.get(key));
+    }
+    public static LuaValue explicitNbtToLua(NbtCompound c, String key, String type) {
+        return explicitNbtToLua(c.get(key), type);
+    }
+
+    public static LuaValue implicitNbtToLua(NbtElement nbt) {
         if (nbt == null) return LuaValue.NIL;
         NbtType<?> type = nbt.getNbtType();
 
         if (type == NbtDouble.TYPE)
-            return LuaValue.valueOf(c.getDouble(key));
+            return LuaValue.valueOf(((NbtDouble)nbt).doubleValue());
         else if (type == NbtString.TYPE)
-            return LuaValue.valueOf(c.getString(key));
+            return LuaValue.valueOf(nbt.asString());
         else if (type == NbtInt.TYPE)
-            return LuaValue.valueOf(c.getInt(key));
+            return LuaValue.valueOf(((NbtInt)nbt).intValue());
         else if (type == NbtFloat.TYPE)
-            return LuaValue.valueOf(c.getFloat(key));
+            return LuaValue.valueOf(((NbtFloat)nbt).floatValue());
         else if (type == NbtByte.TYPE)
-            return LuaValue.valueOf(c.getByte(key));
+            return LuaValue.valueOf(((NbtByte)nbt).byteValue());
         else if (type == NbtShort.TYPE)
-            return LuaValue.valueOf(c.getShort(key));
+            return LuaValue.valueOf(((NbtShort)nbt).shortValue());
+        else if (type == NbtLong.TYPE)
+            return LuaValue.valueOf(((NbtLong)nbt).longValue());
         else if (type == NbtCompound.TYPE)
-            return tableFromNbt(c, key);
+            return tableFromNbt((NbtCompound)nbt);
+        else if (type == NbtList.TYPE)
+            return tableFromNbtList(((NbtList)nbt));
+        else if (type == NbtIntArray.TYPE)
+            return arrToLua(ArrayUtils.toObject(((NbtIntArray)nbt).getIntArray()));
+        else if (type == NbtByteArray.TYPE)
+            return arrToLua(ArrayUtils.toObject(((NbtByteArray)nbt).getByteArray()));
+        else if (type == NbtLongArray.TYPE)
+            return arrToLua(ArrayUtils.toObject(((NbtLongArray)nbt).getLongArray()));
+
         else {
             Luafy.LOGGER.error("Forbidden Nbt Compound Type (" + type + ")");
         }
 
         return LuaValue.NIL;
     }
-
-    public static LuaValue explicitNbtToLua(NbtCompound c, String key, String type) {
+    public static LuaValue explicitNbtToLua(NbtElement nbt, String type) {
         if (Objects.equals(type, LuafyLua.ArgTypes.NUMBER))
-            return LuaValue.valueOf(c.getDouble(key));
+            return LuaValue.valueOf(((NbtDouble)nbt).doubleValue());
         else if (Objects.equals(type, LuafyLua.ArgTypes.STRING))
-            return LuaValue.valueOf(c.getString(key));
+            return LuaValue.valueOf(nbt.asString());
         else if (Objects.equals(type, LuafyLua.ArgTypes.BOOL))
-            return LuaValue.valueOf(c.getBoolean(key));
+            return LuaValue.valueOf(((NbtByte) nbt).byteValue() == 0b1); // bools are stored in NBT by bytes
         else if (Objects.equals(type, LuafyLua.ArgTypes.TABLE))
-            return tableFromNbt(c, key);
+            return tableFromNbt((NbtCompound)nbt);
+        else if (Objects.equals(type, LuafyLua.ArgTypes.LIST))
+            return tableFromNbtList(((NbtList)nbt));
         else {
             Luafy.LOGGER.error("Forbidden Explicit Nbt Compound Type (" + type + ") : Allowed options are [NUM, STR, BOOL, OBJ]");
         }
@@ -57,6 +76,69 @@ public class LuaTypeConversions {
         return LuaValue.NIL;
     }
 
+    public static void implicitNbtPutObject(NbtCompound nbt, String key, Object obj) {
+        if (obj instanceof Integer v) nbt.putInt(key, v);
+        else if (obj instanceof Double v) nbt.putDouble(key, v);
+        else if (obj instanceof Float v) nbt.putFloat(key, v);
+        else if (obj instanceof Short v) nbt.putShort(key, v);
+        else if (obj instanceof Long v) nbt.putLong(key, v);
+        else if (obj instanceof String v) nbt.putString(key, v);
+        else if (obj instanceof Boolean v) nbt.putBoolean(key, v);
+        else if (obj instanceof Byte v) nbt.putByte(key, v);
+        else if (obj instanceof LuaTable v) putTable(nbt, key, v);
+    }
+    public static void explicitNbtPutObject(NbtCompound compound, String key, Object obj, String argType) {
+        switch (argType) {
+            case LuafyLua.ArgTypes.NUMBER -> compound.putDouble(key, (double) obj);
+            case LuafyLua.ArgTypes.STRING -> compound.putString(key, (String) obj);
+            case LuafyLua.ArgTypes.BOOL -> compound.putBoolean(key, (boolean) obj);
+            case LuafyLua.ArgTypes.TABLE -> putTable(compound,key, (LuaTable) obj);
+            case LuafyLua.ArgTypes.LIST -> {} // yeah i havent done anything
+            default -> {}
+        }
+    }
+
+    public static void putTable(NbtCompound compound, String key, LuaTable table) {
+        compound.put(key, tableToNbt(table));
+    }
+
+    public static LuaTable tableFromNbtList(NbtList list) {
+        var jvmList = list.stream().toList();
+        LuaValue[] arr = new LuaValue[jvmList.size()];
+        int i = 0;
+        for (NbtElement element : jvmList) {
+            arr[i] = implicitNbtToLua(element);
+            i++;
+        }
+        return LuaTable.listOf(arr);
+    }
+
+    public static LuaTable tableFromNbt(NbtCompound nbt) {
+
+        LuaTable table = new LuaTable();
+        Collection<String> keys = nbt.getKeys();
+
+        for (String k : keys) {
+            var value = implicitNbtToLua(nbt, k);
+            table.set(k, value);
+        }
+
+        return table;
+    }
+    public static NbtCompound tableToNbt(LuaTable table) {
+        NbtCompound nbt = new NbtCompound();
+
+        for (LuaValue k : table.keys()) {
+            LuaValue val = table.get(k);
+            implicitNbtPutObject(nbt, k.tojstring(), luaToObj(val));
+        }
+
+        return nbt;
+    }
+
+    public static LuaValue luaFromObj(Object val) {
+        return javaToLua(val).arg1();
+    }
     public static Object luaToObj(LuaValue lua) {
         return switch (lua.type()) {
             case LuaValue.TNIL -> null;
@@ -68,58 +150,25 @@ public class LuaTypeConversions {
         };
     }
 
-    public static void nbtPutObject(NbtCompound nbt, String key, Object obj) {
-        if (obj instanceof Integer v) nbt.putInt(key, v);
-        else if (obj instanceof Double v) nbt.putDouble(key, v);
-        else if (obj instanceof Float v) nbt.putFloat(key, v);
-        else if (obj instanceof Short v) nbt.putShort(key, v);
-        else if (obj instanceof Long v) nbt.putLong(key, v);
-        else if (obj instanceof String v) nbt.putString(key, v);
-        else if (obj instanceof Boolean v) nbt.putBoolean(key, v);
-        else if (obj instanceof Byte v) nbt.putByte(key, v);
-        else if (obj instanceof LuaTable v) putTable(nbt, key, v);
-    }
-
-    public static void nbtPutObject(NbtCompound compound, String key, Object obj, String argType) {
-        switch (argType) {
-            case LuafyLua.ArgTypes.NUMBER -> compound.putDouble(key, (double) obj);
-            case LuafyLua.ArgTypes.STRING -> compound.putString(key, (String) obj);
-            case LuafyLua.ArgTypes.BOOL -> compound.putBoolean(key, (boolean) obj);
-            case LuafyLua.ArgTypes.TABLE -> putTable(compound,key, (LuaTable) obj);
-            default -> {}
+    public static Object[] arrFromLua(LuaTable tableArray) {
+        Object[] arr = new Object[tableArray.narg()];
+        for (int i = 0; i < tableArray.narg(); i++) {
+            arr[i] = tableArray.get(i + 1); // lua tables are one-indexed
         }
+        return arr;
     }
 
-    public static LuaTable tableFromNbt(NbtCompound compound, String key) {
-        NbtCompound nbt = compound.getCompound(key);
-        LuaTable table = new LuaTable();
-        Collection<String> keys = nbt.getKeys();
-
-        for (String k : keys) {
-            var value = implicitNbtToLua(nbt, k);
-            table.set(k, value);
+    public static LuaTable arrToLua(Object[] arr) {
+        LuaValue[] arr2 = new LuaValue[arr.length];
+        int i = 0;
+        for (var o : arr) {
+            arr2[i] = luaFromObj(arr[i]);
+            i++;
         }
-
-        return table;
+        return LuaTable.listOf(arr2);
     }
 
-    public static void putTable(NbtCompound compound, String key, LuaTable table) {
-        NbtCompound nbt = new NbtCompound();
-
-        for (LuaValue k : table.keys()) {
-            LuaValue val = table.get(k);
-            nbtPutObject(nbt, k.tojstring(), luaToObj(val));
-        }
-
-        compound.put(key, nbt);
-    }
-
-    public static LuaValue fromJava(Object val) {
-        return javaToLua(val).arg1();
-    }
-
-    // all below is yoinked from figura !! some is edited though
-
+    // all below is yoinked from figura - some is slightly edited though. might eventually be replaced with my own stuff
     public static Varargs javaToLua(Object val) {
         if (val == null)
             return LuaValue.NIL;

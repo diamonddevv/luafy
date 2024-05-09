@@ -1,18 +1,18 @@
-package dev.diamond.luafy.lua.lib;
+package dev.diamond.luafy.lua.api;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import dev.diamond.luafy.lua.LuaScriptManager;
+import dev.diamond.luafy.lua.LuaScript;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.OneArgFunction;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class CommandApi extends AbstractLib {
+public class CommandApi extends AbstractApi {
 
-    private final LuaScriptManager script;
+    private final LuaScript script;
 
-    public CommandApi(LuaScriptManager script) {
+    public CommandApi(LuaScript script) {
         super("command");
         this.script = script;
     }
