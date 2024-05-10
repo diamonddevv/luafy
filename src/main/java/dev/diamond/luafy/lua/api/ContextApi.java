@@ -37,7 +37,7 @@ public class ContextApi extends AbstractApi {
         @Override
         public LuaValue call() {
             if (script.context != null) {
-                return LuaTypeConversions.tableFromNbt(script.context);
+                return script.context;
             } else return NIL;
         }
     }
@@ -58,7 +58,7 @@ public class ContextApi extends AbstractApi {
                             .withPosition(entityLuaObject.entity.getPos())
                             .withRotation(entityLuaObject.entity.getRotationClient());
 
-            s.execute(src, LuaTypeConversions.tableToNbt(ctx));
+            s.execute(src, ctx);
 
             return s.outContext == LuaValue.NIL ? LuaValue.NIL : s.outContext;
         }

@@ -22,7 +22,7 @@ public class LuaScript {
     private final LuaValue script;
 
     public ServerCommandSource source;
-    public NbtCompound context;
+    public LuaTable context;
     public LuaTable outContext;
 
     public LuaScript(String scriptString) {
@@ -44,7 +44,7 @@ public class LuaScript {
 
     }
 
-    public LuaValue execute(ServerCommandSource source, NbtCompound ctx) {
+    public LuaValue execute(ServerCommandSource source, LuaTable ctx) {
         try {
             this.source = FunctionCommand.createFunctionCommandSource(source);
             this.context = ctx;

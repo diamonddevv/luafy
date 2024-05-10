@@ -1,6 +1,7 @@
 package dev.diamond.luafy;
 
 import dev.diamond.luafy.commmand.LuaCommand;
+import dev.diamond.luafy.resource.CallbackScriptResourceLoader;
 import dev.diamond.luafy.resource.LuaScriptResourceLoader;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.api.ModInitializer;
@@ -18,14 +19,16 @@ public class Luafy implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
 
 	public static final LuaScriptResourceLoader LUA_SCRIPT_RESOURCES = new LuaScriptResourceLoader();
+	public static final CallbackScriptResourceLoader CALLBACK_RESOURCES = new CallbackScriptResourceLoader();
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Initialising {} with LuaJ Version {}. Thank you FiguraMC for maintaining LuaJ!", MODID, LUAJ_VER);
+		LOGGER.info("Initialising Luafy with LuaJ Version {}. Thank you FiguraMC for maintaining LuaJ!", LUAJ_VER);
 
 		CommandRegistrationCallback.EVENT.register(LuaCommand::registerLuaCommand);
 
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(LUA_SCRIPT_RESOURCES);
+		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(CALLBACK_RESOURCES);
 	}
 
 

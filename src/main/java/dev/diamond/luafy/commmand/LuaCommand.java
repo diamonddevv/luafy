@@ -6,6 +6,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import dev.diamond.luafy.lua.LuaScript;
+import dev.diamond.luafy.lua.LuaTypeConversions;
 import dev.diamond.luafy.lua.LuafyLua;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.NbtCompoundArgumentType;
@@ -61,7 +62,7 @@ public class LuaCommand {
             throw SCRIPT_NOT_EXIST.create(id);
         }
         LuaScript manager = LuafyLua.LUA_SCRIPTS.get(id);
-        manager.execute(ctx.getSource(), nbtContext);
+        manager.execute(ctx.getSource(), LuaTypeConversions.tableFromNbt(nbtContext));
 
         return true;
     }
