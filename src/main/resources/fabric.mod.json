@@ -19,6 +19,8 @@
             "dev.diamond.luafy.Luafy"
 		]
 	},
+
+	"accessWidener" : "luafy.accesswidener",
 	"mixins": [
 		{
 			"environment": "server",
@@ -30,8 +32,5 @@
 		"minecraft": "~1.20.1",
 		"java": ">=17",
 		"fabric-api": "*"
-	},
-	"suggests": {
-		"another-mod": "*"
 	}
 }

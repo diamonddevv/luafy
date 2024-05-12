@@ -5,7 +5,9 @@ import dev.diamond.luafy.Luafy;
 import dev.diamond.luafy.lua.LuaScript;
 import dev.diamond.luafy.lua.LuafyLua;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.resource.ResourceManager;
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.Identifier;
 
 import java.io.InputStream;
@@ -13,7 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 public class CallbackScriptResourceLoader implements SimpleSynchronousResourceReloadListener {
-    public static final String FILENAME = "callback_lua_scripts.json";
+    public static final String FILENAME = "_callback_lua_scripts.json";
 
     public static final Gson GSON = new Gson();
 

@@ -14,6 +14,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
@@ -57,12 +58,12 @@ public class LuaCommand {
         return success ? 1 : 0;
     }
 
-    private static boolean execute(String id, CommandContext<ServerCommandSource> ctx, NbtCompound nbtContext) throws CommandSyntaxException {
+    private static boolean execute(String id, CommandContext<ServerCommandSource> ctx, @Nullable NbtCompound nbtContext) throws CommandSyntaxException {
         if (!LuafyLua.LUA_SCRIPTS.containsKey(id)) {
             throw SCRIPT_NOT_EXIST.create(id);
         }
         LuaScript manager = LuafyLua.LUA_SCRIPTS.get(id);
-        manager.execute(ctx.getSource(), LuaTypeConversions.tableFromNbt(nbtContext));
+        manager.execute(ctx.getSource(), nbtContext == null ? null : LuaTypeConversions.tableFromNbt(nbtContext));
 
         return true;
     }

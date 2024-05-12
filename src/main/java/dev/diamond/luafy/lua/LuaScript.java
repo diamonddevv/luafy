@@ -55,7 +55,4 @@ public class LuaScript {
         }
         return LuaValue.NIL;
     }
-
-
-
 }

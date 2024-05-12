@@ -8,8 +8,6 @@ import dev.diamond.luafy.lua.object.EntityLuaObject;
 import net.minecraft.command.EntitySelector;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.predicate.NbtPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.Nullable;
 import org.luaj.vm2.LuaTable;
@@ -42,6 +40,7 @@ public class ServerApi extends AbstractApi {
 
         // Entity
         table.set("get_source", new GetSourceEntityFunc());
+        table.set("get_entity_from_uuid", new GetEntityFromUuidFunc());
         table.set("get_entity", new GetEntityFunc(false));
         table.set("get_entities", new GetEntityFunc(true));
     }
@@ -118,6 +117,13 @@ public class ServerApi extends AbstractApi {
             if (script.source.getEntity() != null) {
                 return new EntityLuaObject(script.source.getEntity());
             } else return NIL;
+        }
+    }
+
+    public class GetEntityFromUuidFunc extends OneArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg) {
+            return new EntityLuaObject(script.source.getServer().getPlayerManager().getPlayer(UUID.fromString(arg.checkjstring())));
         }
     }
 

@@ -1,5 +1,9 @@
 package dev.diamond.luafy.lua;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import dev.diamond.luafy.Luafy;
 import net.minecraft.nbt.*;
 import org.apache.commons.lang3.ArrayUtils;
@@ -10,6 +14,8 @@ import org.luaj.vm2.Varargs;
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Objects;
+
+import static org.luaj.vm2.LuaValue.NIL;
 
 public class LuaTypeConversions {
 
@@ -24,7 +30,7 @@ public class LuaTypeConversions {
     }
 
     public static LuaValue implicitNbtToLua(NbtElement nbt) {
-        if (nbt == null) return LuaValue.NIL;
+        if (nbt == null) return NIL;
         NbtType<?> type = nbt.getNbtType();
 
         if (type == NbtDouble.TYPE)
@@ -56,7 +62,7 @@ public class LuaTypeConversions {
             Luafy.LOGGER.error("Forbidden Nbt Compound Type (" + type + ")");
         }
 
-        return LuaValue.NIL;
+        return NIL;
     }
     public static LuaValue explicitNbtToLua(NbtElement nbt, String type) {
         if (Objects.equals(type, LuafyLua.ArgTypes.NUMBER))
@@ -73,7 +79,7 @@ public class LuaTypeConversions {
             Luafy.LOGGER.error("Forbidden Explicit Nbt Compound Type (" + type + ") : Allowed options are [NUM, STR, BOOL, OBJ]");
         }
 
-        return LuaValue.NIL;
+        return NIL;
     }
 
     public static void implicitNbtPutObject(NbtCompound nbt, String key, Object obj) {
@@ -168,10 +174,54 @@ public class LuaTypeConversions {
         return LuaTable.listOf(arr2);
     }
 
+    public static LuaValue jsonElementToLuaValue(JsonElement e) {
+        LuaValue value = null;
+        if (e.isJsonPrimitive()) {
+            JsonPrimitive p = e.getAsJsonPrimitive();
+
+            if (p.isNumber()) {
+                value = LuaValue.valueOf(p.getAsDouble());
+            } else if (p.isString()) {
+                value = LuaValue.valueOf(p.getAsString());
+            } else if (p.isBoolean()) {
+                value = LuaValue.valueOf(p.getAsBoolean());
+            }
+
+        } else if (e.isJsonArray()) {
+
+            JsonArray array = e.getAsJsonArray();
+            LuaValue[] arr = new LuaValue[array.size()];
+
+            int i = 0;
+            for (var e2 : array) {
+                arr[i] = jsonElementToLuaValue(e2);
+                i++;
+            }
+
+            value = LuaTable.listOf(arr);
+
+        } else if (e.isJsonObject()) {
+            value = jsonObjToLuaTable(e.getAsJsonObject());
+        } else if (e.isJsonNull()) {
+            value = NIL;
+        }
+
+        return value;
+    }
+    public static LuaTable jsonObjToLuaTable(JsonObject obj) {
+        LuaTable table = LuaTable.tableOf();
+        for (var key : obj.keySet()) {
+            JsonElement e = obj.get(key);
+            LuaValue value = jsonElementToLuaValue(e);
+            if (value != null) table.set(LuaValue.valueOf(key), value);
+        }
+        return table;
+    }
+
     // all below is yoinked from figura - some is slightly edited though. might eventually be replaced with my own stuff
     public static Varargs javaToLua(Object val) {
         if (val == null)
-            return LuaValue.NIL;
+            return NIL;
         else if (val instanceof LuaValue l)
             return l;
         else if (val instanceof Double d)
@@ -198,7 +248,7 @@ public class LuaTypeConversions {
             return wrapArray(val);
         else {
             Luafy.LOGGER.error("Forbidden Lua Type (" + val.getClass() + ")");
-            return LuaValue.NIL;
+            return NIL;
         }
     }
     public static Varargs wrapArray(Object array) {

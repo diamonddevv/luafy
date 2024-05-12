@@ -27,14 +27,10 @@ public class PlayerAdvancementTrackerMixin {
             if (callbacks.advancementCallbacks != null) {
                 for (var advCall : callbacks.advancementCallbacks) {
 
-                    if (Objects.equals(advCall.id, advancement.id().toString())) {
+                    if (Objects.equals(advCall.id, advancement.id().toString()) || Objects.equals(advCall.id, "*")) { // wildcard works
                         for (String script : advCall.scriptIds) {
-                            System.out.println(script);
-
                             ServerCommandSource source = owner.getCommandSource().withSilent().withLevel(2);
-                            if (LuafyLua.LUA_SCRIPTS.get(script) != null) {
-                                LuafyLua.LUA_SCRIPTS.get(script).execute(source, null); // no context
-                            }
+                            LuafyLua.executeScript(script, source, null);
                         }
                     }
                 }

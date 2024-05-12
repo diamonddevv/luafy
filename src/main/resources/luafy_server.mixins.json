@@ -3,6 +3,8 @@
     "package": "dev.diamond.luafy.mixin",
     "compatibilityLevel": "JAVA_17",
     "mixins": [
+        "EntityMixin",
+        "MinecraftServerMixin",
         "PlayerAdvancementTrackerMixin"
     ],
     "injectors": {
