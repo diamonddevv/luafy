@@ -1,6 +1,7 @@
 package dev.diamond.luafy;
 
 import dev.diamond.luafy.commmand.LuaCommand;
+import dev.diamond.luafy.lua.LuafyLua;
 import dev.diamond.luafy.resource.CallbackScriptResourceLoader;
 import dev.diamond.luafy.resource.LuaScriptResourceLoader;
 import net.fabricmc.api.DedicatedServerModInitializer;
@@ -11,6 +12,9 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class Luafy implements ModInitializer {
 	public static final String MODID = "luafy";

@@ -4,6 +4,7 @@ import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.diamond.luafy.lua.LuaScript;
 import dev.diamond.luafy.lua.LuaTypeConversions;
+import dev.diamond.luafy.lua.LuafyLua;
 import dev.diamond.luafy.lua.object.EntityLuaObject;
 import net.minecraft.command.EntitySelector;
 import net.minecraft.command.argument.EntityArgumentType;
@@ -15,6 +16,7 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.ZeroArgFunction;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,11 +45,31 @@ public class ServerApi extends AbstractApi {
         table.set("get_entity_from_uuid", new GetEntityFromUuidFunc());
         table.set("get_entity", new GetEntityFunc(false));
         table.set("get_entities", new GetEntityFunc(true));
+
+        // Groups
+        table.set("group_entities", new GroupEntitiesFunc());
+        table.set("get_entity_group", new GetGroupedEntitiesFunc());
     }
 
     @Nullable
     private ServerPlayerEntity getPlayer(String uuid) {
         return script.source.getServer().getPlayerManager().getPlayer(UUID.fromString(uuid));
+    }
+
+    private List<? extends Entity> selectEntities(boolean multiple, String selector) {
+        EntityArgumentType argType = multiple ? EntityArgumentType.entities() : EntityArgumentType.entity();
+        try {
+            EntitySelector s = argType.parse(new StringReader(selector));
+            if (multiple) {
+                return s.getEntities(script.source);
+            } else {
+                List<Entity> es = new ArrayList<>();
+                es.add(s.getEntity(script.source));
+                return es;
+            }
+        } catch (CommandSyntaxException e) {
+            throw new RuntimeException("An exception was caught while parsing an entity selector | Exception: " + e);
+        }
     }
 
     public class GetPlayerNamesFunc extends ZeroArgFunction {
@@ -136,21 +158,36 @@ public class ServerApi extends AbstractApi {
 
         @Override
         public LuaValue call(LuaValue arg) {
-            try {
-                EntityArgumentType argType = multiple ? EntityArgumentType.entities() : EntityArgumentType.entity();
-                EntitySelector selector = argType.parse(new StringReader(arg.checkjstring()));
-
-                if (multiple) {
-                    List<? extends Entity> entities = selector.getEntities(script.source);
-                    List<EntityLuaObject> luaEntities = entities.stream().map(EntityLuaObject::new).toList();
-                    return LuaTypeConversions.arrToLua(luaEntities.toArray());
-                } else {
-                    Entity entity = selector.getEntity(script.source);
-                    return new EntityLuaObject(entity);
-                }
-            } catch (CommandSyntaxException e) {
-                throw new RuntimeException("An exception was caught while parsing an entity selector | Exception: " + e);
+            List<? extends Entity> entities = selectEntities(multiple, arg.checkjstring());
+            if (multiple) {
+                List<EntityLuaObject> luaEntities = entities.stream().map(EntityLuaObject::new).toList();
+                return LuaTypeConversions.arrToLua(luaEntities.toArray());
+            } else {
+                Entity entity = entities.get(0);
+                return new EntityLuaObject(entity);
             }
+        }
+    }
+
+
+    public class GroupEntitiesFunc extends OneArgFunction {
+
+        @Override
+        public LuaValue call(LuaValue arg) {
+            LuafyLua.HexId hexid = LuafyLua.HexId.makeNewUnique(LuafyLua.ScriptManagements.ENTITY_GROUP_CACHE.keySet());
+            var entities = selectEntities(true, arg.checkjstring());
+            LuafyLua.ScriptManagements.ENTITY_GROUP_CACHE.put(hexid, entities);
+            return hexid;
+        }
+    }
+    public class GetGroupedEntitiesFunc extends OneArgFunction {
+
+        @Override
+        public LuaValue call(LuaValue arg) {
+            if (!(arg instanceof LuafyLua.HexId)) return NIL;
+            var entities = LuafyLua.ScriptManagements.ENTITY_GROUP_CACHE.get(arg);
+            EntityLuaObject[] luaEs = (EntityLuaObject[]) entities.stream().map(EntityLuaObject::new).toArray();
+            return LuaTable.listOf(luaEs);
         }
     }
 }
