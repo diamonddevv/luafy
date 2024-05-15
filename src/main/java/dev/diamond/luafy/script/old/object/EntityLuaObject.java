@@ -1,13 +1,17 @@
-package dev.diamond.luafy.lua.object;
+package dev.diamond.luafy.script.old.object;
 
-import dev.diamond.luafy.lua.LuaTypeConversions;
-import dev.diamond.luafy.lua.LuafyLua;
+import dev.diamond.luafy.script.old.LuaTypeConversions;
+import dev.diamond.luafy.script.old.LuafyLua;
+import dev.diamond.luafy.script.old.api.CommandApi;
+import dev.diamond.luafy.util.HexId;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.predicate.NbtPredicate;
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.OneArgFunction;
+import org.luaj.vm2.lib.TwoArgFunction;
 import org.luaj.vm2.lib.ZeroArgFunction;
 
 import java.util.function.Function;
@@ -25,6 +29,8 @@ public class EntityLuaObject extends AbstractLuaObject {
         this.set("get_uuid", new GetWithEntityFunc(Entity::getUuidAsString));
         this.set("get_nbt", new GetWithEntityFunc(e -> LuaTypeConversions.tableFromNbt(NbtPredicate.entityToNbt(e))));
         this.set("get_type", new GetWithEntityFunc(e -> e.getType().getName().getString()));
+
+        this.set("parse_command_as_at", new ParseAsAtFunc());
 
         this.set("is_player", new GetWithEntityFunc(e -> e instanceof ServerPlayerEntity));
         this.set("is_living", new GetWithEntityFunc(e -> e instanceof LivingEntity));
@@ -71,6 +77,24 @@ public class EntityLuaObject extends AbstractLuaObject {
         @Override
         public LuaValue call(LuaValue arg) {
             return LuaValue.valueOf(LuafyLua.getAndTestPredicate(arg.checkjstring(), entity));
+        }
+    }
+
+    public class ParseAsAtFunc extends TwoArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg, LuaValue arg2) {
+            ServerCommandSource source = entity.getCommandSource()
+                    .withLevel(arg2.checkint())
+                    .withEntity(entity)
+                    .withPosition(entity.getPos())
+                    .withRotation(entity.getRotationClient());
+
+            String command = arg.checkjstring();
+            var parsed = CommandApi.parseCommand(command, source);
+
+            HexId hexid = HexId.makeNewUnique(LuafyLua.ScriptManagements.PREPARSED_COMMANDS_CACHE.keySet());
+            LuafyLua.ScriptManagements.PREPARSED_COMMANDS_CACHE.put(hexid, parsed);
+            return hexid;
         }
     }
 }

@@ -1,25 +1,20 @@
-package dev.diamond.luafy.lua.api;
+package dev.diamond.luafy.script.old.api;
 
-import dev.diamond.luafy.lua.LuaScript;
-import dev.diamond.luafy.lua.LuaTypeConversions;
-import dev.diamond.luafy.lua.LuafyLua;
-import dev.diamond.luafy.lua.api.AbstractApi;
-import dev.diamond.luafy.lua.object.EntityLuaObject;
+import dev.diamond.luafy.script.old.Old_LuaScript;
+import dev.diamond.luafy.script.old.LuafyLua;
+import dev.diamond.luafy.script.old.object.EntityLuaObject;
 import net.minecraft.server.command.ServerCommandSource;
 import org.jetbrains.annotations.Nullable;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.ThreeArgFunction;
-import org.luaj.vm2.lib.TwoArgFunction;
 import org.luaj.vm2.lib.ZeroArgFunction;
 
-import java.util.Optional;
-
 public class ContextApi extends AbstractApi {
-    private final LuaScript script;
+    private final Old_LuaScript script;
 
-    public ContextApi(LuaScript script) {
+    public ContextApi(Old_LuaScript script) {
         super("context");
         this.script = script;
     }
@@ -50,7 +45,7 @@ public class ContextApi extends AbstractApi {
             LuaTable ctx = arg2.checktable();
             EntityLuaObject entityLuaObject = (EntityLuaObject) arg3Optional;
 
-            LuaScript s = LuafyLua.LUA_SCRIPTS.get(lua);
+            Old_LuaScript s = LuafyLua.LUA_SCRIPTS.get(lua);
 
             ServerCommandSource src = entityLuaObject == null ? script.source :
                     script.source

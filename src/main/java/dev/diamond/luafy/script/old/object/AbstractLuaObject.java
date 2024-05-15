@@ -1,6 +1,6 @@
-package dev.diamond.luafy.lua.object;
+package dev.diamond.luafy.script.old.object;
 
-import dev.diamond.luafy.lua.LuaTypeConversions;
+import dev.diamond.luafy.script.old.LuaTypeConversions;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.ZeroArgFunction;

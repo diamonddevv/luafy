@@ -1,3 +1,4 @@
 accessWidener	v1	named
 
 accessible method net/minecraft/stat/ServerStatHandler asString ()Ljava/lang/String;
+accessible field net/minecraft/server/command/ServerCommandSource level I

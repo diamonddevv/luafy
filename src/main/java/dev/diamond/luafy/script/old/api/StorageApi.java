@@ -1,9 +1,9 @@
-package dev.diamond.luafy.lua.api;
+package dev.diamond.luafy.script.old.api;
 
-import dev.diamond.luafy.lua.ArrArgFunction;
-import dev.diamond.luafy.lua.LuaScript;
-import dev.diamond.luafy.lua.LuaTypeConversions;
-import dev.diamond.luafy.lua.object.StorageLuaObject;
+import dev.diamond.luafy.script.old.ArrArgFunction;
+import dev.diamond.luafy.script.old.Old_LuaScript;
+import dev.diamond.luafy.script.old.LuaTypeConversions;
+import dev.diamond.luafy.script.old.object.StorageLuaObject;
 import net.minecraft.command.DataCommandStorage;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.command.ServerCommandSource;
@@ -14,9 +14,9 @@ import org.luaj.vm2.lib.OneArgFunction;
 
 public class StorageApi extends AbstractApi {
 
-    private final LuaScript script;
+    private final Old_LuaScript script;
 
-    public StorageApi(LuaScript script) {
+    public StorageApi(Old_LuaScript script) {
         super("storage");
         this.script = script;
     }

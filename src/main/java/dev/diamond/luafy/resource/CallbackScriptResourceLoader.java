@@ -2,12 +2,10 @@ package dev.diamond.luafy.resource;
 
 import com.google.gson.Gson;
 import dev.diamond.luafy.Luafy;
-import dev.diamond.luafy.lua.LuaScript;
-import dev.diamond.luafy.lua.LuafyLua;
+import dev.diamond.luafy.script.old.LuafyLua;
+import dev.diamond.luafy.script.old.ScriptCallbacks;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.Identifier;
 
 import java.io.InputStream;
@@ -41,7 +39,7 @@ public class CallbackScriptResourceLoader implements SimpleSynchronousResourceRe
                     byte[] bytes = stream.readAllBytes();
                     String s = new String(bytes, StandardCharsets.UTF_8);
 
-                    LuafyLua.CallbackScriptBean bean = GSON.fromJson(s, LuafyLua.CallbackScriptBean.class);
+                    ScriptCallbacks.CallbackScriptBean bean = GSON.fromJson(s, ScriptCallbacks.CallbackScriptBean.class);
 
                     LuafyLua.CALLBACK_SCRIPTS.add(bean);
                 } catch (Exception e) {

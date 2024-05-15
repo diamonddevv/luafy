@@ -1,11 +1,12 @@
-package dev.diamond.luafy.lua.api;
+package dev.diamond.luafy.script.old.api;
 
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import dev.diamond.luafy.lua.LuaScript;
-import dev.diamond.luafy.lua.LuaTypeConversions;
-import dev.diamond.luafy.lua.LuafyLua;
-import dev.diamond.luafy.lua.object.EntityLuaObject;
+import dev.diamond.luafy.script.old.Old_LuaScript;
+import dev.diamond.luafy.script.old.LuaTypeConversions;
+import dev.diamond.luafy.script.old.LuafyLua;
+import dev.diamond.luafy.script.old.object.EntityLuaObject;
+import dev.diamond.luafy.util.HexId;
 import net.minecraft.command.EntitySelector;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.Entity;
@@ -21,9 +22,9 @@ import java.util.List;
 import java.util.UUID;
 
 public class ServerApi extends AbstractApi {
-    private final LuaScript script;
+    private final Old_LuaScript script;
 
-    public ServerApi(LuaScript script) {
+    public ServerApi(Old_LuaScript script) {
         super("server");
         this.script = script;
     }
@@ -174,7 +175,7 @@ public class ServerApi extends AbstractApi {
 
         @Override
         public LuaValue call(LuaValue arg) {
-            LuafyLua.HexId hexid = LuafyLua.HexId.makeNewUnique(LuafyLua.ScriptManagements.ENTITY_GROUP_CACHE.keySet());
+            HexId hexid = HexId.makeNewUnique(LuafyLua.ScriptManagements.ENTITY_GROUP_CACHE.keySet());
             var entities = selectEntities(true, arg.checkjstring());
             LuafyLua.ScriptManagements.ENTITY_GROUP_CACHE.put(hexid, entities);
             return hexid;
@@ -184,10 +185,15 @@ public class ServerApi extends AbstractApi {
 
         @Override
         public LuaValue call(LuaValue arg) {
-            if (!(arg instanceof LuafyLua.HexId)) return NIL;
-            var entities = LuafyLua.ScriptManagements.ENTITY_GROUP_CACHE.get(arg);
-            EntityLuaObject[] luaEs = (EntityLuaObject[]) entities.stream().map(EntityLuaObject::new).toArray();
-            return LuaTable.listOf(luaEs);
+            if (!(arg instanceof HexId)) return NIL;
+            var entities = HexId.getHashed(LuafyLua.ScriptManagements.ENTITY_GROUP_CACHE, (HexId) arg);
+            if (entities == null) return NIL;
+            EntityLuaObject[] luaEs = new EntityLuaObject[entities.size()];
+
+            int i = 0;
+            for (var e : entities) { luaEs[i] = new EntityLuaObject(e); i++; }
+
+            return LuaTypeConversions.arrToLua(luaEs);
         }
     }
 }

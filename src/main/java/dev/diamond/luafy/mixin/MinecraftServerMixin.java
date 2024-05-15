@@ -1,6 +1,6 @@
 package dev.diamond.luafy.mixin;
 
-import dev.diamond.luafy.lua.LuafyLua;
+import dev.diamond.luafy.script.old.LuafyLua;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
 import org.spongepowered.asm.mixin.Mixin;

@@ -1,8 +1,8 @@
-package dev.diamond.luafy.lua.object;
+package dev.diamond.luafy.script.old.object;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import dev.diamond.luafy.lua.LuaTypeConversions;
+import dev.diamond.luafy.script.old.LuaTypeConversions;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;

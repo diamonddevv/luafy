@@ -1,8 +1,7 @@
-package dev.diamond.luafy.lua.object;
+package dev.diamond.luafy.script.old.object;
 
-import dev.diamond.luafy.lua.LuaTypeConversions;
+import dev.diamond.luafy.script.old.LuaTypeConversions;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.Identifier;
 import org.luaj.vm2.LuaValue;

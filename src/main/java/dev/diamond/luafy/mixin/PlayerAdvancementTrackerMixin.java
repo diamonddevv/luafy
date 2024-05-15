@@ -1,6 +1,6 @@
 package dev.diamond.luafy.mixin;
 
-import dev.diamond.luafy.lua.LuafyLua;
+import dev.diamond.luafy.script.old.LuafyLua;
 import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.advancement.PlayerAdvancementTracker;
 import net.minecraft.server.command.ServerCommandSource;

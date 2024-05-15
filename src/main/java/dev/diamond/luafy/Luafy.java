@@ -1,10 +1,10 @@
 package dev.diamond.luafy;
 
 import dev.diamond.luafy.commmand.LuaCommand;
-import dev.diamond.luafy.lua.LuafyLua;
+import dev.diamond.luafy.config.LuafyConfig;
 import dev.diamond.luafy.resource.CallbackScriptResourceLoader;
 import dev.diamond.luafy.resource.LuaScriptResourceLoader;
-import net.fabricmc.api.DedicatedServerModInitializer;
+import dev.diamond.luafy.resource.SandboxStrategyResourceLoader;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
@@ -12,9 +12,6 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 public class Luafy implements ModInitializer {
 	public static final String MODID = "luafy";
@@ -24,6 +21,7 @@ public class Luafy implements ModInitializer {
 
 	public static final LuaScriptResourceLoader LUA_SCRIPT_RESOURCES = new LuaScriptResourceLoader();
 	public static final CallbackScriptResourceLoader CALLBACK_RESOURCES = new CallbackScriptResourceLoader();
+	public static final SandboxStrategyResourceLoader SANDBOXES = new SandboxStrategyResourceLoader();
 
 	@Override
 	public void onInitialize() {
@@ -33,6 +31,10 @@ public class Luafy implements ModInitializer {
 
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(LUA_SCRIPT_RESOURCES);
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(CALLBACK_RESOURCES);
+		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(SANDBOXES);
+
+
+		LuafyConfig.initializeConfig();
 	}
 
 

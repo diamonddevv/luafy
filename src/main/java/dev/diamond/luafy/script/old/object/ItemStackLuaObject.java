@@ -1,6 +1,6 @@
-package dev.diamond.luafy.lua.object;
+package dev.diamond.luafy.script.old.object;
 
-import dev.diamond.luafy.lua.LuaTypeConversions;
+import dev.diamond.luafy.script.old.LuaTypeConversions;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import org.luaj.vm2.LuaValue;
@@ -18,8 +18,8 @@ public class ItemStackLuaObject extends AbstractLuaObject {
 
     @Override
     public void create() {
-        set("get_id", new GetWithStackFunc(s -> LuaValue.valueOf(Registries.ITEM.getId(s.getItem()).toString())));
-        set("get_count", new GetWithStackFunc(s -> LuaValue.valueOf(s.getCount())));
+        set("get_id", new GetWithStackFunc(s -> valueOf(Registries.ITEM.getId(s.getItem()).toString())));
+        set("get_count", new GetWithStackFunc(s -> valueOf(s.getCount())));
 
         set("get_nbt", new GetNbtTableFunc());
         set("set_nbt", new SetNbtTableFunc());

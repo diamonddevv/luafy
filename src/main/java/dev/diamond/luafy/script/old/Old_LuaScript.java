@@ -1,21 +1,15 @@
-package dev.diamond.luafy.lua;
+package dev.diamond.luafy.script.old;
 
 import dev.diamond.luafy.Luafy;
-import dev.diamond.luafy.lua.api.CommandApi;
-import dev.diamond.luafy.lua.api.ContextApi;
-import dev.diamond.luafy.lua.api.ServerApi;
-import dev.diamond.luafy.lua.api.StorageApi;
-import net.minecraft.nbt.NbtCompound;
+import dev.diamond.luafy.config.LuafyConfig;
 import net.minecraft.server.command.FunctionCommand;
 import net.minecraft.server.command.ServerCommandSource;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.compiler.LuaC;
-import org.luaj.vm2.lib.jse.JsePlatform;
 
-public class LuaScript {
+public class Old_LuaScript {
 
     private final String scriptString;
     private final Globals scriptGlobals;
@@ -25,22 +19,11 @@ public class LuaScript {
     public LuaTable context;
     public LuaTable outContext;
 
-    public LuaScript(String scriptString) {
+    public Old_LuaScript(String scriptString) {
         this.scriptString = scriptString;
 
-        this.scriptGlobals = JsePlatform.standardGlobals();
-        loadFunctions();
-        LuaC.install(this.scriptGlobals);
+        this.scriptGlobals = SandboxStrategies.applySandboxStrategy(LuafyConfig.GLOBAL_CONFIG.getStrategy(), this);
         this.script = this.scriptGlobals.load(scriptString);
-
-    }
-
-    private void loadFunctions() {
-        // gloabal libs
-        scriptGlobals.load(new CommandApi(this));
-        scriptGlobals.load(new StorageApi(this));
-        scriptGlobals.load(new ServerApi(this));
-        scriptGlobals.load(new ContextApi(this));
 
     }
 

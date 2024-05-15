@@ -1,29 +1,33 @@
 package dev.diamond.luafy.resource;
 
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 import dev.diamond.luafy.Luafy;
-import dev.diamond.luafy.script.old.Old_LuaScript;
 import dev.diamond.luafy.script.old.LuafyLua;
+import dev.diamond.luafy.script.old.SandboxStrategies;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+import java.io.InputStreamReader;
 
-public class LuaScriptResourceLoader implements SimpleSynchronousResourceReloadListener {
+public class SandboxStrategyResourceLoader implements SimpleSynchronousResourceReloadListener {
 
-    public static final String PATH = "lua_scripts";
-    public static final String EXTENSION = ".lua";
+    public static final String PATH = "sandboxes";
+    public static final String EXTENSION = ".json";
+
+    public static final Gson gson = new Gson();
 
     @Override
     public Identifier getFabricId() {
-        return Luafy.id("script_resources");
+        return Luafy.id("sandbox_strategies");
     }
 
     @Override
     public void reload(ResourceManager manager) {
         // Clear Cache Phase
-        LuafyLua.LUA_SCRIPTS.clear();
+        LuafyLua.SANDBOX_STRATEGIES.clear();
 
         // Read Phase
         for (Identifier id : manager.findResources(PATH, path -> path.getPath().endsWith(EXTENSION)).keySet()) {
@@ -31,16 +35,16 @@ public class LuaScriptResourceLoader implements SimpleSynchronousResourceReloadL
 
                 try (InputStream stream = manager.getResource(id).get().getInputStream()) {
                     // Consume stream
-                    byte[] bytes = stream.readAllBytes();
-                    String s = new String(bytes, StandardCharsets.UTF_8);
-                    Old_LuaScript script = new Old_LuaScript(s);
+
+                    SandboxStrategies.Strategy strategy = gson.fromJson(new JsonReader(new InputStreamReader(stream)), SandboxStrategies.Strategy.class);
+
 
                     int pfLen = (PATH + "/").length();
                     String fixedPath = id.getPath().substring(pfLen);
                     fixedPath = fixedPath.substring(0, fixedPath.length() - EXTENSION.length());
                     String newId = id.getNamespace() + ":" + fixedPath;
 
-                    LuafyLua.LUA_SCRIPTS.put(newId, script);
+                    LuafyLua.SANDBOX_STRATEGIES.put(newId, strategy);
                 } catch (Exception e) {
                     Luafy.LOGGER.error("Error occurred while loading Lua Script " + id.toString(), e);
                 }

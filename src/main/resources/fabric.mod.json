@@ -5,7 +5,13 @@
 	"name": "Luafy",
 	"description": "Server-side mod adding Lua to Datapacks",
 	"authors": [
-		"DiamondDev"
+		"DiamondDev\n",
+
+
+		"\n\n\n",
+		"Other Credits/Thanks:\n",
+		"FiguraMC: Maintaining of LuaJ",
+		"Mulverine: Support and guidance in knowledge of commands"
 	],
 	"contact": {
 		"homepage": "https://diamonddevv.github.io/",

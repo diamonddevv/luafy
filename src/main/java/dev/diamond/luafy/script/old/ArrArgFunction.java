@@ -1,4 +1,4 @@
-package dev.diamond.luafy.lua;
+package dev.diamond.luafy.script.old;
 
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;

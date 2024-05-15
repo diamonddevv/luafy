@@ -1,4 +1,4 @@
-package dev.diamond.luafy.lua.api;
+package dev.diamond.luafy.script.old.api;
 
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;

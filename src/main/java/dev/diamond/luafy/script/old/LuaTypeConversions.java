@@ -1,4 +1,4 @@
-package dev.diamond.luafy.lua;
+package dev.diamond.luafy.script.old;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
