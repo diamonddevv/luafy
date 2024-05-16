@@ -7,8 +7,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import dev.diamond.luafy.config.LuafyConfig;
 import dev.diamond.luafy.script.ScriptManager;
-import dev.diamond.luafy.script.old.Old_LuaScript;
-import dev.diamond.luafy.script.old.LuaTypeConversions;
 import dev.diamond.luafy.script.old.LuafyLua;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.NbtCompoundArgumentType;
@@ -71,7 +69,7 @@ public class LuafyCommand {
         } else {
 
             String arg = StringArgumentType.getString(ctx, "sandbox");
-            if (LuafyLua.SANDBOX_STRATEGIES.containsKey(arg)) {
+            if (ScriptManager.SANDBOX_STRATEGIES.containsKey(arg)) {
                 LuafyConfig.GLOBAL_CONFIG.sandboxStrategy = arg;
                 LuafyConfig.writeConfig();
                 ctx.getSource().sendFeedback(() -> Text.literal("Set Lua sandbox strategy. Please run /reload for this to take effect!"), true);
@@ -85,7 +83,7 @@ public class LuafyCommand {
 
     private static int luaCommand_execute(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
         String arg = StringArgumentType.getString(ctx, "script");
-        boolean success = ScriptManager.execute(arg, ctx.getSource());
+        boolean success = execute(arg, ctx, null);
         return success ? 1 : 0;
     }
     private static int luaCommand_executeWithContext(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
@@ -96,25 +94,25 @@ public class LuafyCommand {
     }
 
     private static boolean execute(String id, CommandContext<ServerCommandSource> ctx, @Nullable NbtCompound nbtContext) throws CommandSyntaxException {
-        if (!LuafyLua.LUA_SCRIPTS.containsKey(id)) {
+        if (!ScriptManager.has(id)) {
             throw SCRIPT_NOT_EXIST.create(id);
         }
-        Old_LuaScript manager = LuafyLua.LUA_SCRIPTS.get(id);
-        manager.execute(ctx.getSource(), nbtContext == null ? null : LuaTypeConversions.tableFromNbt(nbtContext));
+        var script = ScriptManager.get(id);
+        script.execute(ctx.getSource(), nbtContext == null ? null : null); // LuaTypeConversions.tableFromNbt(nbtContext)
 
         return true;
     }
 
     private static int luaCommand_list(CommandContext<ServerCommandSource> ctx) {
-        ctx.getSource().sendFeedback(() -> Text.literal("Total: " + LuafyLua.LUA_SCRIPTS.size()), false);
-        LuafyLua.LUA_SCRIPTS.forEach((key, value) -> ctx.getSource().sendFeedback(() -> Text.literal(key), false));
+        ctx.getSource().sendFeedback(() -> Text.literal("Total: " + ScriptManager.SCRIPTS.size()), false);
+        ScriptManager.SCRIPTS.forEach((key, value) -> ctx.getSource().sendFeedback(() -> Text.literal(key), false));
         return 1;
     }
 
     private static int luaCommand_listSandboxes(CommandContext<ServerCommandSource> ctx) {
         if (LuafyConfig.GLOBAL_CONFIG.sandboxStrategy != null) ctx.getSource().sendFeedback(() -> Text.literal("Current: " + LuafyConfig.GLOBAL_CONFIG.sandboxStrategy), false);
-        ctx.getSource().sendFeedback(() -> Text.literal("Total: " + LuafyLua.SANDBOX_STRATEGIES.size()), false);
-        LuafyLua.SANDBOX_STRATEGIES.forEach((key, value) -> ctx.getSource().sendFeedback(() -> Text.literal(key), false));
+        ctx.getSource().sendFeedback(() -> Text.literal("Total: " + ScriptManager.SANDBOX_STRATEGIES.size()), false);
+        ScriptManager.SANDBOX_STRATEGIES.forEach((key, value) -> ctx.getSource().sendFeedback(() -> Text.literal(key), false));
         return 1;
     }
 }

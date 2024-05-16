@@ -40,6 +40,12 @@ public class LuaFunctionWrapper
     }
 
     @Override
+    public LuaFunction adapt(Object obj) {
+        return (LuaFunction) asBase().adapt(obj);
+    }
+
+
+    @Override
     public String asString() {
         return value.name();
     }

@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import dev.diamond.luafy.Luafy;
 import dev.diamond.luafy.script.old.LuafyLua;
-import dev.diamond.luafy.script.old.SandboxStrategies;
+import dev.diamond.luafy.script.SandboxStrategies;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;

@@ -2,6 +2,7 @@ package dev.diamond.luafy.script.old.api;
 
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import dev.diamond.luafy.script.lua.LuaHexid;
 import dev.diamond.luafy.script.old.Old_LuaScript;
 import dev.diamond.luafy.script.old.LuafyLua;
 import dev.diamond.luafy.util.HexId;
@@ -13,11 +14,11 @@ import org.luaj.vm2.lib.TwoArgFunction;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class CommandApi extends AbstractApi {
+public class OldCommandApi extends OldAbstractApi {
 
     private final Old_LuaScript script;
 
-    public CommandApi(Old_LuaScript script) {
+    public OldCommandApi(Old_LuaScript script) {
         super("command");
         this.script = script;
     }
@@ -44,8 +45,8 @@ public class CommandApi extends AbstractApi {
 
         @Override
         public LuaValue call(LuaValue arg) {
-            HexId hexid = ((HexId)arg);
-            var p = HexId.getHashed(LuafyLua.ScriptManagements.PREPARSED_COMMANDS_CACHE, hexid);
+            LuaHexid hexid = ((LuaHexid)arg);
+            var p = hexid.get().getHashed(LuafyLua.ScriptManagements.PREPARSED_COMMANDS_CACHE);
             return LuaValue.valueOf(executeCommand(p, script.source));
         }
     }
@@ -54,9 +55,9 @@ public class CommandApi extends AbstractApi {
 
         @Override
         public LuaValue call(LuaValue arg) {
-            HexId hexId = HexId.makeNewUnique(LuafyLua.ScriptManagements.PREPARSED_COMMANDS_CACHE.keySet());
+            LuaHexid hexId = new LuaHexid(HexId.makeNewUnique(LuafyLua.ScriptManagements.PREPARSED_COMMANDS_CACHE.keySet()));
             var p = parseCommand(arg.checkjstring(), script.source);
-            LuafyLua.ScriptManagements.PREPARSED_COMMANDS_CACHE.put(hexId, p);
+            LuafyLua.ScriptManagements.PREPARSED_COMMANDS_CACHE.put(hexId.get(), p);
             return hexId;
         }
     }
@@ -65,8 +66,8 @@ public class CommandApi extends AbstractApi {
 
         @Override
         public LuaValue call(LuaValue arg, LuaValue arg2) {
-            HexId hexid = (HexId) arg;
-            var group = hexid.getHashed(LuafyLua.ScriptManagements.ENTITY_GROUP_CACHE);
+            LuaHexid hexid = (LuaHexid) arg;
+            var group = hexid.get().getHashed(LuafyLua.ScriptManagements.ENTITY_GROUP_CACHE);
             var parsed = parseCommand(arg2.checkjstring(), script.source);
             for (var entity : group) {
                 executeCommand(parsed, entity.getCommandSource()

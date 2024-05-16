@@ -1,6 +1,6 @@
 package dev.diamond.luafy.script.old.object;
 
-import dev.diamond.luafy.script.old.LuaTypeConversions;
+import dev.diamond.luafy.script.lua.LuaTypeConversions;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import org.luaj.vm2.LuaValue;

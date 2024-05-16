@@ -3,17 +3,16 @@ package dev.diamond.luafy.resource;
 import com.google.gson.Gson;
 import dev.diamond.luafy.Luafy;
 import dev.diamond.luafy.script.old.LuafyLua;
-import dev.diamond.luafy.script.old.ScriptCallbacks;
+import dev.diamond.luafy.script.ScriptCallbacks;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 
 public class CallbackScriptResourceLoader implements SimpleSynchronousResourceReloadListener {
-    public static final String FILENAME = "_callback_lua_scripts.json";
+    public static final String PATH = "callbacks";
 
     public static final Gson GSON = new Gson();
 
@@ -28,10 +27,7 @@ public class CallbackScriptResourceLoader implements SimpleSynchronousResourceRe
         LuafyLua.CALLBACK_SCRIPTS.clear();
 
         // Read Phase - path is root
-        for (Identifier id : manager.findResources(LuaScriptResourceLoader.PATH, path -> {
-            String[] splits = path.getPath().split("/");
-            return Objects.equals(splits[splits.length - 1], FILENAME);
-        }).keySet()) {
+        for (Identifier id : manager.findResources(LuaScriptResourceLoader.PATH, path -> path.getPath().endsWith(".json")).keySet()) {
             if (manager.getResource(id).isPresent()) {
 
                 try (InputStream stream = manager.getResource(id).get().getInputStream()) {

@@ -4,9 +4,9 @@ import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.BaseLib;
 
-public abstract class AbstractApi extends BaseLib {
+public abstract class OldAbstractApi extends BaseLib {
 
-    public AbstractApi(String name) {
+    public OldAbstractApi(String name) {
         this.name = name;
     }
 

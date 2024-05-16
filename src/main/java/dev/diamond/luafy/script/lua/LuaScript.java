@@ -5,8 +5,7 @@ import dev.diamond.luafy.script.abstraction.AbstractScriptApi;
 import dev.diamond.luafy.script.abstraction.ApiProvider;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
 import dev.diamond.luafy.script.old.ArrArgFunction;
-import dev.diamond.luafy.script.old.LuaTypeConversions;
-import dev.diamond.luafy.script.old.SandboxStrategies;
+import dev.diamond.luafy.script.SandboxStrategies;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
@@ -16,15 +15,14 @@ import org.luaj.vm2.lib.jse.JsePlatform;
 public class LuaScript extends AbstractScript<LuaFunctionWrapper, LuaTableWrapper, LuaValueWrapper> {
 
     private final String scriptString;
-    private final Globals scriptGlobals;
+    public final Globals scriptGlobals;
     private final LuaValue script;
 
     public LuaScript(String scriptString) {
         this.scriptString = scriptString;
 
-        this.scriptGlobals = JsePlatform.standardGlobals(); // currently NOT sandboxed
-
-        SandboxStrategies.applyAbstractSandbox(this); // this isnt sandboxing it im serious
+        this.scriptGlobals = new Globals();
+        SandboxStrategies.applyAbstractSandbox(this);
 
 
         this.script = this.scriptGlobals.load(scriptString);
@@ -50,7 +48,10 @@ public class LuaScript extends AbstractScript<LuaFunctionWrapper, LuaTableWrappe
                             for (int i = 0; i < params.length; i++) {
                                 values[i] = new LuaValueWrapper(params[i]);
                             }
-                            LuaValueWrapper result = new LuaValueWrapper(LuaTypeConversions.luaFromObj(func.getValue().call(values)));
+
+                            var returned = func.getValue().call(values);
+                            LuaValueWrapper result = new LuaValueWrapper(null);
+                            result.adaptAndSetOrThrow(returned);
                             return result.isNull() ? LuaValue.NIL : result.getValue();
                         }
                     }

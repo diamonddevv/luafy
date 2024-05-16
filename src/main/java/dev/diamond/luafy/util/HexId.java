@@ -1,13 +1,10 @@
 package dev.diamond.luafy.util;
 
-import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.lib.ZeroArgFunction;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
 
-public class HexId extends LuaValue {
+public class HexId {
     public final String stringId;
     public final long longId;
 
@@ -24,22 +21,6 @@ public class HexId extends LuaValue {
         return longId == other.longId;
     }
 
-
-    @Override
-    public int type() {
-        return TSTRING;
-    }
-
-    @Override
-    public String typename() {
-        return "hexid";
-    }
-
-    @Override
-    public String tojstring() {
-        return get();
-    }
-
     @Override
     public String toString() {
         return stringId;
@@ -47,6 +28,9 @@ public class HexId extends LuaValue {
 
     public <T> T getHashed(HashMap<HexId, T> hash) {
         return getHashed(hash, this);
+    }
+    public <T> void removeHashed(HashMap<HexId, T> hash) {
+        removeHashed(hash, this);
     }
 
     public static <T> T getHashed(HashMap<HexId, T> hash, HexId key) {
@@ -56,6 +40,10 @@ public class HexId extends LuaValue {
             }
         }
         return null;
+    }
+
+    public static <T> void removeHashed(HashMap<HexId, T> hash, HexId key) {
+        hash.remove(key);
     }
 
 

@@ -1,13 +1,9 @@
 package dev.diamond.luafy.script.abstraction.lang;
 
-import dev.diamond.luafy.script.abstraction.AbstractScriptApi;
 import dev.diamond.luafy.script.abstraction.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.ApiProvider;
-import dev.diamond.luafy.script.old.SandboxStrategies;
 import net.minecraft.server.command.FunctionCommand;
 import net.minecraft.server.command.ServerCommandSource;
-
-import java.util.function.Consumer;
 
 /**
  * Base class for all scripts.

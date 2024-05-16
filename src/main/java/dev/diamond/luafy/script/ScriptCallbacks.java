@@ -1,4 +1,4 @@
-package dev.diamond.luafy.script.old;
+package dev.diamond.luafy.script;
 
 import com.google.gson.annotations.SerializedName;
 

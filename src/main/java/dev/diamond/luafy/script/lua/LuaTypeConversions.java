@@ -1,10 +1,11 @@
-package dev.diamond.luafy.script.old;
+package dev.diamond.luafy.script.lua;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import dev.diamond.luafy.Luafy;
+import dev.diamond.luafy.script.old.LuafyLua;
 import net.minecraft.nbt.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.luaj.vm2.LuaTable;
@@ -247,8 +248,7 @@ public class LuaTypeConversions {
         else if (val.getClass().isArray())
             return wrapArray(val);
         else {
-            Luafy.LOGGER.error("Forbidden Lua Type (" + val.getClass() + ")");
-            return NIL;
+            throw new IllegalStateException("Forbidden Lua Type (" + val.getClass() + ")");
         }
     }
     public static Varargs wrapArray(Object array) {

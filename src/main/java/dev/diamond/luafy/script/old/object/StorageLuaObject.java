@@ -1,6 +1,6 @@
 package dev.diamond.luafy.script.old.object;
 
-import dev.diamond.luafy.script.old.LuaTypeConversions;
+import dev.diamond.luafy.script.lua.LuaTypeConversions;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.Identifier;

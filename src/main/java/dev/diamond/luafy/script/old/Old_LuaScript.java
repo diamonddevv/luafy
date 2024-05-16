@@ -2,6 +2,7 @@ package dev.diamond.luafy.script.old;
 
 import dev.diamond.luafy.Luafy;
 import dev.diamond.luafy.config.LuafyConfig;
+import dev.diamond.luafy.script.SandboxStrategies;
 import net.minecraft.server.command.FunctionCommand;
 import net.minecraft.server.command.ServerCommandSource;
 import org.luaj.vm2.Globals;

@@ -2,8 +2,9 @@ package dev.diamond.luafy.script.old.api;
 
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import dev.diamond.luafy.script.lua.LuaHexid;
 import dev.diamond.luafy.script.old.Old_LuaScript;
-import dev.diamond.luafy.script.old.LuaTypeConversions;
+import dev.diamond.luafy.script.lua.LuaTypeConversions;
 import dev.diamond.luafy.script.old.LuafyLua;
 import dev.diamond.luafy.script.old.object.EntityLuaObject;
 import dev.diamond.luafy.util.HexId;
@@ -21,10 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class ServerApi extends AbstractApi {
+public class OldServerApi extends OldAbstractApi {
     private final Old_LuaScript script;
 
-    public ServerApi(Old_LuaScript script) {
+    public OldServerApi(Old_LuaScript script) {
         super("server");
         this.script = script;
     }
@@ -178,15 +179,15 @@ public class ServerApi extends AbstractApi {
             HexId hexid = HexId.makeNewUnique(LuafyLua.ScriptManagements.ENTITY_GROUP_CACHE.keySet());
             var entities = selectEntities(true, arg.checkjstring());
             LuafyLua.ScriptManagements.ENTITY_GROUP_CACHE.put(hexid, entities);
-            return hexid;
+            return new LuaHexid(hexid);
         }
     }
     public class GetGroupedEntitiesFunc extends OneArgFunction {
 
         @Override
         public LuaValue call(LuaValue arg) {
-            if (!(arg instanceof HexId)) return NIL;
-            var entities = HexId.getHashed(LuafyLua.ScriptManagements.ENTITY_GROUP_CACHE, (HexId) arg);
+            if (!(arg instanceof LuaHexid)) return NIL;
+            var entities = ((LuaHexid) arg).get().getHashed(LuafyLua.ScriptManagements.ENTITY_GROUP_CACHE);
             if (entities == null) return NIL;
             EntityLuaObject[] luaEs = new EntityLuaObject[entities.size()];
 

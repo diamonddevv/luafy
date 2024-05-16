@@ -30,6 +30,11 @@ public class LuaTableWrapper
     }
 
     @Override
+    public LuaTable adapt(Object obj) {
+        return (LuaTable) asBase().adapt(obj);
+    }
+
+    @Override
     public String asString() {
         return value.checkjstring();
     }

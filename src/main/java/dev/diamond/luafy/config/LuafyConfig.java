@@ -5,8 +5,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonReader;
 import dev.diamond.luafy.Luafy;
+import dev.diamond.luafy.script.ScriptManager;
 import dev.diamond.luafy.script.old.LuafyLua;
-import dev.diamond.luafy.script.old.SandboxStrategies;
+import dev.diamond.luafy.script.SandboxStrategies;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.*;
@@ -21,7 +22,7 @@ public class LuafyConfig {
             """
             {
                 "blacklist": true,
-                "modules": [ "io", "os", "luajava" ]
+                "modules": [ "lua_io", "lua_os", "luajava" ]
             }
             """;
 
@@ -40,8 +41,8 @@ public class LuafyConfig {
 
 
         public SandboxStrategies.Strategy getStrategy() {
-            if (sandboxStrategy != null && LuafyLua.SANDBOX_STRATEGIES.containsKey(sandboxStrategy)) {
-                return LuafyLua.SANDBOX_STRATEGIES.get(sandboxStrategy);
+            if (sandboxStrategy != null && ScriptManager.SANDBOX_STRATEGIES.containsKey(sandboxStrategy)) {
+                return ScriptManager.SANDBOX_STRATEGIES.get(sandboxStrategy);
             } else {
                 if (fallbackStrategy == null) {
                     throw new RuntimeException("No fallback Lua sandbox was provided. Please provide a fallback sandbox in the config!");

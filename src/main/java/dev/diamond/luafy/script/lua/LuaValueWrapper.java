@@ -1,6 +1,7 @@
 package dev.diamond.luafy.script.lua;
 
 import dev.diamond.luafy.script.abstraction.lang.AbstractBaseValue;
+import dev.diamond.luafy.util.HexId;
 import org.luaj.vm2.LuaValue;
 
 public class LuaValueWrapper extends AbstractBaseValue<LuaValue, LuaFunctionWrapper, LuaTableWrapper> {
@@ -82,6 +83,22 @@ public class LuaValueWrapper extends AbstractBaseValue<LuaValue, LuaFunctionWrap
     @Override
     public boolean isFunction() {
         return value.isfunction();
+    }
+
+    @Override
+    public LuaValue adapt(Object obj) {
+        try {
+            if (obj instanceof LuaValue luaval)
+                return luaval;
+            else if (obj instanceof LuaValueWrapper wrapper)
+                return wrapper.getValue();
+            else if (obj instanceof HexId hexid)
+                return new LuaHexid(hexid);
+            else
+                return LuaTypeConversions.luaFromObj(obj);
+        } catch (Exception e) {
+            throw new RuntimeException("Could not adapt type " + obj.getClass() + ": " + e);
+        }
     }
 
 }

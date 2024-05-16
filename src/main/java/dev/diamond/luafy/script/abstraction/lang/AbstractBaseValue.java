@@ -1,5 +1,7 @@
 package dev.diamond.luafy.script.abstraction.lang;
 
+import net.minecraft.data.DataGenerator;
+
 public abstract class AbstractBaseValue
         <
                 LangValue,
@@ -23,6 +25,10 @@ public abstract class AbstractBaseValue
     public FuncValue asFunction() { return null; }
     public MapValue asMap() { return null; }
 
+    public <T> T as(Class<T> clazz) { return clazz.cast(value); }
+
+    public AbstractBaseValue<?, ?, ?> asBase() { return this; }
+
 
     public boolean isString() { return false; }
     public boolean isInt() { return false; }
@@ -34,6 +40,16 @@ public abstract class AbstractBaseValue
     public boolean isMap() { return false; }
     public boolean isNull() { return value == null || value == getLangNull(); }
 
+    public <T> boolean is(Class<T> clazz) {
+        return value.getClass() == clazz;
+    }
+
 
     public LangValue getValue() { return value; }
+
+
+    public void adaptAndSetOrThrow(Object obj) {
+        value = adapt(obj);
+    }
+    public abstract LangValue adapt(Object obj);
 }

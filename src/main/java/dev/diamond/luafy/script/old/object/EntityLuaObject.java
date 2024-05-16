@@ -1,9 +1,11 @@
 package dev.diamond.luafy.script.old.object;
 
-import dev.diamond.luafy.script.old.LuaTypeConversions;
+import dev.diamond.luafy.script.lua.LuaHexid;
+import dev.diamond.luafy.script.lua.LuaTypeConversions;
 import dev.diamond.luafy.script.old.LuafyLua;
-import dev.diamond.luafy.script.old.api.CommandApi;
+import dev.diamond.luafy.script.old.api.OldCommandApi;
 import dev.diamond.luafy.util.HexId;
+import dev.diamond.luafy.util.LuafyUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.predicate.NbtPredicate;
@@ -76,7 +78,7 @@ public class EntityLuaObject extends AbstractLuaObject {
 
         @Override
         public LuaValue call(LuaValue arg) {
-            return LuaValue.valueOf(LuafyLua.getAndTestPredicate(arg.checkjstring(), entity));
+            return LuaValue.valueOf(LuafyUtil.getAndTestPredicate(arg.checkjstring(), entity));
         }
     }
 
@@ -90,11 +92,11 @@ public class EntityLuaObject extends AbstractLuaObject {
                     .withRotation(entity.getRotationClient());
 
             String command = arg.checkjstring();
-            var parsed = CommandApi.parseCommand(command, source);
+            var parsed = OldCommandApi.parseCommand(command, source);
 
             HexId hexid = HexId.makeNewUnique(LuafyLua.ScriptManagements.PREPARSED_COMMANDS_CACHE.keySet());
             LuafyLua.ScriptManagements.PREPARSED_COMMANDS_CACHE.put(hexid, parsed);
-            return hexid;
+            return new LuaHexid(hexid);
         }
     }
 }

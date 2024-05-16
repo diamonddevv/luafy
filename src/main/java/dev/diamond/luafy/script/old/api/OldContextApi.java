@@ -11,10 +11,10 @@ import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.ThreeArgFunction;
 import org.luaj.vm2.lib.ZeroArgFunction;
 
-public class ContextApi extends AbstractApi {
+public class OldContextApi extends OldAbstractApi {
     private final Old_LuaScript script;
 
-    public ContextApi(Old_LuaScript script) {
+    public OldContextApi(Old_LuaScript script) {
         super("context");
         this.script = script;
     }
