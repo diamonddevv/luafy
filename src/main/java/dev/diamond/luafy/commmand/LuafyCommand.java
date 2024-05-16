@@ -6,6 +6,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import dev.diamond.luafy.config.LuafyConfig;
+import dev.diamond.luafy.script.ScriptManager;
 import dev.diamond.luafy.script.old.Old_LuaScript;
 import dev.diamond.luafy.script.old.LuaTypeConversions;
 import dev.diamond.luafy.script.old.LuafyLua;
@@ -20,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
-public class LuaCommand {
+public class LuafyCommand {
     private static final DynamicCommandExceptionType SCRIPT_NOT_EXIST = new DynamicCommandExceptionType((o) -> Text.literal("Script '" + o + "' does not exist. Run { /lua list } to get a list of all scripts."));
     private static final DynamicCommandExceptionType SANDBOX_STRATEGY_NOT_EXIST = new DynamicCommandExceptionType((o) -> Text.literal("No sandbox strategy with id '" + o + "' was found"));
 
@@ -30,32 +31,32 @@ public class LuaCommand {
         
 
         dispatcher.register(
-                literal("lua").requires(src -> src.hasPermissionLevel(2))
+                literal("luafy").requires(src -> src.hasPermissionLevel(2))
                         .then(
                                 literal("execute")
                                         .then(
                                                 argument("script", StringArgumentType.string())
                                                         .then(
                                                                 argument("context", NbtCompoundArgumentType.nbtCompound())
-                                                                        .executes(LuaCommand::luaCommand_executeWithContext)
-                                                        ).executes(LuaCommand::luaCommand_execute)
+                                                                        .executes(LuafyCommand::luaCommand_executeWithContext)
+                                                        ).executes(LuafyCommand::luaCommand_execute)
                                         ) // execute branch
                         ).then(
                                 literal("list")
-                                        .executes(LuaCommand::luaCommand_list)
+                                        .executes(LuafyCommand::luaCommand_list)
                         ).then(
                                 literal("sandbox")
                                         .then(
                                                 argument("sandbox", StringArgumentType.string())
-                                                        .executes(LuaCommand::luaCommand_setSandboxStrategy)
+                                                        .executes(LuafyCommand::luaCommand_setSandboxStrategy)
                                         ).executes((ctx) -> luaCommand_setSandboxStrategy(ctx, true))
                                         .then(
-                                                literal("list").executes(LuaCommand::luaCommand_listSandboxes)
+                                                literal("list").executes(LuafyCommand::luaCommand_listSandboxes)
                                         )
                         )// subcommands
         ); // root
-
     }
+
 
     private static int luaCommand_setSandboxStrategy(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
         return luaCommand_setSandboxStrategy(ctx, false);
@@ -84,7 +85,7 @@ public class LuaCommand {
 
     private static int luaCommand_execute(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
         String arg = StringArgumentType.getString(ctx, "script");
-        boolean success = execute(arg, ctx, null);
+        boolean success = ScriptManager.execute(arg, ctx.getSource());
         return success ? 1 : 0;
     }
     private static int luaCommand_executeWithContext(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {

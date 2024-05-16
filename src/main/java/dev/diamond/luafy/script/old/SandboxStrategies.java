@@ -1,7 +1,8 @@
 package dev.diamond.luafy.script.old;
 
 import com.google.gson.annotations.SerializedName;
-import dev.diamond.luafy.script.old.api.*;
+import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
+import dev.diamond.luafy.script.api.CommandApi;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LoadState;
 import org.luaj.vm2.compiler.LuaC;
@@ -58,11 +59,11 @@ public class SandboxStrategies {
                 case "os" -> globals.load(new JseOsLib());
                 case "luajava" -> globals.load(new LuajavaLib());
 
-                case "luafy" -> globals.load(new LuafyApi(script));
-                case "command" -> globals.load(new CommandApi(script));
-                case "server" -> globals.load(new ServerApi(script));
-                case "context" -> globals.load(new ContextApi(script));
-                case "storage" -> globals.load(new StorageApi(script));
+                case "luafy" -> globals.load(new dev.diamond.luafy.script.old.api.LuafyApi(script));
+                case "command" -> globals.load(new dev.diamond.luafy.script.old.api.CommandApi(script));
+                case "server" -> globals.load(new dev.diamond.luafy.script.old.api.ServerApi(script));
+                case "context" -> globals.load(new dev.diamond.luafy.script.old.api.ContextApi(script));
+                case "storage" -> globals.load(new dev.diamond.luafy.script.old.api.StorageApi(script));
 
             }
         }
@@ -72,6 +73,12 @@ public class SandboxStrategies {
 
         return globals;
     }
+
+    public static void applyAbstractSandbox(AbstractScript<?, ?, ?> script) {
+        script.addApi(CommandApi::new);
+    }
+
+
 
     public static class Strategy {
         @SerializedName("blacklist")

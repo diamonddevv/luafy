@@ -46,7 +46,7 @@ public class SandboxStrategyResourceLoader implements SimpleSynchronousResourceR
 
                     LuafyLua.SANDBOX_STRATEGIES.put(newId, strategy);
                 } catch (Exception e) {
-                    Luafy.LOGGER.error("Error occurred while loading Lua Script " + id.toString(), e);
+                    Luafy.LOGGER.error("Error occurred while loading Sandbox Strategy: " + id.toString(), e);
                 }
             }
         }

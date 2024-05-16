@@ -1,26 +1,27 @@
-package dev.diamond.luafy.script.abstraction;
+package dev.diamond.luafy.script.abstraction.lang;
 
 public abstract class AbstractBaseValue
         <
-                V,
-                F extends AbstractFunctionValue<?, ?, ?, ?, ?>,
-                M extends AbstractMapValue<?, ?, ?, ?, ?>
+                LangValue,
+                FuncValue extends AbstractFunctionValue<?, ?, ?, ?, ?>,
+                MapValue extends AbstractMapValue<?, ?, ?, ?, ?>
                 > {
 
-    public V value;
+    public LangValue value;
 
-    public AbstractBaseValue(V value) {
+    public AbstractBaseValue(LangValue value) {
         this.value = value;
     }
 
     public abstract String asString();
+    public abstract Object getLangNull();
     public int asInt() { return 0; }
     public long asLong() { return 0; }
     public float asFloat() { return 0; }
     public double asDouble() { return 0; }
     public boolean asBoolean() { return false; }
-    public F asFunction() { return null; }
-    public M asMap() { return null; }
+    public FuncValue asFunction() { return null; }
+    public MapValue asMap() { return null; }
 
 
     public boolean isString() { return false; }
@@ -31,7 +32,8 @@ public abstract class AbstractBaseValue
     public boolean isBool() { return false; }
     public boolean isFunction() { return false; }
     public boolean isMap() { return false; }
+    public boolean isNull() { return value == null || value == getLangNull(); }
 
 
-    public V getValue() { return value; }
+    public LangValue getValue() { return value; }
 }

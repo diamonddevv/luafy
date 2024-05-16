@@ -1,6 +1,6 @@
 package dev.diamond.luafy;
 
-import dev.diamond.luafy.commmand.LuaCommand;
+import dev.diamond.luafy.commmand.LuafyCommand;
 import dev.diamond.luafy.config.LuafyConfig;
 import dev.diamond.luafy.resource.CallbackScriptResourceLoader;
 import dev.diamond.luafy.resource.LuaScriptResourceLoader;
@@ -27,7 +27,7 @@ public class Luafy implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("Initialising Luafy with LuaJ Version {}. Thank you FiguraMC for maintaining LuaJ!", LUAJ_VER);
 
-		CommandRegistrationCallback.EVENT.register(LuaCommand::registerLuaCommand);
+		CommandRegistrationCallback.EVENT.register(LuafyCommand::registerLuaCommand);
 
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(LUA_SCRIPT_RESOURCES);
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(CALLBACK_RESOURCES);

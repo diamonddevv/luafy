@@ -1,6 +1,7 @@
 package dev.diamond.luafy.script.lua;
 
-import dev.diamond.luafy.script.abstraction.AbstractFunctionValue;
+import dev.diamond.luafy.script.abstraction.lang.AbstractFunctionValue;
+import dev.diamond.luafy.script.abstraction.AdaptableFunction;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
 
@@ -21,14 +22,11 @@ public class LuaFunctionWrapper
     @Override
     public LuaValueWrapper invoke(LuaValueWrapper[] params) {
         LuaValue[] values = new LuaValue[params.length];
-
         for (int i = 0; i < params.length; i++) {
             values[i] = params[i].getValue();
         }
-
-        LuaValue result = value.invoke(values).arg1();
-
-        return new LuaValueWrapper(result);
+        var returned = value.invoke(values).arg1();
+        return new LuaValueWrapper(returned);
     }
 
     @Override
@@ -44,6 +42,11 @@ public class LuaFunctionWrapper
     @Override
     public String asString() {
         return value.name();
+    }
+
+    @Override
+    public Object getLangNull() {
+        return LuaValue.NIL;
     }
 
 

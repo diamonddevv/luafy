@@ -43,7 +43,7 @@ public class CallbackScriptResourceLoader implements SimpleSynchronousResourceRe
 
                     LuafyLua.CALLBACK_SCRIPTS.add(bean);
                 } catch (Exception e) {
-                    Luafy.LOGGER.error("Error occurred while loading Lua Script " + id.toString(), e);
+                    Luafy.LOGGER.error("Error occurred while loading Callbacks " + id.toString(), e);
                 }
             }
         }

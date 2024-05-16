@@ -1,6 +1,8 @@
 package dev.diamond.luafy.resource;
 
 import dev.diamond.luafy.Luafy;
+import dev.diamond.luafy.script.ScriptManager;
+import dev.diamond.luafy.script.lua.LuaScript;
 import dev.diamond.luafy.script.old.Old_LuaScript;
 import dev.diamond.luafy.script.old.LuafyLua;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
@@ -41,6 +43,10 @@ public class LuaScriptResourceLoader implements SimpleSynchronousResourceReloadL
                     String newId = id.getNamespace() + ":" + fixedPath;
 
                     LuafyLua.LUA_SCRIPTS.put(newId, script);
+
+                    // Get NEW script
+                    LuaScript absScript = new LuaScript(s);
+                    ScriptManager.SCRIPTS.put(newId, absScript);
                 } catch (Exception e) {
                     Luafy.LOGGER.error("Error occurred while loading Lua Script " + id.toString(), e);
                 }

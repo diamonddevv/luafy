@@ -1,6 +1,6 @@
 package dev.diamond.luafy.script.lua;
 
-import dev.diamond.luafy.script.abstraction.AbstractBaseValue;
+import dev.diamond.luafy.script.abstraction.lang.AbstractBaseValue;
 import org.luaj.vm2.LuaValue;
 
 public class LuaValueWrapper extends AbstractBaseValue<LuaValue, LuaFunctionWrapper, LuaTableWrapper> {
@@ -12,6 +12,11 @@ public class LuaValueWrapper extends AbstractBaseValue<LuaValue, LuaFunctionWrap
     @Override
     public String asString() {
         return value.checkjstring();
+    }
+
+    @Override
+    public Object getLangNull() {
+        return LuaValue.NIL;
     }
 
     @Override
