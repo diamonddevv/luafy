@@ -1,6 +1,9 @@
 # Luafy
 Adding the Lua Scripting Language to Minecraft datapacks, entirely server sided.
 
+[![Modrinth Downloads](https://img.shields.io/modrinth/dt/luafy?logo=modrinth)](https://modrinth.com/mod/luafy)
+
+
 ## What?
 Lua is a easy, simple to use and easy to learn scripting language used by many games to add custom content to games. Luafy is a mod that adds that to Minecraft datapacks, entirely server sided.
 
