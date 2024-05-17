@@ -10,6 +10,7 @@ import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 
+@Deprecated
 public class Old_LuaScript {
 
     private final String scriptString;
@@ -23,7 +24,7 @@ public class Old_LuaScript {
     public Old_LuaScript(String scriptString) {
         this.scriptString = scriptString;
 
-        this.scriptGlobals = SandboxStrategies.applySandboxStrategy(LuafyConfig.GLOBAL_CONFIG.getStrategy(), this);
+        this.scriptGlobals = new Globals();
         this.script = this.scriptGlobals.load(scriptString);
 
     }

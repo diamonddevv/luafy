@@ -3,12 +3,11 @@ package dev.diamond.luafy.script.abstraction.lang;
 public abstract class AbstractFunctionValue
         <
                 LangValue,
-                Self extends AbstractFunctionValue<LangValue, Self, FuncValue, MapValue, BaseValue>,
+                Self extends AbstractFunctionValue<LangValue, Self, FuncValue, BaseValue>,
                 FuncValue extends LangValue,
-                MapValue extends AbstractMapValue<LangValue, MapValue, ? extends LangValue, Self, BaseValue>, // VSMFB
-                BaseValue extends AbstractBaseValue<LangValue, Self, MapValue>
+                BaseValue extends AbstractBaseValue<LangValue, Self, BaseValue>
                 >
-        extends AbstractBaseValue<FuncValue, Self, MapValue> {
+        extends AbstractBaseValue<FuncValue, Self, BaseValue> {
 
     public AbstractFunctionValue(FuncValue value) {
         super(value);

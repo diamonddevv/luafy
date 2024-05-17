@@ -25,7 +25,7 @@ public class LuaScriptResourceLoader implements SimpleSynchronousResourceReloadL
     @Override
     public void reload(ResourceManager manager) {
         // Clear Cache Phase
-        LuafyLua.LUA_SCRIPTS.clear();
+        ScriptManager.SCRIPTS.clear();
 
         // Read Phase
         for (Identifier id : manager.findResources(PATH, path -> path.getPath().endsWith(EXTENSION)).keySet()) {
@@ -35,16 +35,13 @@ public class LuaScriptResourceLoader implements SimpleSynchronousResourceReloadL
                     // Consume stream
                     byte[] bytes = stream.readAllBytes();
                     String s = new String(bytes, StandardCharsets.UTF_8);
-                    Old_LuaScript script = new Old_LuaScript(s);
 
                     int pfLen = (PATH + "/").length();
                     String fixedPath = id.getPath().substring(pfLen);
                     fixedPath = fixedPath.substring(0, fixedPath.length() - EXTENSION.length());
                     String newId = id.getNamespace() + ":" + fixedPath;
 
-                    LuafyLua.LUA_SCRIPTS.put(newId, script);
 
-                    // Get NEW script
                     LuaScript absScript = new LuaScript(s);
                     ScriptManager.SCRIPTS.put(newId, absScript);
                 } catch (Exception e) {

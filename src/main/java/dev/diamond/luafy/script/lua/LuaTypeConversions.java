@@ -14,7 +14,9 @@ import org.luaj.vm2.Varargs;
 
 import java.lang.reflect.Array;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Objects;
+import java.util.function.Function;
 
 import static org.luaj.vm2.LuaValue.NIL;
 
@@ -219,6 +221,19 @@ public class LuaTypeConversions {
         return table;
     }
 
+
+    public static LuaTable hashToLua(HashMap<?,?> hash, Function<Object, LuaValue> adapter) {
+        LuaTable table = new LuaTable();
+        for (var kvp : hash.entrySet()) {
+
+            var key = adapter.apply(kvp.getKey());
+            var value = adapter.apply(kvp.getValue());
+
+            table.set(key, value);
+        }
+        return table;
+    }
+
     // all below is yoinked from figura - some is slightly edited though. might eventually be replaced with my own stuff
     public static Varargs javaToLua(Object val) {
         if (val == null)
@@ -260,4 +275,5 @@ public class LuaTypeConversions {
 
         return LuaValue.varargsOf(args);
     }
+
 }

@@ -1,19 +1,21 @@
 package dev.diamond.luafy.script.api;
 
+import com.mojang.brigadier.ParseResults;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.diamond.luafy.script.ScriptManager;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
 import dev.diamond.luafy.script.abstraction.AbstractScriptApi;
 import dev.diamond.luafy.script.abstraction.AdaptableFunction;
-import dev.diamond.luafy.script.lua.LuaHexid;
-import dev.diamond.luafy.script.old.api.OldCommandApi;
 import dev.diamond.luafy.util.HexId;
+import net.minecraft.server.command.ServerCommandSource;
 
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CommandApi extends AbstractScriptApi {
 
 
-    public CommandApi(AbstractScript<?, ?, ?> script) {
+    public CommandApi(AbstractScript<?, ?> script) {
         super(script, "command");
     }
 
@@ -22,12 +24,12 @@ public class CommandApi extends AbstractScriptApi {
         HashMap<String, AdaptableFunction> f = new HashMap<>();
 
         f.put("execute", args -> {
-            var parsed = OldCommandApi.parseCommand(args[0].asString(), script.source);
-            return OldCommandApi.executeCommand(parsed, script.source);
+            var parsed = parseCommand(args[0].asString(), script.source);
+            return executeCommand(parsed, script.source);
         });
 
         f.put("parse", args -> {
-            var parsed = OldCommandApi.parseCommand(args[0].asString(), script.source);
+            var parsed = parseCommand(args[0].asString(), script.source);
             var hexid = HexId.makeNewUnique(ScriptManager.Caches.PREPARSED_COMMANDS.keySet());
             ScriptManager.Caches.PREPARSED_COMMANDS.put(hexid, parsed);
 
@@ -37,7 +39,7 @@ public class CommandApi extends AbstractScriptApi {
         f.put("execute_preparsed", args -> {
             var hi = HexId.fromString(args[0].asString());
             var parse = hi.getHashed(ScriptManager.Caches.PREPARSED_COMMANDS);
-            return OldCommandApi.executeCommand(parse, script.source);
+            return executeCommand(parse, script.source);
         });
 
         f.put("free_preparsed", args -> {
@@ -47,6 +49,22 @@ public class CommandApi extends AbstractScriptApi {
         });
 
         return f;
+    }
+
+    public static ParseResults<ServerCommandSource> parseCommand(String command, ServerCommandSource source) {
+        return source.getDispatcher().parse(command, source);
+    }
+    public static int executeCommand(ParseResults<ServerCommandSource> command, ServerCommandSource source) {
+        try {
+            AtomicInteger r = new AtomicInteger();
+            source.getDispatcher().setConsumer((context, success, result) -> {
+                r.set(result);
+            });
+            source.getDispatcher().execute(command);
+            return r.get();
+        } catch (CommandSyntaxException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

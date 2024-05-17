@@ -2,6 +2,7 @@ package dev.diamond.luafy.resource;
 
 import com.google.gson.Gson;
 import dev.diamond.luafy.Luafy;
+import dev.diamond.luafy.script.ScriptManager;
 import dev.diamond.luafy.script.old.LuafyLua;
 import dev.diamond.luafy.script.ScriptCallbacks;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
@@ -24,7 +25,7 @@ public class CallbackScriptResourceLoader implements SimpleSynchronousResourceRe
     @Override
     public void reload(ResourceManager manager) {
         // Clear Cache Phase
-        LuafyLua.CALLBACK_SCRIPTS.clear();
+        ScriptManager.CALLBACKS.clear();
 
         // Read Phase - path is root
         for (Identifier id : manager.findResources(LuaScriptResourceLoader.PATH, path -> path.getPath().endsWith(".json")).keySet()) {
@@ -37,7 +38,7 @@ public class CallbackScriptResourceLoader implements SimpleSynchronousResourceRe
 
                     ScriptCallbacks.CallbackScriptBean bean = GSON.fromJson(s, ScriptCallbacks.CallbackScriptBean.class);
 
-                    LuafyLua.CALLBACK_SCRIPTS.add(bean);
+                    ScriptManager.CALLBACKS.add(bean);
                 } catch (Exception e) {
                     Luafy.LOGGER.error("Error occurred while loading Callbacks " + id.toString(), e);
                 }

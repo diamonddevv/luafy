@@ -3,6 +3,7 @@ package dev.diamond.luafy.resource;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import dev.diamond.luafy.Luafy;
+import dev.diamond.luafy.script.ScriptManager;
 import dev.diamond.luafy.script.old.LuafyLua;
 import dev.diamond.luafy.script.SandboxStrategies;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
@@ -27,7 +28,7 @@ public class SandboxStrategyResourceLoader implements SimpleSynchronousResourceR
     @Override
     public void reload(ResourceManager manager) {
         // Clear Cache Phase
-        LuafyLua.SANDBOX_STRATEGIES.clear();
+        ScriptManager.SANDBOX_STRATEGIES.clear();
 
         // Read Phase
         for (Identifier id : manager.findResources(PATH, path -> path.getPath().endsWith(EXTENSION)).keySet()) {
@@ -36,7 +37,8 @@ public class SandboxStrategyResourceLoader implements SimpleSynchronousResourceR
                 try (InputStream stream = manager.getResource(id).get().getInputStream()) {
                     // Consume stream
 
-                    SandboxStrategies.Strategy strategy = gson.fromJson(new JsonReader(new InputStreamReader(stream)), SandboxStrategies.Strategy.class);
+                    SandboxStrategies.Strategy strategy =
+                            gson.fromJson(new JsonReader(new InputStreamReader(stream)), SandboxStrategies.Strategy.class);
 
 
                     int pfLen = (PATH + "/").length();
@@ -44,7 +46,7 @@ public class SandboxStrategyResourceLoader implements SimpleSynchronousResourceR
                     fixedPath = fixedPath.substring(0, fixedPath.length() - EXTENSION.length());
                     String newId = id.getNamespace() + ":" + fixedPath;
 
-                    LuafyLua.SANDBOX_STRATEGIES.put(newId, strategy);
+                    ScriptManager.SANDBOX_STRATEGIES.put(newId, strategy);
                 } catch (Exception e) {
                     Luafy.LOGGER.error("Error occurred while loading Sandbox Strategy: " + id.toString(), e);
                 }

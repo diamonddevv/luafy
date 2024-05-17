@@ -8,7 +8,7 @@ import dev.diamond.luafy.util.HexId;
 import java.util.HashMap;
 
 public class LuafyApi extends AbstractScriptApi {
-    public LuafyApi(AbstractScript<?, ?, ?> script) {
+    public LuafyApi(AbstractScript<?, ?> script) {
         super(script, "luafy");
     }
 

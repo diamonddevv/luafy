@@ -1,12 +1,18 @@
 package dev.diamond.luafy.script.abstraction.lang;
 
-import net.minecraft.data.DataGenerator;
+import dev.diamond.luafy.script.abstraction.BaseValueConversions;
+import dev.diamond.luafy.script.nbt.OptionallyExplicitNbtElement;
+import net.minecraft.nbt.NbtElement;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Optional;
 
 public abstract class AbstractBaseValue
         <
                 LangValue,
-                FuncValue extends AbstractFunctionValue<?, ?, ?, ?, ?>,
-                MapValue extends AbstractMapValue<?, ?, ?, ?, ?>
+                FuncValue extends AbstractFunctionValue<?, ?, ?, ?>,
+                BaseValue extends AbstractBaseValue<?, ?, ?>
                 > {
 
     public LangValue value;
@@ -23,12 +29,11 @@ public abstract class AbstractBaseValue
     public double asDouble() { return 0; }
     public boolean asBoolean() { return false; }
     public FuncValue asFunction() { return null; }
-    public MapValue asMap() { return null; }
+    public HashMap<BaseValue, BaseValue> asMap() { return null; }
 
     public <T> T as(Class<T> clazz) { return clazz.cast(value); }
 
     public AbstractBaseValue<?, ?, ?> asBase() { return this; }
-
 
     public boolean isString() { return false; }
     public boolean isInt() { return false; }
@@ -51,5 +56,19 @@ public abstract class AbstractBaseValue
     public void adaptAndSetOrThrow(Object obj) {
         value = adapt(obj);
     }
-    public abstract LangValue adapt(Object obj);
+    public LangValue adapt(Object obj) {
+
+        if (obj instanceof OptionallyExplicitNbtElement nbt) {
+            if (nbt.isExplicit()) {
+
+            } else {
+                obj = BaseValueConversions.implicit_nbtToBase(nbt.nbt(), a -> {
+                    adaptAbstract(a);
+                });
+            }
+        }
+
+        return adaptAbstract(obj);
+    }
+    public abstract LangValue adaptAbstract(Object obj);
 }

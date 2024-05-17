@@ -46,7 +46,9 @@ public class LuafyConfig {
             } else {
                 if (fallbackStrategy == null) {
                     throw new RuntimeException("No fallback Lua sandbox was provided. Please provide a fallback sandbox in the config!");
-                } else return fallbackStrategy;
+                } else {
+                    return fallbackStrategy;
+                }
             }
         }
     }

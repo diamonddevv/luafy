@@ -5,9 +5,6 @@ import dev.diamond.luafy.config.LuafyConfig;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
 import dev.diamond.luafy.script.api.*;
 import dev.diamond.luafy.script.lua.LuaScript;
-import dev.diamond.luafy.script.old.Old_LuaScript;
-import dev.diamond.luafy.script.old.api.*;
-import org.luaj.vm2.Globals;
 import org.luaj.vm2.LoadState;
 import org.luaj.vm2.compiler.LuaC;
 import org.luaj.vm2.lib.Bit32Lib;
@@ -23,7 +20,7 @@ public class SandboxStrategies {
 
     private static final String[] ALL =
             {
-                    "base", "package", "bit32", "table", "string", "coroutine", "math", "io", "os", "luajava",
+                    "lua_base", "lua_package", "lua_bit32", "lua_table", "lua_string", "lua_coroutine", "lua_math", "lua_io", "lua_os", "lua_luajava",
                     "luafy", "command", "server", "context", "storage"
             };
 
@@ -44,7 +41,7 @@ public class SandboxStrategies {
         return m;
     }
 
-    public static void applyAbstractSandbox(AbstractScript<?, ?, ?> script) {
+    public static void applyAbstractSandbox(AbstractScript<?, ?> script) {
         List<String> m = parseStrategy(LuafyConfig.GLOBAL_CONFIG.getStrategy());
 
         for (var mod : m) {
@@ -78,7 +75,7 @@ public class SandboxStrategies {
         });
     }
 
-    public static void operateAsLuaOrPass(AbstractScript<?, ?, ?> script, ScriptProvider<LuaScript> provider) {
+    public static void operateAsLuaOrPass(AbstractScript<?, ?> script, ScriptProvider<LuaScript> provider) {
         if (script instanceof LuaScript l) {
             provider.provide(l);
         }
@@ -95,7 +92,7 @@ public class SandboxStrategies {
     }
 
     @FunctionalInterface
-    public interface ScriptProvider<T extends AbstractScript<?, ?, ?>> {
+    public interface ScriptProvider<T extends AbstractScript<?, ?>> {
         void provide(T script);
     }
 }

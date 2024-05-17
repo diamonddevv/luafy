@@ -12,7 +12,7 @@ import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.JsePlatform;
 
-public class LuaScript extends AbstractScript<LuaFunctionWrapper, LuaTableWrapper, LuaValueWrapper> {
+public class LuaScript extends AbstractScript<LuaFunctionWrapper, LuaValueWrapper> {
 
     private final String scriptString;
     public final Globals scriptGlobals;

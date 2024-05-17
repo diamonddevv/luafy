@@ -1,9 +1,9 @@
 package dev.diamond.luafy.script.old.object;
 
+import dev.diamond.luafy.script.api.CommandApi;
 import dev.diamond.luafy.script.lua.LuaHexid;
 import dev.diamond.luafy.script.lua.LuaTypeConversions;
 import dev.diamond.luafy.script.old.LuafyLua;
-import dev.diamond.luafy.script.old.api.OldCommandApi;
 import dev.diamond.luafy.util.HexId;
 import dev.diamond.luafy.util.LuafyUtil;
 import net.minecraft.entity.Entity;
@@ -92,7 +92,7 @@ public class EntityLuaObject extends AbstractLuaObject {
                     .withRotation(entity.getRotationClient());
 
             String command = arg.checkjstring();
-            var parsed = OldCommandApi.parseCommand(command, source);
+            var parsed = CommandApi.parseCommand(command, source);
 
             HexId hexid = HexId.makeNewUnique(LuafyLua.ScriptManagements.PREPARSED_COMMANDS_CACHE.keySet());
             LuafyLua.ScriptManagements.PREPARSED_COMMANDS_CACHE.put(hexid, parsed);

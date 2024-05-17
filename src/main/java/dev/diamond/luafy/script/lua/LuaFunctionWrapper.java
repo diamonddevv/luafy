@@ -5,13 +5,14 @@ import dev.diamond.luafy.script.abstraction.AdaptableFunction;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
 
+import java.util.Optional;
+
 public class LuaFunctionWrapper
         extends AbstractFunctionValue
         <
                 LuaValue,
                 LuaFunctionWrapper,
                 LuaFunction,
-                LuaTableWrapper,
                 LuaValueWrapper
                 > {
 
@@ -40,8 +41,8 @@ public class LuaFunctionWrapper
     }
 
     @Override
-    public LuaFunction adapt(Object obj) {
-        return (LuaFunction) asBase().adapt(obj);
+    public Optional<LuaFunction> adaptAbstract(Object obj) {
+        return Optional.ofNullable((LuaFunction) asBase().adaptAbstract(obj).get());
     }
 
 

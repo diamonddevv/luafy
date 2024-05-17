@@ -1,5 +1,6 @@
 package dev.diamond.luafy.mixin;
 
+import dev.diamond.luafy.script.ScriptManager;
 import dev.diamond.luafy.script.old.LuafyLua;
 import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.advancement.PlayerAdvancementTracker;
@@ -23,14 +24,14 @@ public class PlayerAdvancementTrackerMixin {
     private void luafy$runAdvancementCallbacks(AdvancementEntry advancement, String criterionName, CallbackInfoReturnable<Boolean> cir) {
         // this is executed after the check if all criteria are completed
 
-        for (var callbacks : LuafyLua.CALLBACK_SCRIPTS) {
+        for (var callbacks : ScriptManager.CALLBACKS) {
             if (callbacks.advancementCallbacks != null) {
                 for (var advCall : callbacks.advancementCallbacks) {
 
                     if (Objects.equals(advCall.id, advancement.id().toString()) || Objects.equals(advCall.id, "*")) { // wildcard works
                         for (String script : advCall.scriptIds) {
                             ServerCommandSource source = owner.getCommandSource().withSilent().withLevel(2);
-                            LuafyLua.executeScript(script, source, null);
+                            ScriptManager.execute(script, source);
                         }
                     }
                 }

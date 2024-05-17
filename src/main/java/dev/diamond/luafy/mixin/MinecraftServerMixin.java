@@ -1,5 +1,6 @@
 package dev.diamond.luafy.mixin;
 
+import dev.diamond.luafy.script.ScriptManager;
 import dev.diamond.luafy.script.old.LuafyLua;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
@@ -20,10 +21,10 @@ public abstract class MinecraftServerMixin {
 
     @Inject(method = "reloadResources", at = @At("TAIL"))
     public void luafy$runLoadCallbacks(Collection<String> dataPacks, CallbackInfoReturnable<CompletableFuture<Void>> cir) {
-        for (var callbacks : LuafyLua.CALLBACK_SCRIPTS) {
+        for (var callbacks : ScriptManager.CALLBACKS) {
             if (callbacks.loadCallbacks != null) {
                 for (var script : callbacks.loadCallbacks.scriptIds) {
-                    LuafyLua.executeScript(script, this.getCommandSource(), null);
+                    ScriptManager.execute(script, this.getCommandSource());
                 }
             }
         }
@@ -32,10 +33,10 @@ public abstract class MinecraftServerMixin {
 
     @Inject(method = "tickWorlds", at = @At("HEAD"))
     public void luafy$runTickCallbacks(BooleanSupplier shouldKeepTicking, CallbackInfo ci) {
-        for (var callbacks : LuafyLua.CALLBACK_SCRIPTS) {
+        for (var callbacks : ScriptManager.CALLBACKS) {
             if (callbacks.tickCallbacks != null) {
                 for (var script : callbacks.tickCallbacks.scriptIds) {
-                    LuafyLua.executeScript(script, this.getCommandSource(), null);
+                    ScriptManager.execute(script, this.getCommandSource());
                 }
             }
         }
