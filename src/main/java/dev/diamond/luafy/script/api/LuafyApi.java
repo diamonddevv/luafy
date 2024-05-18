@@ -1,6 +1,6 @@
 package dev.diamond.luafy.script.api;
 
-import dev.diamond.luafy.script.abstraction.AbstractScriptApi;
+import dev.diamond.luafy.script.abstraction.api.AbstractScriptApi;
 import dev.diamond.luafy.script.abstraction.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
 import dev.diamond.luafy.util.HexId;
@@ -8,7 +8,7 @@ import dev.diamond.luafy.util.HexId;
 import java.util.HashMap;
 
 public class LuafyApi extends AbstractScriptApi {
-    public LuafyApi(AbstractScript<?, ?> script) {
+    public LuafyApi(AbstractScript<?> script) {
         super(script, "luafy");
     }
 

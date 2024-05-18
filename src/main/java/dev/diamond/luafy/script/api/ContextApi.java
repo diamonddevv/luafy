@@ -1,18 +1,15 @@
 package dev.diamond.luafy.script.api;
 
 import dev.diamond.luafy.script.ScriptManager;
-import dev.diamond.luafy.script.abstraction.AbstractScriptApi;
+import dev.diamond.luafy.script.abstraction.api.AbstractScriptApi;
 import dev.diamond.luafy.script.abstraction.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
-import dev.diamond.luafy.script.lua.LuaValueWrapper;
 import net.minecraft.server.command.ServerCommandSource;
-import org.luaj.vm2.LuaTable;
-import org.luaj.vm2.LuaValue;
 
 import java.util.HashMap;
 
 public class ContextApi extends AbstractScriptApi {
-    public ContextApi(AbstractScript<?, ?> script) {
+    public ContextApi(AbstractScript<?> script) {
         super(script, "context");
     }
 
@@ -37,7 +34,7 @@ public class ContextApi extends AbstractScriptApi {
             HashMap<?, ?> ctx = args[1].asMap();
 
             ServerCommandSource src = script.source;
-            AbstractScript<?, ?> s = ScriptManager.get(id);
+            AbstractScript<?> s = ScriptManager.get(id);
             s.execute(src, ctx);
             return s.outContextMap == null ? null : s.outContextMap;
         });

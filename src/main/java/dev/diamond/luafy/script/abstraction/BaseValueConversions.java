@@ -13,7 +13,7 @@ import static dev.diamond.luafy.script.ScriptManager.ExplicitType.*;
 
 public class BaseValueConversions {
 
-    public static AbstractBaseValue<?, ?, ?> implicit_nbtToBase(NbtElement nbt, LangTypeAdapter adapter) {
+    public static AbstractBaseValue<?, ?> implicit_nbtToBase(NbtElement nbt, BaseValueAdapter adapter) {
         ScriptManager.ExplicitType t;
 
         NbtType<?> type = nbt.getNbtType();
@@ -37,39 +37,91 @@ public class BaseValueConversions {
 
         return explicit_nbtToBase(nbt, t, adapter);
     }
-    public static AbstractBaseValue<?, ?, ?> explicit_nbtToBase(NbtElement nbt, ScriptManager.ExplicitType type, LangTypeAdapter adapter) {
+    public static AbstractBaseValue<?, ?> explicit_nbtToBase(NbtElement nbt, ScriptManager.ExplicitType type, BaseValueAdapter adapter) {
         return switch (type) {
-            case DOUBLE -> adapter.adapt(((NbtDouble) nbt).doubleValue());
+            case DOUBLE -> adapter.adapt(((AbstractNbtNumber) nbt).doubleValue());
             case STRING -> adapter.adapt(nbt.asString());
             case BOOLEAN -> adapter.adapt(((NbtByte) nbt).byteValue());
-            case OBJECT -> adapter.adapt(nbtListToBase(((NbtList) nbt), adapter));
-            case LIST -> adapter.adapt(nbtObjToBase(((NbtCompound) nbt), adapter));
+            case LIST -> adapter.adapt(nbtListToBase(((AbstractNbtList<?>) nbt), adapter));
+            case OBJECT -> adapter.adapt(nbtObjToBase(((NbtCompound) nbt), adapter));
         };
     }
 
-
-    public static Collection<AbstractBaseValue<?, ?, ?>> nbtListToBase(NbtList list, LangTypeAdapter adapter) {
-        Collection<AbstractBaseValue<?, ?, ?>> collection = new ArrayList<>();
+    public static Collection<AbstractBaseValue<?, ?>> nbtListToBase(AbstractNbtList<?> list, BaseValueAdapter adapter) {
+        Collection<AbstractBaseValue<?, ?>> collection = new ArrayList<>();
         for (NbtElement element : list) {
             collection.add(implicit_nbtToBase(element, adapter));
         }
         return collection;
     }
-    public static HashMap<AbstractBaseValue<?, ?, ?>, AbstractBaseValue<?, ?, ?>> nbtObjToBase(NbtCompound nbt, LangTypeAdapter adapter) {
-        HashMap<AbstractBaseValue<?, ?, ?>, AbstractBaseValue<?, ?, ?>> hash = new HashMap<>();
+    public static HashMap<AbstractBaseValue<?, ?>, AbstractBaseValue<?, ?>> nbtObjToBase(NbtCompound nbt, BaseValueAdapter adapter) {
+        HashMap<AbstractBaseValue<?, ?>, AbstractBaseValue<?, ?>> hash = new HashMap<>();
         for (String key : nbt.getKeys()) {
             var element = nbt.get(key);
-            hash.put(adapter.adapt(key), adapter.adapt(element));
+            if (element != null) hash.put(adapter.adapt(key), adapter.adapt(implicit_nbtToBase(element, adapter)));
         }
         return hash;
     }
 
-    public static AbstractBaseValue<?, ?, ?> implicit_nbtToBaseWithKey(NbtCompound compound, String key, LangTypeAdapter adapter) {
+    public static AbstractBaseValue<?, ?> implicit_nbtToBaseWithKey(NbtCompound compound, String key, BaseValueAdapter adapter) {
         return implicit_nbtToBase(Objects.requireNonNull(compound.get(key)), adapter);
     }
-
-    public static AbstractBaseValue<?, ?, ?> explicit_nbtToBaseWithKey(NbtCompound compound, String key, ScriptManager.ExplicitType type, LangTypeAdapter adapter) {
+    public static AbstractBaseValue<?, ?> explicit_nbtToBaseWithKey(NbtCompound compound, String key, ScriptManager.ExplicitType type, BaseValueAdapter adapter) {
         return explicit_nbtToBase(Objects.requireNonNull(compound.get(key)), type, adapter);
     }
+
+    public static NbtElement implicit_baseToNbt(AbstractBaseValue<?, ?> value) {
+        ScriptManager.ExplicitType t;
+
+
+        if      (value.isDouble())      t = DOUBLE;
+        else if (value.isFloat())       t = DOUBLE;
+        else if (value.isInt())         t = DOUBLE;
+        else if (value.isLong())        t = DOUBLE;
+        else if (value.isBool())        t = BOOLEAN;
+        else if (value.isMap())         t = OBJECT;
+        else if (value.isCollection())  t = LIST;
+        else if (value.isString())      t = STRING;
+        else throw new RuntimeException("Couldn't convert base value of " + value.value + " to NBT.");
+
+        System.out.println(value.isDouble());
+        System.out.println(value.value);
+
+        return explicit_baseToNbt(t, value);
+    }
+    public static NbtElement explicit_baseToNbt(ScriptManager.ExplicitType type, AbstractBaseValue<?, ?> value) {
+        return switch (type) {
+            case DOUBLE ->  NbtDouble.of(value.asDouble());
+            case STRING -> NbtString.of(value.asString());
+            case BOOLEAN -> NbtByte.of(value.asBoolean());
+            case OBJECT -> mapToCompound((HashMap<AbstractBaseValue<?, ?>, AbstractBaseValue<?, ?>>) value.asMap());
+            case LIST -> collectionToList((Collection<AbstractBaseValue<?, ?>>)value.asCollection());
+        };
+    }
+
+    public static NbtList collectionToList(Collection<AbstractBaseValue<?,?>> collection) {
+        NbtList nbt = new NbtList();
+        for (var k : collection) {
+            nbt.add(implicit_baseToNbt(k));
+        }
+        return nbt;
+    }
+    public static NbtCompound mapToCompound(HashMap<AbstractBaseValue<?, ?>, AbstractBaseValue<?, ?>> map) {
+        NbtCompound nbt = new NbtCompound();
+        for (var kvp : map.entrySet()) {
+            nbt.put(kvp.getKey().asString(), implicit_baseToNbt(kvp.getValue()));
+        }
+        return nbt;
+    }
+
+    public static void implicit_putBaseToNbt(NbtCompound nbt, String address, AbstractBaseValue<?, ?> base) {
+        NbtElement element = implicit_baseToNbt(base);
+        nbt.put(address, element);
+    }
+    public static void explicit_putBaseToNbt(NbtCompound nbt, String address, ScriptManager.ExplicitType type, AbstractBaseValue<?, ?> base) {
+        NbtElement element = explicit_baseToNbt(type, base);
+        nbt.put(address, element);
+    }
+
 
 }

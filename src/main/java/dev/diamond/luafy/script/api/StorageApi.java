@@ -1,12 +1,13 @@
 package dev.diamond.luafy.script.api;
 
 import dev.diamond.luafy.script.ScriptManager;
-import dev.diamond.luafy.script.abstraction.AbstractScriptApi;
+import dev.diamond.luafy.script.abstraction.api.AbstractScriptApi;
 import dev.diamond.luafy.script.abstraction.AdaptableFunction;
+import dev.diamond.luafy.script.abstraction.BaseValueConversions;
 import dev.diamond.luafy.script.abstraction.lang.AbstractBaseValue;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
-import dev.diamond.luafy.script.lua.LuaTypeConversions;
 import dev.diamond.luafy.script.nbt.OptionallyExplicitNbtElement;
+import dev.diamond.luafy.script.api.obj.StorageScriptObject;
 import net.minecraft.command.DataCommandStorage;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -16,7 +17,7 @@ import net.minecraft.util.Identifier;
 import java.util.HashMap;
 
 public class StorageApi extends AbstractScriptApi {
-    public StorageApi(AbstractScript<?, ?> script) {
+    public StorageApi(AbstractScript<?> script) {
         super(script, "storage");
     }
 
@@ -24,24 +25,26 @@ public class StorageApi extends AbstractScriptApi {
     public HashMap<String, AdaptableFunction> getFunctions() {
         HashMap<String, AdaptableFunction> f = new HashMap<>();
 
-        f.put("read", args -> {
+        f.put("read", args -> readStorage(args, false));
 
-        });
-
-        f.put("read_implicit", args -> {
-
-        });
+        f.put("read_implicit", args -> readStorage(args, true));
 
         f.put("write", args -> {
-
+            writeStorage(args);
+            return null;
         });
 
         f.put("has", args -> {
-
+            var id = args[0];
+            var address = args[1];
+            var store = getDataStorage(script.source, id);
+            return store.get(address.asString()) != null;
         });
 
         f.put("object", args -> {
-
+            String[] splits = args[0].asString().split(":");
+            Identifier i = new Identifier(splits[0], splits[1]);
+            return new StorageScriptObject(script.source, i);
         });
 
 
@@ -50,11 +53,11 @@ public class StorageApi extends AbstractScriptApi {
 
 
     // functions
-    public OptionallyExplicitNbtElement readStorage(AbstractBaseValue<?, ?, ?>[] params, boolean implicit) {
-        AbstractBaseValue<?, ?, ?> arg_id = params[0];
-        AbstractBaseValue<?, ?, ?> arg_path = params[1];
+    public OptionallyExplicitNbtElement readStorage(AbstractBaseValue<?, ?>[] params, boolean implicit) {
+        AbstractBaseValue<?, ?> arg_id = params[0];
+        AbstractBaseValue<?, ?> arg_path = params[1];
 
-        AbstractBaseValue<?, ?, ?> arg_type = null;
+        AbstractBaseValue<?, ?> arg_type = null;
         if (!implicit) {
             arg_type = params[2];
         }
@@ -67,33 +70,26 @@ public class StorageApi extends AbstractScriptApi {
         else return new OptionallyExplicitNbtElement(ScriptManager.ExplicitType.get(arg_type.asString()), element);
     }
 
-    public void writeStorage(AbstractBaseValue<?, ?, ?>[] params, boolean implicit) {
-        AbstractBaseValue<?, ?, ?> arg_id = params[0];
-        AbstractBaseValue<?, ?, ?> arg_path = params[1];
-        AbstractBaseValue<?, ?, ?> arg_data = params[2];
+    public void writeStorage(AbstractBaseValue<?, ?>[] params) {
+        AbstractBaseValue<?, ?> arg_id   = params[0];
+        AbstractBaseValue<?, ?> arg_path = params[1];
+        AbstractBaseValue<?, ?> arg_data = params[2];
 
-        AbstractBaseValue<?, ?, ?> arg_type = null;
-        if (!implicit) {
-            arg_type = params[3];
-        }
 
         NbtCompound cmpnd = getDataStorage(script.source, arg_id);
-
-        if (arg_type == null) LuaTypeConversions.implicitNbtPutObject(cmpnd, arg_path.tojstring(), LuaTypeConversions.luaToObj(arg_data));
-        else LuaTypeConversions.explicitNbtPutObject(cmpnd, arg_path.tojstring(), LuaTypeConversions.luaToObj(arg_data), arg_type.tojstring());
-
+        BaseValueConversions.implicit_putBaseToNbt(cmpnd, arg_path.asString(), arg_data);
         writeDataStorage(script.source, arg_id, cmpnd);
     }
 
-    private static DataCommandStorage getStorage(ServerCommandSource source) {
+    public static DataCommandStorage getStorage(ServerCommandSource source) {
         return source.getServer().getDataCommandStorage();
     }
-    public static NbtCompound getDataStorage(ServerCommandSource source, AbstractBaseValue<?, ?, ?> id) {
+    public static NbtCompound getDataStorage(ServerCommandSource source, AbstractBaseValue<?, ?> id) {
         String[] splits = id.asString().split(":");
         Identifier i = new Identifier(splits[0], splits[1]);
         return getStorage(source).get(i);
     }
-    public static void writeDataStorage(ServerCommandSource source, AbstractBaseValue<?, ?, ?> id, NbtCompound compound) {
+    public static void writeDataStorage(ServerCommandSource source, AbstractBaseValue<?, ?> id, NbtCompound compound) {
         String[] splits = id.asString().split(":");
         Identifier i = new Identifier(splits[0], splits[1]);
         getStorage(source).set(i, compound);

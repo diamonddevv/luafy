@@ -1,18 +1,21 @@
 package dev.diamond.luafy.script.lua;
 
 import dev.diamond.luafy.Luafy;
-import dev.diamond.luafy.script.abstraction.AbstractScriptApi;
-import dev.diamond.luafy.script.abstraction.ApiProvider;
+import dev.diamond.luafy.script.abstraction.AdaptableFunction;
+import dev.diamond.luafy.script.abstraction.api.AbstractScriptApi;
+import dev.diamond.luafy.script.abstraction.api.ApiProvider;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
+import dev.diamond.luafy.script.abstraction.obj.ScriptObjectProvider;
 import dev.diamond.luafy.script.old.ArrArgFunction;
 import dev.diamond.luafy.script.SandboxStrategies;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.lib.jse.JsePlatform;
 
-public class LuaScript extends AbstractScript<LuaFunctionWrapper, LuaValueWrapper> {
+import java.util.HashMap;
+
+public class LuaScript extends AbstractScript<LuaValueWrapper> {
 
     private final String scriptString;
     public final Globals scriptGlobals;
@@ -40,22 +43,7 @@ public class LuaScript extends AbstractScript<LuaFunctionWrapper, LuaValueWrappe
         AbstractScriptApi api = provider.provide(this);
 
         for (var func : api.getFunctions().entrySet()) {
-            table.set(func.getKey(), new ArrArgFunction()
-                    {
-                        @Override
-                        public LuaValue call(LuaValue[] params) {
-                            LuaValueWrapper[] values = new LuaValueWrapper[params.length];
-                            for (int i = 0; i < params.length; i++) {
-                                values[i] = new LuaValueWrapper(params[i]);
-                            }
-
-                            var returned = func.getValue().call(values);
-                            LuaValueWrapper result = new LuaValueWrapper(null);
-                            result.adaptAndSetOrThrow(returned);
-                            return result.isNull() ? LuaValue.NIL : result.getValue();
-                        }
-                    }
-            );
+            table.set(func.getKey(), adaptableToArrArg(func.getValue()));
         }
 
         scriptGlobals.set(api.name, table);
@@ -65,7 +53,6 @@ public class LuaScript extends AbstractScript<LuaFunctionWrapper, LuaValueWrappe
     }
 
 
-
     private LuaValue execute() {
         try {
             return this.script.call();
@@ -73,6 +60,24 @@ public class LuaScript extends AbstractScript<LuaFunctionWrapper, LuaValueWrappe
             Luafy.LOGGER.error("[LUA: INTERPRETATION] \n" + err.getMessage());
         }
         return LuaValue.NIL;
+    }
+
+    public static ArrArgFunction adaptableToArrArg(AdaptableFunction adaptableFunction) {
+        return new ArrArgFunction()
+        {
+            @Override
+            public LuaValue call(LuaValue[] params) {
+                LuaValueWrapper[] values = new LuaValueWrapper[params.length];
+                for (int i = 0; i < params.length; i++) {
+                    values[i] = new LuaValueWrapper(params[i]);
+                }
+
+                var returned = adaptableFunction.call(values);
+                LuaValueWrapper result = new LuaValueWrapper(null);
+                result.adaptAndSetOrThrow(returned);
+                return result.isNull() ? LuaValue.NIL : result.getValue();
+            }
+        };
     }
 
 }

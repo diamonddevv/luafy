@@ -41,7 +41,7 @@ public class SandboxStrategies {
         return m;
     }
 
-    public static void applyAbstractSandbox(AbstractScript<?, ?> script) {
+    public static void applyAbstractSandbox(AbstractScript<?> script) {
         List<String> m = parseStrategy(LuafyConfig.GLOBAL_CONFIG.getStrategy());
 
         for (var mod : m) {
@@ -75,7 +75,7 @@ public class SandboxStrategies {
         });
     }
 
-    public static void operateAsLuaOrPass(AbstractScript<?, ?> script, ScriptProvider<LuaScript> provider) {
+    public static void operateAsLuaOrPass(AbstractScript<?> script, ScriptProvider<LuaScript> provider) {
         if (script instanceof LuaScript l) {
             provider.provide(l);
         }
@@ -92,7 +92,7 @@ public class SandboxStrategies {
     }
 
     @FunctionalInterface
-    public interface ScriptProvider<T extends AbstractScript<?, ?>> {
+    public interface ScriptProvider<T extends AbstractScript<?>> {
         void provide(T script);
     }
 }

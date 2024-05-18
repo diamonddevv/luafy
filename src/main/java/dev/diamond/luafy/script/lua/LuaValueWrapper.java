@@ -1,14 +1,17 @@
 package dev.diamond.luafy.script.lua;
 
+import dev.diamond.luafy.script.abstraction.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.lang.AbstractBaseValue;
+import dev.diamond.luafy.script.abstraction.obj.ScriptObjectProvider;
 import dev.diamond.luafy.util.HexId;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
-public class LuaValueWrapper extends AbstractBaseValue<LuaValue, LuaFunctionWrapper, LuaValueWrapper> {
+public class LuaValueWrapper extends AbstractBaseValue<LuaValue, LuaValueWrapper> {
 
     public LuaValueWrapper(LuaValue value) {
         super(value);
@@ -35,9 +38,6 @@ public class LuaValueWrapper extends AbstractBaseValue<LuaValue, LuaFunctionWrap
     @Override public boolean asBoolean() {
         return value.checkboolean();
     }
-    @Override public LuaFunctionWrapper asFunction() {
-        return new LuaFunctionWrapper(value.checkfunction());
-    }
     @Override public HashMap<LuaValueWrapper, LuaValueWrapper> asMap() {
         HashMap<LuaValueWrapper, LuaValueWrapper> hash = new HashMap<>();
         LuaTable table = value.checktable();
@@ -46,6 +46,14 @@ public class LuaValueWrapper extends AbstractBaseValue<LuaValue, LuaFunctionWrap
         }
 
         return hash;
+    }
+    @Override public Collection<LuaValueWrapper> asCollection() {
+        Collection<LuaValueWrapper> collection = new ArrayList<>();
+        LuaTable table = value.checktable();
+        for (int i = 0; i < table.length(); i++) {
+            collection.add(new LuaValueWrapper(table.get(i + 1)));
+        }
+        return collection;
     }
 
     @Override public boolean isString() {
@@ -66,31 +74,52 @@ public class LuaValueWrapper extends AbstractBaseValue<LuaValue, LuaFunctionWrap
     @Override public boolean isBool() {
         return value.isboolean();
     }
-    @Override public boolean isFunction() {
-        return value.isfunction();
-    }
     @Override public boolean isMap() {
-        return value.istable();
+        return value.istable() && !isCollection();
+    }
+    @Override public boolean isCollection() {
+        if (!value.istable()) return false;
+        else {
+            LuaValue[] keys = value.checktable().keys();
+            boolean allNumbers = true;
+            for (var key : keys) {
+                if (!key.isnumber()) {
+                    allNumbers = false;
+                    break;
+                }
+            }
+            return allNumbers;
+        }
     }
 
     @Override
-    public LuaValue adaptAbstract(Object obj) {
+    public LuaValueWrapper adaptAbstract(Object obj) {
         try {
             if (obj instanceof LuaValue luaval)
-                return luaval;
+                return new LuaValueWrapper(luaval);
             else if (obj instanceof LuaValueWrapper wrapper)
-                return wrapper.getValue();
+                return wrapper;
             else if (obj instanceof HashMap<?, ?> hash)
-                return LuaTypeConversions.hashToLua(hash, this::adapt);
+                return new LuaValueWrapper(LuaTypeConversions.hashToLua(hash, this::adapt));
             else if (obj instanceof Collection<?> collection)
-                return LuaTypeConversions.arrToLua(collection.toArray());
+                return new LuaValueWrapper(LuaTypeConversions.collToLua(collection, this::adapt));
             else if (obj instanceof HexId hexid)
-                return new LuaHexid(hexid);
+                return new LuaValueWrapper(new LuaHexid(hexid));
             else
-                return LuaTypeConversions.luaFromObj(obj);
+                return new LuaValueWrapper(LuaTypeConversions.luaFromObj(obj));
         } catch (Exception e) {
             throw new RuntimeException("Could not adapt type " + obj.getClass() + ": " + e);
         }
     }
 
+    @Override
+    public LuaValueWrapper addObject(ScriptObjectProvider obj) {
+        LuaTable table = new LuaTable();
+        HashMap<String, AdaptableFunction> functions = new HashMap<>();
+        obj.provide().addFunctions(functions);
+        for (var kvp : functions.entrySet()) {
+            table.set(kvp.getKey(), LuaScript.adaptableToArrArg(kvp.getValue()));
+        }
+        return new LuaValueWrapper(table);
+    }
 }

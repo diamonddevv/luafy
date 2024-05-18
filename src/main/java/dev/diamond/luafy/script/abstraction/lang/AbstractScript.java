@@ -1,7 +1,8 @@
 package dev.diamond.luafy.script.abstraction.lang;
 
 import dev.diamond.luafy.script.abstraction.AdaptableFunction;
-import dev.diamond.luafy.script.abstraction.ApiProvider;
+import dev.diamond.luafy.script.abstraction.api.ApiProvider;
+import dev.diamond.luafy.script.abstraction.obj.ScriptObjectProvider;
 import net.minecraft.server.command.FunctionCommand;
 import net.minecraft.server.command.ServerCommandSource;
 
@@ -12,8 +13,7 @@ import java.util.HashMap;
  */
 public abstract class AbstractScript
         <
-                FuncValue extends AbstractFunctionValue<?, FuncValue, ?, BaseValue>,
-                BaseValue extends AbstractBaseValue<?, FuncValue, BaseValue>
+                BaseValue extends AbstractBaseValue<?, BaseValue>
 
                 > {
 
@@ -49,7 +49,5 @@ public abstract class AbstractScript
      * @param api provided api
      */
     public abstract void addApi(ApiProvider api);
-
-
 
 }

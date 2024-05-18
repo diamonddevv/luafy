@@ -234,6 +234,17 @@ public class LuaTypeConversions {
         return table;
     }
 
+    public static LuaTable collToLua(Collection<?> collection, Function<Object, LuaValue> adapter) {
+        LuaValue[] arr = new LuaValue[collection.size()];
+        int i = 0;
+        for (var e : collection) {
+            var element = adapter.apply(e);
+            arr[i] = element;
+            i++;
+        }
+        return LuaTable.listOf(arr);
+    }
+
     // all below is yoinked from figura - some is slightly edited though. might eventually be replaced with my own stuff
     public static Varargs javaToLua(Object val) {
         if (val == null)
@@ -275,5 +286,6 @@ public class LuaTypeConversions {
 
         return LuaValue.varargsOf(args);
     }
+
 
 }

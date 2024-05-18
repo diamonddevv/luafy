@@ -32,7 +32,7 @@ public class ScriptManager {
     }
 
 
-    public static final HashMap<String, AbstractScript<?, ?>> SCRIPTS = new HashMap<>();
+    public static final HashMap<String, AbstractScript<?>> SCRIPTS = new HashMap<>();
     public static final Collection<ScriptCallbacks.CallbackScriptBean> CALLBACKS = new ArrayList<>();
     public static HashMap<String, SandboxStrategies.Strategy> SANDBOX_STRATEGIES = new HashMap<>();
 
@@ -49,7 +49,7 @@ public class ScriptManager {
         return SCRIPTS.containsKey(script);
     }
 
-    public static AbstractScript<?, ?> get(String script) {
+    public static AbstractScript<?> get(String script) {
         return SCRIPTS.get(script);
     }
 }

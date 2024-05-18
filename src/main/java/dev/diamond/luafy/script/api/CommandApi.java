@@ -4,7 +4,7 @@ import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.diamond.luafy.script.ScriptManager;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
-import dev.diamond.luafy.script.abstraction.AbstractScriptApi;
+import dev.diamond.luafy.script.abstraction.api.AbstractScriptApi;
 import dev.diamond.luafy.script.abstraction.AdaptableFunction;
 import dev.diamond.luafy.util.HexId;
 import net.minecraft.server.command.ServerCommandSource;
@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class CommandApi extends AbstractScriptApi {
 
 
-    public CommandApi(AbstractScript<?, ?> script) {
+    public CommandApi(AbstractScript<?> script) {
         super(script, "command");
     }
 

@@ -1,6 +1,8 @@
 package dev.diamond.luafy.script.abstraction.lang;
 
 import dev.diamond.luafy.script.abstraction.BaseValueConversions;
+import dev.diamond.luafy.script.abstraction.obj.IScriptObject;
+import dev.diamond.luafy.script.abstraction.obj.ScriptObjectProvider;
 import dev.diamond.luafy.script.nbt.OptionallyExplicitNbtElement;
 import net.minecraft.nbt.NbtElement;
 
@@ -11,8 +13,7 @@ import java.util.Optional;
 public abstract class AbstractBaseValue
         <
                 LangValue,
-                FuncValue extends AbstractFunctionValue<?, ?, ?, ?>,
-                BaseValue extends AbstractBaseValue<?, ?, ?>
+                BaseValue extends AbstractBaseValue<?, ?>
                 > {
 
     public LangValue value;
@@ -28,12 +29,12 @@ public abstract class AbstractBaseValue
     public float asFloat() { return 0; }
     public double asDouble() { return 0; }
     public boolean asBoolean() { return false; }
-    public FuncValue asFunction() { return null; }
     public HashMap<BaseValue, BaseValue> asMap() { return null; }
+    public Collection<BaseValue> asCollection() { return null; }
 
     public <T> T as(Class<T> clazz) { return clazz.cast(value); }
 
-    public AbstractBaseValue<?, ?, ?> asBase() { return this; }
+    public AbstractBaseValue<?, ?> asBase() { return this; }
 
     public boolean isString() { return false; }
     public boolean isInt() { return false; }
@@ -41,8 +42,8 @@ public abstract class AbstractBaseValue
     public boolean isFloat() { return false; }
     public boolean isDouble() { return false; }
     public boolean isBool() { return false; }
-    public boolean isFunction() { return false; }
     public boolean isMap() { return false; }
+    public boolean isCollection() { return false; }
     public boolean isNull() { return value == null || value == getLangNull(); }
 
     public <T> boolean is(Class<T> clazz) {
@@ -60,15 +61,26 @@ public abstract class AbstractBaseValue
 
         if (obj instanceof OptionallyExplicitNbtElement nbt) {
             if (nbt.isExplicit()) {
-
+                assert nbt.type() != null;
+                obj = BaseValueConversions.explicit_nbtToBase(nbt.nbt(), nbt.type(), this::adaptAbstract);
             } else {
-                obj = BaseValueConversions.implicit_nbtToBase(nbt.nbt(), a -> {
-                    adaptAbstract(a);
-                });
+                obj = BaseValueConversions.implicit_nbtToBase(nbt.nbt(), this::adaptAbstract);
             }
         }
 
-        return adaptAbstract(obj);
+        if (obj instanceof IScriptObject so) {
+            obj = addObject(() -> so);
+        }
+
+        return (LangValue) adaptAbstract(obj).value;
     }
-    public abstract LangValue adaptAbstract(Object obj);
+    public abstract BaseValue adaptAbstract(Object obj);
+
+
+    /**
+     * add a script object (set of functions acting as an object) to the script.
+     *
+     * @param obj provider
+     */
+    public abstract BaseValue addObject(ScriptObjectProvider obj);
 }
