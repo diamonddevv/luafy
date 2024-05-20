@@ -14,7 +14,6 @@ import java.util.HashMap;
 public abstract class AbstractScript
         <
                 BaseValue extends AbstractBaseValue<?, BaseValue>
-
                 > {
 
     public ServerCommandSource source;

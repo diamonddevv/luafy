@@ -1,9 +1,13 @@
 package dev.diamond.luafy.script.abstraction.lang;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import dev.diamond.luafy.script.abstraction.BaseValueAdapter;
 import dev.diamond.luafy.script.abstraction.BaseValueConversions;
 import dev.diamond.luafy.script.abstraction.obj.IScriptObject;
 import dev.diamond.luafy.script.abstraction.obj.ScriptObjectProvider;
 import dev.diamond.luafy.script.nbt.OptionallyExplicitNbtElement;
+import dev.diamond.luafy.util.HexId;
 import net.minecraft.nbt.NbtElement;
 
 import java.util.Collection;
@@ -55,25 +59,73 @@ public abstract class AbstractBaseValue
 
 
     public void adaptAndSetOrThrow(Object obj) {
-        value = adapt(obj);
+        value = (LangValue) adapt(obj).value;
     }
-    public LangValue adapt(Object obj) {
+    public BaseValue adapt(Object obj) {
 
-        if (obj instanceof OptionallyExplicitNbtElement nbt) {
+        if (obj instanceof AbstractBaseValue<?,?> baseValue){
+            return (BaseValue) baseValue;
+        }
+
+        else if (obj instanceof OptionallyExplicitNbtElement nbt) {
             if (nbt.isExplicit()) {
                 assert nbt.type() != null;
-                obj = BaseValueConversions.explicit_nbtToBase(nbt.nbt(), nbt.type(), this::adaptAbstract);
+                return (BaseValue) BaseValueConversions.explicit_nbtToBase(nbt.nbt(), nbt.type(), this::adapt);
             } else {
-                obj = BaseValueConversions.implicit_nbtToBase(nbt.nbt(), this::adaptAbstract);
+                return (BaseValue) BaseValueConversions.implicit_nbtToBase(nbt.nbt(), this::adapt);
             }
         }
 
-        if (obj instanceof IScriptObject so) {
-            obj = addObject(() -> so);
+        else if (obj instanceof NbtElement nbt) {
+            return (BaseValue) BaseValueConversions.implicit_nbtToBase(nbt, this::adapt);
         }
 
-        return (LangValue) adaptAbstract(obj).value;
+        else if (obj instanceof IScriptObject so) {
+            return addObject(() -> so);
+        }
+
+        else if (obj instanceof JsonElement jsonElement) {
+            return (BaseValue) BaseValueConversions.jsonElementToValue(jsonElement, this::adapt);
+        }
+
+        else if (obj instanceof HexId hexid) {
+            return adapt(hexid.get());
+        }
+
+        return adaptAbstract(obj);
     }
+
+
+    /**
+     * Used in several scenarios to adapt Java Objects to Script values. Some are already completed for you, but here are some important types
+     * that need to be manually converted: <br>
+     *
+     * <ul>
+     *     <li>LangValue type (e.g. LuaValue for Lua Scripts): This should be adapted by wrapping with a constructor to BaseValue.</li>
+     *     <li>Collection of ?s: All API and ScriptObject functions that return "arrays" actually return collections. Should be adapted by
+     *     a BaseValue wrapped around some Language representation of arrays (or lists preferably).</li>
+     *     <li>HashMap of ?s to ?s: Same reason as above. Should be adapted by some function returning a BaseValue wrapped around
+     *     a Language representation of a Table, Map, Dictionary, or like.</li>
+     *     <li>Primitive Types + String: Should be adapted by some catch-all function.</li>
+     * </ul>
+     *
+     * If a type cant be adapted, you should probably throw an exception.
+     * I reccommend looking at LuaBaseValue to see how I did it there.
+     * <br>
+     * <h3>Types that are already adapted:<br></h3>
+     * <ul>
+     *     <li>AbstractBaseValue (no adaptation needed)</li>
+     *     <li>OptionallyExplicitNbtElement</li>
+     *     <li>NbtElement</li>
+     *     <li>IScriptObject</li>
+     *     <li>JsonElement</li>
+     *     <li>HexId (adaptation converts to string)</li>
+     * </ul>
+     *
+     * @see dev.diamond.luafy.script.lua.LuaBaseValue
+     * @param obj
+     * @return value extending AbstractBaseValue.
+     */
     public abstract BaseValue adaptAbstract(Object obj);
 
 

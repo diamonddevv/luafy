@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
-public class LuaValueWrapper extends AbstractBaseValue<LuaValue, LuaValueWrapper> {
+public class LuaBaseValue extends AbstractBaseValue<LuaValue, LuaBaseValue> {
 
-    public LuaValueWrapper(LuaValue value) {
+    public LuaBaseValue(LuaValue value) {
         super(value);
     }
 
@@ -38,20 +38,20 @@ public class LuaValueWrapper extends AbstractBaseValue<LuaValue, LuaValueWrapper
     @Override public boolean asBoolean() {
         return value.checkboolean();
     }
-    @Override public HashMap<LuaValueWrapper, LuaValueWrapper> asMap() {
-        HashMap<LuaValueWrapper, LuaValueWrapper> hash = new HashMap<>();
+    @Override public HashMap<LuaBaseValue, LuaBaseValue> asMap() {
+        HashMap<LuaBaseValue, LuaBaseValue> hash = new HashMap<>();
         LuaTable table = value.checktable();
         for (int i = 0; i < table.narg(); i++) {
-            hash.put(new LuaValueWrapper(table.keys()[i]), new LuaValueWrapper(table.get(table.keys()[i])));
+            hash.put(new LuaBaseValue(table.keys()[i]), new LuaBaseValue(table.get(table.keys()[i])));
         }
 
         return hash;
     }
-    @Override public Collection<LuaValueWrapper> asCollection() {
-        Collection<LuaValueWrapper> collection = new ArrayList<>();
+    @Override public Collection<LuaBaseValue> asCollection() {
+        Collection<LuaBaseValue> collection = new ArrayList<>();
         LuaTable table = value.checktable();
         for (int i = 0; i < table.length(); i++) {
-            collection.add(new LuaValueWrapper(table.get(i + 1)));
+            collection.add(new LuaBaseValue(table.get(i + 1)));
         }
         return collection;
     }
@@ -93,33 +93,29 @@ public class LuaValueWrapper extends AbstractBaseValue<LuaValue, LuaValueWrapper
     }
 
     @Override
-    public LuaValueWrapper adaptAbstract(Object obj) {
+    public LuaBaseValue adaptAbstract(Object obj) {
         try {
             if (obj instanceof LuaValue luaval)
-                return new LuaValueWrapper(luaval);
-            else if (obj instanceof LuaValueWrapper wrapper)
-                return wrapper;
+                return new LuaBaseValue(luaval);
             else if (obj instanceof HashMap<?, ?> hash)
-                return new LuaValueWrapper(LuaTypeConversions.hashToLua(hash, this::adapt));
+                return new LuaBaseValue(LuaTypeConversions.hashToLua(hash, this::adapt));
             else if (obj instanceof Collection<?> collection)
-                return new LuaValueWrapper(LuaTypeConversions.collToLua(collection, this::adapt));
-            else if (obj instanceof HexId hexid)
-                return new LuaValueWrapper(new LuaHexid(hexid));
+                return new LuaBaseValue(LuaTypeConversions.collToLua(collection, this::adapt));
             else
-                return new LuaValueWrapper(LuaTypeConversions.luaFromObj(obj));
+                return new LuaBaseValue(LuaTypeConversions.luaFromObj(obj));
         } catch (Exception e) {
             throw new RuntimeException("Could not adapt type " + obj.getClass() + ": " + e);
         }
     }
 
     @Override
-    public LuaValueWrapper addObject(ScriptObjectProvider obj) {
+    public LuaBaseValue addObject(ScriptObjectProvider obj) {
         LuaTable table = new LuaTable();
         HashMap<String, AdaptableFunction> functions = new HashMap<>();
         obj.provide().addFunctions(functions);
         for (var kvp : functions.entrySet()) {
             table.set(kvp.getKey(), LuaScript.adaptableToArrArg(kvp.getValue()));
         }
-        return new LuaValueWrapper(table);
+        return new LuaBaseValue(table);
     }
 }

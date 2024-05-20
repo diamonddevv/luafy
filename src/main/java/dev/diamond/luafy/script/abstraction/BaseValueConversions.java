@@ -1,13 +1,14 @@
 package dev.diamond.luafy.script.abstraction;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import dev.diamond.luafy.script.ScriptManager;
 import dev.diamond.luafy.script.abstraction.lang.AbstractBaseValue;
 import net.minecraft.nbt.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Objects;
+import java.util.*;
 
 import static dev.diamond.luafy.script.ScriptManager.ExplicitType.*;
 
@@ -123,5 +124,48 @@ public class BaseValueConversions {
         nbt.put(address, element);
     }
 
+    public static AbstractBaseValue<?, ?> jsonElementToValue(JsonElement e,  BaseValueAdapter adapter) {
+        AbstractBaseValue<?, ?> value = null;
+        if (e.isJsonPrimitive()) {
+            JsonPrimitive p = e.getAsJsonPrimitive();
+
+            if (p.isNumber()) {
+                value = adapter.adapt(p.getAsDouble());
+            } else if (p.isString()) {
+                value = adapter.adapt(p.getAsString());
+            } else if (p.isBoolean()) {
+                value = adapter.adapt(p.getAsBoolean());
+            }
+
+        } else if (e.isJsonArray()) {
+
+            JsonArray array = e.getAsJsonArray();
+            AbstractBaseValue<?, ?>[] arr = new AbstractBaseValue<?, ?>[array.size()];
+
+            int i = 0;
+            for (var e2 : array) {
+                arr[i] = jsonElementToValue(e2, adapter);
+                i++;
+            }
+
+            value = adapter.adapt(Arrays.stream(arr).toList());
+
+        } else if (e.isJsonObject()) {
+            value = jsonObjToValue(e.getAsJsonObject(), adapter);
+        } else if (e.isJsonNull()) {
+            value = adapter.adapt(null);
+        }
+
+        return value;
+    }
+    public static AbstractBaseValue<?, ?> jsonObjToValue(JsonObject obj, BaseValueAdapter adapter) {
+        HashMap<AbstractBaseValue<?, ?>, AbstractBaseValue<?, ?>> map = new HashMap<>();
+        for (var key : obj.keySet()) {
+            JsonElement e = obj.get(key);
+            AbstractBaseValue<?, ?> value = jsonElementToValue(e, adapter);
+            if (value != null) map.put(adapter.adapt(key), value);
+        }
+        return adapter.adapt(map);
+    }
 
 }

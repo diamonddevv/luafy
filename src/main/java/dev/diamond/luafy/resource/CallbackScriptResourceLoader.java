@@ -28,7 +28,7 @@ public class CallbackScriptResourceLoader implements SimpleSynchronousResourceRe
         ScriptManager.CALLBACKS.clear();
 
         // Read Phase - path is root
-        for (Identifier id : manager.findResources(LuaScriptResourceLoader.PATH, path -> path.getPath().endsWith(".json")).keySet()) {
+        for (Identifier id : manager.findResources(PATH, path -> path.getPath().endsWith(".json")).keySet()) {
             if (manager.getResource(id).isPresent()) {
 
                 try (InputStream stream = manager.getResource(id).get().getInputStream()) {
@@ -39,6 +39,7 @@ public class CallbackScriptResourceLoader implements SimpleSynchronousResourceRe
                     ScriptCallbacks.CallbackScriptBean bean = GSON.fromJson(s, ScriptCallbacks.CallbackScriptBean.class);
 
                     ScriptManager.CALLBACKS.add(bean);
+                    ScriptManager.populateEventCallbacks();
                 } catch (Exception e) {
                     Luafy.LOGGER.error("Error occurred while loading Callbacks " + id.toString(), e);
                 }

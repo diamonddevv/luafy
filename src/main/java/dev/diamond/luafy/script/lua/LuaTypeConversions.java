@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import dev.diamond.luafy.Luafy;
+import dev.diamond.luafy.script.abstraction.BaseValueAdapter;
 import dev.diamond.luafy.script.old.LuafyLua;
 import net.minecraft.nbt.*;
 import org.apache.commons.lang3.ArrayUtils;
@@ -222,24 +223,24 @@ public class LuaTypeConversions {
     }
 
 
-    public static LuaTable hashToLua(HashMap<?,?> hash, Function<Object, LuaValue> adapter) {
+    public static LuaTable hashToLua(HashMap<?,?> hash, BaseValueAdapter adapter) {
         LuaTable table = new LuaTable();
         for (var kvp : hash.entrySet()) {
 
-            var key = adapter.apply(kvp.getKey());
-            var value = adapter.apply(kvp.getValue());
+            var key = (LuaValue) adapter.adapt(kvp.getKey()).value;
+            var value = (LuaValue) adapter.adapt(kvp.getValue()).value;
 
             table.set(key, value);
         }
         return table;
     }
 
-    public static LuaTable collToLua(Collection<?> collection, Function<Object, LuaValue> adapter) {
+    public static LuaTable collToLua(Collection<?> collection, BaseValueAdapter adapter) {
         LuaValue[] arr = new LuaValue[collection.size()];
         int i = 0;
         for (var e : collection) {
-            var element = adapter.apply(e);
-            arr[i] = element;
+            var element = adapter.adapt(e);
+            arr[i] = (LuaValue) element.value;
             i++;
         }
         return LuaTable.listOf(arr);

@@ -5,17 +5,13 @@ import dev.diamond.luafy.script.abstraction.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.api.AbstractScriptApi;
 import dev.diamond.luafy.script.abstraction.api.ApiProvider;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
-import dev.diamond.luafy.script.abstraction.obj.ScriptObjectProvider;
-import dev.diamond.luafy.script.old.ArrArgFunction;
 import dev.diamond.luafy.script.SandboxStrategies;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 
-import java.util.HashMap;
-
-public class LuaScript extends AbstractScript<LuaValueWrapper> {
+public class LuaScript extends AbstractScript<LuaBaseValue> {
 
     private final String scriptString;
     public final Globals scriptGlobals;
@@ -32,9 +28,9 @@ public class LuaScript extends AbstractScript<LuaValueWrapper> {
     }
 
     @Override
-    public LuaValueWrapper executeScript() {
+    public LuaBaseValue executeScript() {
         var value = execute();
-        return new LuaValueWrapper(value);
+        return new LuaBaseValue(value);
     }
 
     @Override
@@ -67,13 +63,13 @@ public class LuaScript extends AbstractScript<LuaValueWrapper> {
         {
             @Override
             public LuaValue call(LuaValue[] params) {
-                LuaValueWrapper[] values = new LuaValueWrapper[params.length];
+                LuaBaseValue[] values = new LuaBaseValue[params.length];
                 for (int i = 0; i < params.length; i++) {
-                    values[i] = new LuaValueWrapper(params[i]);
+                    values[i] = new LuaBaseValue(params[i]);
                 }
 
                 var returned = adaptableFunction.call(values);
-                LuaValueWrapper result = new LuaValueWrapper(null);
+                LuaBaseValue result = new LuaBaseValue(null);
                 result.adaptAndSetOrThrow(returned);
                 return result.isNull() ? LuaValue.NIL : result.getValue();
             }
