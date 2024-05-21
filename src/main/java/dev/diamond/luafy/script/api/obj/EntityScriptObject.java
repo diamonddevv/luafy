@@ -14,6 +14,8 @@ import net.minecraft.registry.Registries;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 public class EntityScriptObject implements IScriptObject {
@@ -31,6 +33,21 @@ public class EntityScriptObject implements IScriptObject {
         set.put("get_nbt", args -> new OptionallyExplicitNbtElement(null, NbtPredicate.entityToNbt(entity)));
         set.put("get_type", args -> Registries.ENTITY_TYPE.getId(entity.getType()).toString());
 
+        set.put("get_position", args -> {
+            Collection<Double> doubles = new ArrayList<>();
+            doubles.add(entity.getX());
+            doubles.add(entity.getY());
+            doubles.add(entity.getZ());
+            return doubles;
+        });
+
+        set.put("get_rotation", args -> {
+            Collection<Float> floats = new ArrayList<>();
+            floats.add(entity.getPitch());
+            floats.add(entity.getYaw());
+            return floats;
+        });
+
         set.put("parse_command_as_at", args -> parseAsAt(args[0].asString(), args[1] == null ? 0 : args[1].asInt()));
 
         set.put("is_living", args -> entity instanceof LivingEntity);
@@ -38,7 +55,7 @@ public class EntityScriptObject implements IScriptObject {
 
         set.put("test_predicate", args -> LuafyUtil.getAndTestPredicate(args[0].asString(), entity));
 
-        // todo player cast
+        set.put("as_player", args -> new PlayerEntityScriptObject((ServerPlayerEntity) entity));
         set.put("as_living", args -> new LivingEntityScriptObject((LivingEntity) entity));
     }
 
@@ -48,6 +65,7 @@ public class EntityScriptObject implements IScriptObject {
                 .withLevel(raisedPermission < 1 ? entity.getCommandSource().level : raisedPermission)
                 .withEntity(entity)
                 .withPosition(entity.getPos())
+                .withSilent()
                 .withRotation(entity.getRotationClient());
 
         var parsed = CommandApi.parseCommand(command, source);

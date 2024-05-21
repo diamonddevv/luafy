@@ -1,4 +1,4 @@
-package dev.diamond.luafy.commmand;
+package dev.diamond.luafy.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -7,7 +7,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import dev.diamond.luafy.config.LuafyConfig;
 import dev.diamond.luafy.script.ScriptManager;
-import dev.diamond.luafy.script.old.LuafyLua;
+import dev.diamond.luafy.script.abstraction.BaseValueConversions;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.NbtCompoundArgumentType;
 import net.minecraft.nbt.NbtCompound;
@@ -98,7 +98,7 @@ public class LuafyCommand {
             throw SCRIPT_NOT_EXIST.create(id);
         }
         var script = ScriptManager.get(id);
-        script.execute(ctx.getSource(), nbtContext == null ? null : null); // LuaTypeConversions.tableFromNbt(nbtContext)
+        script.execute(ctx.getSource(), nbtContext == null ? null : BaseValueConversions.nbtObjToBase(nbtContext, s -> script.getNullBaseValue().adapt(s)));
 
         return true;
     }

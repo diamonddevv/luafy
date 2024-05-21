@@ -1,9 +1,9 @@
 package dev.diamond.luafy;
 
-import dev.diamond.luafy.commmand.LuafyCommand;
+import dev.diamond.luafy.command.LuafyCommand;
 import dev.diamond.luafy.config.LuafyConfig;
 import dev.diamond.luafy.resource.CallbackScriptResourceLoader;
-import dev.diamond.luafy.resource.LuaScriptResourceLoader;
+import dev.diamond.luafy.resource.ScriptResourceLoader;
 import dev.diamond.luafy.resource.SandboxStrategyResourceLoader;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -19,7 +19,7 @@ public class Luafy implements ModInitializer {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
 
-	public static final LuaScriptResourceLoader LUA_SCRIPT_RESOURCES = new LuaScriptResourceLoader();
+	public static final ScriptResourceLoader LUA_SCRIPT_RESOURCES = new ScriptResourceLoader();
 	public static final CallbackScriptResourceLoader CALLBACK_RESOURCES = new CallbackScriptResourceLoader();
 	public static final SandboxStrategyResourceLoader SANDBOXES = new SandboxStrategyResourceLoader();
 

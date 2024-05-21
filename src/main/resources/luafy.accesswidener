@@ -2,3 +2,8 @@ accessWidener	v1	named
 
 accessible method net/minecraft/stat/ServerStatHandler asString ()Ljava/lang/String;
 accessible field net/minecraft/server/command/ServerCommandSource level I
+accessible field net/minecraft/command/argument/DefaultPosArgument x Lnet/minecraft/command/argument/CoordinateArgument;
+accessible field net/minecraft/command/argument/DefaultPosArgument y Lnet/minecraft/command/argument/CoordinateArgument;
+accessible field net/minecraft/command/argument/DefaultPosArgument z Lnet/minecraft/command/argument/CoordinateArgument;
+accessible field net/minecraft/command/argument/CoordinateArgument value D
+mutable field net/minecraft/command/argument/CoordinateArgument value D

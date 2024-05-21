@@ -48,6 +48,11 @@ public class LuaScript extends AbstractScript<LuaBaseValue> {
 
     }
 
+    @Override
+    public LuaBaseValue getNullBaseValue() {
+        return new LuaBaseValue(null);
+    }
+
 
     private LuaValue execute() {
         try {

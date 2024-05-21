@@ -49,4 +49,6 @@ public abstract class AbstractScript
      */
     public abstract void addApi(ApiProvider api);
 
+
+    public abstract BaseValue getNullBaseValue();
 }

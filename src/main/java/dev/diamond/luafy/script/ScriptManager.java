@@ -36,7 +36,11 @@ public class ScriptManager {
         LOAD("load"),
 
         ON_ENTITY_DIES("on_entity_dies"),
-        ON_ENTITY_HURTS("on_entity_hurts")
+        ON_ENTITY_HURTS("on_entity_hurts"),
+
+        ADVANCEMENT("advancement_obtained"),
+
+        USE_ITEM("on_use")
         ;
 
 
