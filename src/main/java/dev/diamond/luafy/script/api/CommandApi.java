@@ -48,7 +48,7 @@ public class CommandApi extends AbstractScriptApi {
         f.put("modify_preparsed_argument", args -> {
             var hi = HexId.fromString(args[0].asString());
             var parsed = hi.getHashed(ScriptManager.Caches.PREPARSED_COMMANDS);
-            modifyArgument(parsed, args[1].asString(), args[2].value);
+            modifyArgument(parsed, args[1].asString(), args[2]);
             return null;
         });
 
@@ -89,8 +89,18 @@ public class CommandApi extends AbstractScriptApi {
         return ICommandArgumentScriptObject.adapt(command.getContext().getArguments().get(argument).getResult(), o -> script.getNullBaseValue().adapt(o));
     }
 
-    public static void modifyArgument(ParseResults<ServerCommandSource> command, String argument, Object value) {
-        ((ParsedArgumentAccessor) command.getContext().getArguments().get(argument)).setResult(value);
+    public static void modifyArgument(ParseResults<ServerCommandSource> command, String argument, AbstractBaseValue<?, ?> value) {
+        Object o;
+
+        var so = value.asScriptObjectIfPresent();
+
+        if (so.isPresent() && so.get() instanceof ICommandArgumentScriptObject icaso)
+            o = icaso.getArg();
+        else
+            o = value.value;
+
+
+        ((ParsedArgumentAccessor) command.getContext().getArguments().get(argument)).setResult(o);
     }
 
 }

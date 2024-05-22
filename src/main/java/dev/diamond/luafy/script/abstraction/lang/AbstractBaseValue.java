@@ -1,8 +1,6 @@
 package dev.diamond.luafy.script.abstraction.lang;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import dev.diamond.luafy.script.abstraction.BaseValueAdapter;
 import dev.diamond.luafy.script.abstraction.BaseValueConversions;
 import dev.diamond.luafy.script.abstraction.obj.IScriptObject;
 import dev.diamond.luafy.script.abstraction.obj.ScriptObjectProvider;
@@ -39,6 +37,7 @@ public abstract class AbstractBaseValue
     public <T> T as(Class<T> clazz) { return clazz.cast(value); }
 
     public AbstractBaseValue<?, ?> asBase() { return this; }
+
 
     public boolean isString() { return false; }
     public boolean isInt() { return false; }
@@ -130,9 +129,21 @@ public abstract class AbstractBaseValue
 
 
     /**
-     * add a script object (set of functions acting as an object) to the script.
+     * add a script object (set of functions acting as an object) to the script. <br>
      *
+     * Add a HexId to whatever your language representation of this is; use it as a key to cache this object in <code>IScriptObject.CACHE</code>.
+     *
+     * @see IScriptObject
      * @param obj provider
      */
     public abstract BaseValue addObject(ScriptObjectProvider obj);
+
+
+    /**
+     * Implementation should fetch from IScriptObject.CACHE using key set from addObject.
+     *
+     * @see AbstractBaseValue#addObject(ScriptObjectProvider)
+     * @return Optional containing an IScriptObject, if the type is one. Otherwise, empty.
+     */
+    public abstract Optional<IScriptObject> asScriptObjectIfPresent();
 }

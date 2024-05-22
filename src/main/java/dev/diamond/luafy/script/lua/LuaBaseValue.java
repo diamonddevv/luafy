@@ -2,6 +2,7 @@ package dev.diamond.luafy.script.lua;
 
 import dev.diamond.luafy.script.abstraction.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.lang.AbstractBaseValue;
+import dev.diamond.luafy.script.abstraction.obj.IScriptObject;
 import dev.diamond.luafy.script.abstraction.obj.ScriptObjectProvider;
 import dev.diamond.luafy.util.HexId;
 import org.luaj.vm2.LuaTable;
@@ -10,8 +11,11 @@ import org.luaj.vm2.LuaValue;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Optional;
 
 public class LuaBaseValue extends AbstractBaseValue<LuaValue, LuaBaseValue> {
+
+    public static final String SCRIPT_OBJ_HEXID_KEY = "__scriptobjhexid";
 
     public LuaBaseValue(LuaValue value) {
         super(value);
@@ -116,6 +120,28 @@ public class LuaBaseValue extends AbstractBaseValue<LuaValue, LuaBaseValue> {
         for (var kvp : functions.entrySet()) {
             table.set(kvp.getKey(), LuaScript.adaptableToArrArg(kvp.getValue()));
         }
+
+        // Caching
+        var hexid = HexId.makeNewUnique(IScriptObject.CACHE.keySet());
+        IScriptObject.CACHE.put(hexid, obj.provide());
+
+        table.set(SCRIPT_OBJ_HEXID_KEY, hexid.get());
+
         return new LuaBaseValue(table);
+    }
+
+    @Override
+    public Optional<IScriptObject> asScriptObjectIfPresent() {
+        if (!value.istable()) return Optional.empty();
+        else {
+            if (value.checktable().get(SCRIPT_OBJ_HEXID_KEY) != LuaValue.NIL) {
+                return Optional.of(
+                        HexId.fromString(
+                                value.checktable().get(SCRIPT_OBJ_HEXID_KEY).checkjstring()
+                        ).getHashed(IScriptObject.CACHE)
+                );
+            }
+        }
+        return Optional.empty();
     }
 }
