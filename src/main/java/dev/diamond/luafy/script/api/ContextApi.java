@@ -32,10 +32,11 @@ public class ContextApi extends AbstractScriptApi {
         f.put("scriptcall", args -> {
             String id = args[0].asString();
             HashMap<?, ?> ctx = args[1].asMap();
+            boolean thread = args[2].asBoolean();
 
             ServerCommandSource src = script.source;
             AbstractScript<?> s = ScriptManager.get(id);
-            s.execute(src, ctx);
+            ScriptManager.execute(id, src, ctx, thread);
             return s.outContextMap == null ? null : s.outContextMap;
         });
 

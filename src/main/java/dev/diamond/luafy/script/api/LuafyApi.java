@@ -19,6 +19,8 @@ public class LuafyApi extends AbstractScriptApi {
         f.put("hexid_as_string", args -> HexId.fromString(args[0].asString()));
         f.put("hexid_from_string", args -> HexId.fromString(args[0].asString()));
 
+        f.put("get_system_rtc", args -> System.currentTimeMillis());
+
         return f;
     }
 }

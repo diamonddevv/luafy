@@ -22,6 +22,9 @@ public class ScriptCallbacks
 
         @SerializedName("scripts")
         public List<String> scriptIds;
+
+        @SerializedName("threaded")
+        public boolean threaded = false;
     }
 
 

@@ -40,6 +40,12 @@ public class LuafyConfig {
         public SandboxStrategies.Strategy fallbackStrategy = DEFUALT_FALLBACK;
 
 
+        @SerializedName("script_threading_allowed")
+        public boolean scriptThreading = false;
+
+        @SerializedName("parsed_command_modification-command_api")
+        public boolean allowParsedCommandEditing = true;
+
         public SandboxStrategies.Strategy getStrategy() {
             if (sandboxStrategy != null && ScriptManager.SANDBOX_STRATEGIES.containsKey(sandboxStrategy)) {
                 return ScriptManager.SANDBOX_STRATEGIES.get(sandboxStrategy);
@@ -57,7 +63,6 @@ public class LuafyConfig {
         Path path = FabricLoader.getInstance().getConfigDir();
         return new File(path.toString() + File.separator + "luafy.json");
     }
-
     public static void initializeConfig() {
         File file = getFile();
 
@@ -74,7 +79,6 @@ public class LuafyConfig {
             initializeConfig();
         }
     }
-
     public static void writeConfig() {
         File file = getFile();
 

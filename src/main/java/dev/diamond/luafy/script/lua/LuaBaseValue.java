@@ -60,6 +60,11 @@ public class LuaBaseValue extends AbstractBaseValue<LuaValue, LuaBaseValue> {
         return collection;
     }
 
+    @Override
+    public Object asJavaObject() {
+        return LuaTypeConversions.luaToObj(value);
+    }
+
     @Override public boolean isString() {
         return value.isstring();
     }

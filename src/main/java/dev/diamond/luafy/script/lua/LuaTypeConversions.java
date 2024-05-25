@@ -153,6 +153,7 @@ public class LuaTypeConversions {
         return switch (lua.type()) {
             case LuaValue.TNIL -> null;
             case LuaValue.TSTRING -> lua.checkjstring();
+            case LuaValue.TINT -> lua.checkint();
             case LuaValue.TNUMBER -> lua.checkdouble();
             case LuaValue.TBOOLEAN -> lua.checkboolean();
             case LuaValue.TTABLE -> lua.checktable();

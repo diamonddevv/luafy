@@ -37,7 +37,7 @@ public abstract class AbstractBaseValue
     public <T> T as(Class<T> clazz) { return clazz.cast(value); }
 
     public AbstractBaseValue<?, ?> asBase() { return this; }
-
+    public abstract Object asJavaObject();
 
     public boolean isString() { return false; }
     public boolean isInt() { return false; }

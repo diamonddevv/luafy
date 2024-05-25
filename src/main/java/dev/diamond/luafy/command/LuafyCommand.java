@@ -36,8 +36,14 @@ public class LuafyCommand {
                                                 argument("script", StringArgumentType.string())
                                                         .then(
                                                                 argument("context", NbtCompoundArgumentType.nbtCompound())
-                                                                        .executes(LuafyCommand::luaCommand_executeWithContext)
-                                                        ).executes(LuafyCommand::luaCommand_execute)
+                                                                        .executes(s -> luaCommand_executeWithContext(s, false))
+                                                                        .then(
+                                                                                literal("threaded").executes(s -> luaCommand_executeWithContext(s, true))
+                                                                        )
+                                                        ).then(
+                                                                literal("threaded")
+                                                                        .executes(s -> luaCommand_execute(s, true))
+                                                        ).executes(s -> luaCommand_execute(s, false))
                                         ) // execute branch
                         ).then(
                                 literal("list")
@@ -81,24 +87,30 @@ public class LuafyCommand {
         return 1;
     }
 
-    private static int luaCommand_execute(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+    private static int luaCommand_execute(CommandContext<ServerCommandSource> ctx, boolean threaded) throws CommandSyntaxException {
         String arg = StringArgumentType.getString(ctx, "script");
-        boolean success = execute(arg, ctx, null);
+        boolean success = execute(arg, ctx, null, threaded);
         return success ? 1 : 0;
     }
-    private static int luaCommand_executeWithContext(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+    private static int luaCommand_executeWithContext(CommandContext<ServerCommandSource> ctx, boolean threaded) throws CommandSyntaxException {
         String arg = StringArgumentType.getString(ctx, "script");
         NbtCompound nbtContext = NbtCompoundArgumentType.getNbtCompound(ctx, "context");
-        boolean success = execute(arg, ctx, nbtContext);
+        boolean success = execute(arg, ctx, nbtContext, threaded);
         return success ? 1 : 0;
     }
 
-    private static boolean execute(String id, CommandContext<ServerCommandSource> ctx, @Nullable NbtCompound nbtContext) throws CommandSyntaxException {
+    private static boolean execute(String id, CommandContext<ServerCommandSource> ctx, @Nullable NbtCompound nbtContext, boolean threaded) throws CommandSyntaxException {
         if (!ScriptManager.has(id)) {
             throw SCRIPT_NOT_EXIST.create(id);
         }
         var script = ScriptManager.get(id);
-        script.execute(ctx.getSource(), nbtContext == null ? null : BaseValueConversions.nbtObjToBase(nbtContext, s -> script.getNullBaseValue().adapt(s)));
+
+        ScriptManager.execute(
+                id,
+                ctx.getSource(),
+                nbtContext == null ? null : BaseValueConversions.nbtObjToBase(nbtContext, s -> script.getNullBaseValue().adapt(s)),
+                threaded
+        );
 
         return true;
     }
