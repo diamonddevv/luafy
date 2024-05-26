@@ -2,6 +2,7 @@ package dev.diamond.luafy.mixin;
 
 import dev.diamond.luafy.script.ScriptManager;
 import dev.diamond.luafy.script.api.CommandApi;
+import dev.diamond.luafy.script.callback.ScriptCallbacks;
 import dev.diamond.luafy.script.old.LuafyLua;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.MinecraftServer;
@@ -37,7 +38,7 @@ public abstract class MinecraftServerMixin {
 
     @Inject(method = "reloadResources", at = @At("TAIL"))
     public void luafy$runLoadCallbacks(Collection<String> dataPacks, CallbackInfoReturnable<CompletableFuture<Void>> cir) {
-        ScriptManager.executeEventCallbacks(ScriptManager.CallbackEvent.LOAD, getCommandSource(), null);
+        ScriptManager.executeEventCallbacks(ScriptCallbacks.LOAD, getCommandSource(), null);
     }
 
 
@@ -49,14 +50,14 @@ public abstract class MinecraftServerMixin {
             isDay = getWorld(ServerWorld.OVERWORLD).isDay();
         }
 
-        ScriptManager.executeEventCallbacks(ScriptManager.CallbackEvent.TICK, getCommandSource(), null);
+        ScriptManager.executeEventCallbacks(ScriptCallbacks.TICK, getCommandSource(), null);
 
         if (!lastIsDay && isDay) {
-            ScriptManager.executeEventCallbacks(ScriptManager.CallbackEvent.ON_DAY_START, getCommandSource(), null);
+            ScriptManager.executeEventCallbacks(ScriptCallbacks.ON_DAY_START, getCommandSource(), null);
         }
 
         if (lastIsDay && !isDay) {
-            ScriptManager.executeEventCallbacks(ScriptManager.CallbackEvent.ON_NIGHTFALL, getCommandSource(), null);
+            ScriptManager.executeEventCallbacks(ScriptCallbacks.ON_NIGHT_START, getCommandSource(), null);
         }
 
     }
@@ -69,10 +70,9 @@ public abstract class MinecraftServerMixin {
 
 
     @Inject(method = "startServer", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
-    private static <S extends MinecraftServer> void luafy$createServerThreadReferenceAndStartScriptThread(
+    private static <S extends MinecraftServer> void luafy$startScriptThread(
             Function<Thread, S> serverFactory, CallbackInfoReturnable<S> cir, AtomicReference atomicReference,
             Thread thread, MinecraftServer minecraftServer) {
         ScriptManager.startScriptThread();
-        ScriptManager.setServerThread(thread);
     }
 }

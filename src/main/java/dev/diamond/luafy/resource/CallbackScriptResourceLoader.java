@@ -3,8 +3,7 @@ package dev.diamond.luafy.resource;
 import com.google.gson.Gson;
 import dev.diamond.luafy.Luafy;
 import dev.diamond.luafy.script.ScriptManager;
-import dev.diamond.luafy.script.old.LuafyLua;
-import dev.diamond.luafy.script.ScriptCallbacks;
+import dev.diamond.luafy.script.callback.ScriptCallbacks;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
@@ -13,7 +12,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 public class CallbackScriptResourceLoader implements SimpleSynchronousResourceReloadListener {
-    public static final String PATH = "callbacks";
+    public static final String PATH = "luafy/callback_events";
 
     public static final Gson GSON = new Gson();
 

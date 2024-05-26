@@ -48,44 +48,10 @@ public class LuafyCommand {
                         ).then(
                                 literal("list")
                                         .executes(LuafyCommand::luaCommand_list)
-                        ).then(
-                                literal("sandbox")
-                                        .then(
-                                                argument("sandbox", StringArgumentType.string())
-                                                        .executes(LuafyCommand::luaCommand_setSandboxStrategy)
-                                        ).executes((ctx) -> luaCommand_setSandboxStrategy(ctx, true))
-                                        .then(
-                                                literal("list").executes(LuafyCommand::luaCommand_listSandboxes)
-                                        )
                         )// subcommands
         ); // root
     }
 
-
-    private static int luaCommand_setSandboxStrategy(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
-        return luaCommand_setSandboxStrategy(ctx, false);
-    }
-    private static int luaCommand_setSandboxStrategy(CommandContext<ServerCommandSource> ctx, boolean clear) throws CommandSyntaxException {
-
-
-        if (clear) {
-            LuafyConfig.GLOBAL_CONFIG.sandboxStrategy = null;
-            LuafyConfig.writeConfig();
-            ctx.getSource().sendFeedback(() -> Text.literal("Reset Lua sandbox strategy (using fallback). Please run /reload for this to take effect!"), true);
-        } else {
-
-            String arg = StringArgumentType.getString(ctx, "sandbox");
-            if (ScriptManager.SANDBOX_STRATEGIES.containsKey(arg)) {
-                LuafyConfig.GLOBAL_CONFIG.sandboxStrategy = arg;
-                LuafyConfig.writeConfig();
-                ctx.getSource().sendFeedback(() -> Text.literal("Set Lua sandbox strategy. Please run /reload for this to take effect!"), true);
-            } else {
-                throw SANDBOX_STRATEGY_NOT_EXIST.create(arg);
-            }
-        }
-
-        return 1;
-    }
 
     private static int luaCommand_execute(CommandContext<ServerCommandSource> ctx, boolean threaded) throws CommandSyntaxException {
         String arg = StringArgumentType.getString(ctx, "script");
@@ -118,13 +84,6 @@ public class LuafyCommand {
     private static int luaCommand_list(CommandContext<ServerCommandSource> ctx) {
         ctx.getSource().sendFeedback(() -> Text.literal("Total: " + ScriptManager.SCRIPTS.size()), false);
         ScriptManager.SCRIPTS.forEach((key, value) -> ctx.getSource().sendFeedback(() -> Text.literal(key), false));
-        return 1;
-    }
-
-    private static int luaCommand_listSandboxes(CommandContext<ServerCommandSource> ctx) {
-        if (LuafyConfig.GLOBAL_CONFIG.sandboxStrategy != null) ctx.getSource().sendFeedback(() -> Text.literal("Current: " + LuafyConfig.GLOBAL_CONFIG.sandboxStrategy), false);
-        ctx.getSource().sendFeedback(() -> Text.literal("Total: " + ScriptManager.SANDBOX_STRATEGIES.size()), false);
-        ScriptManager.SANDBOX_STRATEGIES.forEach((key, value) -> ctx.getSource().sendFeedback(() -> Text.literal(key), false));
         return 1;
     }
 }

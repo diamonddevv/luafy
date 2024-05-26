@@ -2,6 +2,7 @@ package dev.diamond.luafy.mixin;
 
 import dev.diamond.luafy.script.ScriptManager;
 import dev.diamond.luafy.script.api.obj.LivingEntityScriptObject;
+import dev.diamond.luafy.script.callback.ScriptCallbacks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -37,13 +38,13 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Inject(method = "onDamaged", at = @At("HEAD"))
     private void luafy$onHurt_LivingEntityContextCallbacks(DamageSource damageSource, CallbackInfo ci) {
-        ScriptManager.executeEventCallbacks(ScriptManager.CallbackEvent.ON_ENTITY_HURTS,
+        ScriptManager.executeEventCallbacks(ScriptCallbacks.ON_ENTITY_HURTS,
                 getThis().getCommandSource().withLevel(2), this::buildContext);
     }
 
     @Inject(method = "onKilledBy", at = @At("HEAD"))
     private void luafy$onDies_LivingEntityContextCallbacks(LivingEntity adversary, CallbackInfo ci) {
-        ScriptManager.executeEventCallbacks(ScriptManager.CallbackEvent.ON_ENTITY_DIES,
+        ScriptManager.executeEventCallbacks(ScriptCallbacks.ON_ENTITY_DIES,
                 getThis().getCommandSource().withLevel(2), this::buildContext);
     }
 }

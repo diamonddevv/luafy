@@ -34,7 +34,7 @@ public class LuafyConfig {
     public static class Config {
 
         @SerializedName("sandbox_strategy_id")
-        public String sandboxStrategy = null;
+        public String sandboxStrategy = "luafy:default";
 
         @SerializedName("fallback_sandbox_strategy")
         public SandboxStrategies.Strategy fallbackStrategy = DEFUALT_FALLBACK;

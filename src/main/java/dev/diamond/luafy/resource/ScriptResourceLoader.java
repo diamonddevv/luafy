@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class ScriptResourceLoader implements SimpleSynchronousResourceReloadListener {
 
-    public static final String PATH = "scripts";
+    public static final String PATH = "luafy/scripts";
 
     @Override
     public Identifier getFabricId() {

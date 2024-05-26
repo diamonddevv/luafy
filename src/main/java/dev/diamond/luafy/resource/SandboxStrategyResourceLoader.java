@@ -15,7 +15,7 @@ import java.io.InputStreamReader;
 
 public class SandboxStrategyResourceLoader implements SimpleSynchronousResourceReloadListener {
 
-    public static final String PATH = "sandboxes";
+    public static final String PATH = "luafy/sandbox_strategies";
     public static final String EXTENSION = ".json";
 
     public static final Gson gson = new Gson();
