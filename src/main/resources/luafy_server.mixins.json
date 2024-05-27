@@ -8,6 +8,7 @@
         "MinecraftServerMixin",
         "ParsedArgumentAccessor",
         "PlayerAdvancementTrackerMixin",
+        "ServerPlayerEntityMixin",
         "ServerStatHandlerMixin",
         "ServerWorldMixin"
     ],

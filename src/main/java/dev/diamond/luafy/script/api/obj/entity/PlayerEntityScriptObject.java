@@ -1,8 +1,9 @@
-package dev.diamond.luafy.script.api.obj;
+package dev.diamond.luafy.script.api.obj.entity;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dev.diamond.luafy.script.abstraction.AdaptableFunction;
+import dev.diamond.luafy.script.api.obj.ItemStackScriptObject;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.Arrays;
@@ -24,6 +25,7 @@ public class PlayerEntityScriptObject extends LivingEntityScriptObject {
 
         set.put("dump_statistics", args -> dumpStats());
         set.put("get_ender_items", args -> getEnderItems());
+        set.put("get_inventory_items", args -> getInventory());
     }
 
     private JsonObject dumpStats() {
@@ -37,6 +39,15 @@ public class PlayerEntityScriptObject extends LivingEntityScriptObject {
         ItemStackScriptObject[] arr = new ItemStackScriptObject[enderchest.size()];
         int i = 0;
         for (var stack : enderchest) { arr[i] = new ItemStackScriptObject(stack); i++; }
+        return Arrays.stream(arr).toList();
+    }
+
+    private Collection<ItemStackScriptObject> getInventory() {
+        var invSize = player.getInventory().size();
+        ItemStackScriptObject[] arr = new ItemStackScriptObject[invSize];
+        for (int i = 0; i < invSize; i++) {
+            arr[i] = new ItemStackScriptObject(player.getInventory().getStack(i));
+        }
         return Arrays.stream(arr).toList();
     }
 }

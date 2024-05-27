@@ -5,9 +5,9 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
-import dev.diamond.luafy.config.LuafyConfig;
 import dev.diamond.luafy.script.ScriptManager;
 import dev.diamond.luafy.script.abstraction.BaseValueConversions;
+import dev.diamond.luafy.script.callback.ScriptCallbackEvent;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.NbtCompoundArgumentType;
 import net.minecraft.nbt.NbtCompound;
@@ -33,7 +33,7 @@ public class LuafyCommand {
                         .then(
                                 literal("execute")
                                         .then(
-                                                argument("script", StringArgumentType.string())
+                                                argument("subscription", StringArgumentType.string())
                                                         .then(
                                                                 argument("context", NbtCompoundArgumentType.nbtCompound())
                                                                         .executes(s -> luaCommand_executeWithContext(s, false))
@@ -47,29 +47,55 @@ public class LuafyCommand {
                                         ) // execute branch
                         ).then(
                                 literal("list")
-                                        .executes(LuafyCommand::luaCommand_list)
-                        )// subcommands
+                                        .then(
+                                                literal("scripts").executes(LuafyCommand::luaCommand_listScripts)
+                                        ).then(
+                                                literal("events").then(argument("event", StringArgumentType.string()).executes(LuafyCommand::luaCommand_listEvents))
+                                        ) // lists
+                        ) // subcommands
         ); // root
     }
 
 
     private static int luaCommand_execute(CommandContext<ServerCommandSource> ctx, boolean threaded) throws CommandSyntaxException {
-        String arg = StringArgumentType.getString(ctx, "script");
+        String arg = StringArgumentType.getString(ctx, "subscription");
         boolean success = execute(arg, ctx, null, threaded);
         return success ? 1 : 0;
     }
     private static int luaCommand_executeWithContext(CommandContext<ServerCommandSource> ctx, boolean threaded) throws CommandSyntaxException {
-        String arg = StringArgumentType.getString(ctx, "script");
+        String arg = StringArgumentType.getString(ctx, "subscription");
         NbtCompound nbtContext = NbtCompoundArgumentType.getNbtCompound(ctx, "context");
         boolean success = execute(arg, ctx, nbtContext, threaded);
         return success ? 1 : 0;
     }
 
+    private static int luaCommand_listScripts(CommandContext<ServerCommandSource> ctx) {
+        ctx.getSource().sendFeedback(() -> Text.literal("Total: " + ScriptManager.SCRIPTS.size()), false);
+        ScriptManager.SCRIPTS.forEach((key, value) -> ctx.getSource().sendFeedback(() -> Text.literal(key), false));
+        return 1;
+    }
+    private static int luaCommand_listEvents(CommandContext<ServerCommandSource> ctx) {
+        ScriptCallbackEvent event = ScriptCallbackEvent.fromStringId(StringArgumentType.getString(ctx, "event"));
+
+        ctx.getSource().sendFeedback(() -> Text.literal("Event: " + event.toString()), false);
+
+        ctx.getSource().sendFeedback(() ->
+                        Text.literal("Subscribed Scripts (" + ScriptManager.EVENT_CALLBACKS.get(event).size() + "): "), false
+        );
+
+        ScriptManager.EVENT_CALLBACKS.get(event)
+                .forEach(subscription -> ctx.getSource()
+                        .sendFeedback(() -> Text.literal(subscription.getScriptId()), false)
+                );
+        return 1;
+    }
+
+    //
     private static boolean execute(String id, CommandContext<ServerCommandSource> ctx, @Nullable NbtCompound nbtContext, boolean threaded) throws CommandSyntaxException {
-        if (!ScriptManager.has(id)) {
+        if (!ScriptManager.hasScript(id)) {
             throw SCRIPT_NOT_EXIST.create(id);
         }
-        var script = ScriptManager.get(id);
+        var script = ScriptManager.getScript(id);
 
         ScriptManager.execute(
                 id,
@@ -79,11 +105,5 @@ public class LuafyCommand {
         );
 
         return true;
-    }
-
-    private static int luaCommand_list(CommandContext<ServerCommandSource> ctx) {
-        ctx.getSource().sendFeedback(() -> Text.literal("Total: " + ScriptManager.SCRIPTS.size()), false);
-        ScriptManager.SCRIPTS.forEach((key, value) -> ctx.getSource().sendFeedback(() -> Text.literal(key), false));
-        return 1;
     }
 }

@@ -4,20 +4,20 @@ import com.mojang.brigadier.ParseResults;
 import dev.diamond.luafy.config.LuafyConfig;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
 import dev.diamond.luafy.script.abstraction.ScriptExecution;
-import dev.diamond.luafy.script.api.obj.EntityScriptObject;
+import dev.diamond.luafy.script.api.obj.entity.EntityScriptObject;
+import dev.diamond.luafy.script.callback.CallbackEventSubscription;
 import dev.diamond.luafy.script.callback.ScriptCallbackEvent;
 import dev.diamond.luafy.script.callback.ScriptCallbacks;
 import dev.diamond.luafy.util.HexId;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.util.Pair;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class ScriptManager {
-
 
 
     public enum ExplicitType {
@@ -36,16 +36,21 @@ public class ScriptManager {
     }
 
 
-    public static class Caches {
+    // Caches for data used BY scripts
+    public static class ScriptCaches {
         public static HashMap<HexId, ParseResults<ServerCommandSource>> PREPARSED_COMMANDS = new HashMap<>();
         public static HashMap<HexId, List<EntityScriptObject>> GROUPED_ENTITIES = new HashMap<>();
     }
 
+    // Script-Related Resource Caches
     public static final HashMap<String, AbstractScript<?>> SCRIPTS = new HashMap<>();
-    public static final Collection<ScriptCallbacks.CallbackScriptBean> CALLBACKS = new ArrayList<>();
+    public static final Collection<ScriptCallbacks.CallbackScriptBean> CALLBACK_FILES = new ArrayList<>();
     public static final HashMap<String, SandboxStrategies.Strategy> SANDBOX_STRATEGIES = new HashMap<>();
-    public static final HashMap<ScriptCallbackEvent, Collection<Pair<String, Boolean>>> EVENT_CALLBACKS = new HashMap<>();
 
+    // Callbacks
+    public static final HashMap<ScriptCallbackEvent, Collection<CallbackEventSubscription>> EVENT_CALLBACKS = new HashMap<>();
+
+    // Script Threading
     public static final ConcurrentLinkedQueue<ScriptExecution> SCRIPT_THREAD_EXECUTIONS = new ConcurrentLinkedQueue<>();
     private static final Thread scriptThread = new Thread(null, () -> {
        while (true) {
@@ -57,8 +62,9 @@ public class ScriptManager {
     }, "Master Script Thread");
 
 
+    // Script Executors
     public static boolean executeCurrentThread(String script, ServerCommandSource src, HashMap<?, ?> ctx) {
-        if (!has(script)) return false;
+        if (!hasScript(script)) return false;
         SCRIPTS.get(script).execute(src, ctx);
         return true;
     }
@@ -83,32 +89,36 @@ public class ScriptManager {
         return execute(script, src, null, ownThread);
     }
 
-    public static boolean has(String script) {
+    // Script Cache
+    public static boolean hasScript(String script) {
         return SCRIPTS.containsKey(script);
     }
-    public static AbstractScript<?> get(String script) {
+    public static AbstractScript<?> getScript(String script) {
         return SCRIPTS.get(script);
     }
 
+    // Callbacks
     public static void populateEventCallbacks() {
         EVENT_CALLBACKS.clear();
 
         for (var v : ScriptCallbackEvent.getAll()) EVENT_CALLBACKS.put(v, new ArrayList<>());
 
-        for (var c : CALLBACKS) {
+        for (var c : CALLBACK_FILES) {
             for (ScriptCallbacks.CallbackEventBean eventCallback : c.eventCallbacks) {
                 ScriptCallbackEvent event = ScriptCallbackEvent.fromStringId(eventCallback.id);
                 if (event != null) {
-                    EVENT_CALLBACKS.get(event).addAll(eventCallback.scriptIds.stream().map(s -> new Pair<>(s, eventCallback.ownThread)).toList());
+                    EVENT_CALLBACKS.get(event).addAll(eventCallback.scriptIds.stream().map(s ->
+                            CallbackEventSubscription.of(s, eventCallback.ownThread)).toList());
                 }
             }
         }
     }
-    public static void executeEventCallbacks(ScriptCallbackEvent event, ServerCommandSource src, @Nullable Function<Void, HashMap<?, ?>> ctxBuilder) {
+    public static void executeEventCallbacks(ScriptCallbackEvent event, ServerCommandSource src, @Nullable Consumer<HashMap<String, Object>> ctxBuilder) {
 
-        HashMap<?, ?> ctx;
+        HashMap<String, Object> ctx;
         if (ctxBuilder != null) {
-            ctx = ctxBuilder.apply(null);
+            ctx = new HashMap<>();
+            ctxBuilder.accept(ctx);
         } else {
             ctx = null;
         }
@@ -116,10 +126,18 @@ public class ScriptManager {
         if (!ScriptManager.EVENT_CALLBACKS.containsKey(event)) return;
 
         ScriptManager.EVENT_CALLBACKS.get(event)
-                .forEach(s -> ScriptManager.execute(s.getLeft(), src, ctx, s.getRight()));
+                .forEach(s -> ScriptManager.execute(s.getScriptId(), src, ctx, s.usesOwnThread()));
+    }
+
+    public static void subscribeEvent(ScriptCallbackEvent event, String scriptId, boolean usesOwnThread) {
+        EVENT_CALLBACKS.get(event).add(CallbackEventSubscription.of(scriptId, usesOwnThread));
+    }
+    public static void unsubscribeEvent(ScriptCallbackEvent event, String scriptId) {
+        EVENT_CALLBACKS.get(event).removeIf(e -> Objects.equals(e.getScriptId(), scriptId));
     }
 
 
+    // Threading
     public static void startScriptThread() {
         scriptThread.start();
     }

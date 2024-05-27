@@ -2,18 +2,26 @@ package dev.diamond.luafy.script.api;
 
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import dev.diamond.luafy.Luafy;
 import dev.diamond.luafy.script.ScriptManager;
-import dev.diamond.luafy.script.abstraction.api.AbstractScriptApi;
 import dev.diamond.luafy.script.abstraction.AdaptableFunction;
+import dev.diamond.luafy.script.abstraction.api.AbstractScriptApi;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
-import dev.diamond.luafy.script.api.obj.EntityScriptObject;
-import dev.diamond.luafy.script.api.obj.PlayerEntityScriptObject;
+import dev.diamond.luafy.script.api.obj.entity.EntityScriptObject;
+import dev.diamond.luafy.script.api.obj.entity.PlayerEntityScriptObject;
+import dev.diamond.luafy.script.api.obj.math.Vec3dScriptObject;
 import dev.diamond.luafy.util.HexId;
 import net.minecraft.command.EntitySelector;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.StringNbtReader;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -65,18 +73,45 @@ public class ServerApi extends AbstractScriptApi {
 
         f.put("group_entities", args -> {
             var entities = selectEntities(true, args[0].asString()).stream().map(EntityScriptObject::new).toList();
-            var hexid = HexId.makeNewUnique(ScriptManager.Caches.GROUPED_ENTITIES.keySet());
-            ScriptManager.Caches.GROUPED_ENTITIES.put(hexid, entities);
+            var hexid = HexId.makeNewUnique(ScriptManager.ScriptCaches.GROUPED_ENTITIES.keySet());
+            ScriptManager.ScriptCaches.GROUPED_ENTITIES.put(hexid, entities);
             return hexid;
         });
-        f.put("get_entity_group", args -> HexId.fromString(args[0].asString()).getHashed(ScriptManager.Caches.GROUPED_ENTITIES));
+        f.put("get_entity_group", args -> HexId.fromString(args[0].asString()).getHashed(ScriptManager.ScriptCaches.GROUPED_ENTITIES));
         f.put("remove_entity_group", args -> {
-            ScriptManager.Caches.GROUPED_ENTITIES.remove(HexId.fromString(args[0].asString()));
+            ScriptManager.ScriptCaches.GROUPED_ENTITIES.remove(HexId.fromString(args[0].asString()));
             return null;
         });
 
         f.put("get_world_time", args -> script.source.getWorld().getTime());
         f.put("get_days", args -> script.source.getWorld().getTimeOfDay() / 24000L);
+
+        f.put("create_entity", args -> {
+            String entityId = args[0].asString();
+            Vec3d pos = ((Vec3dScriptObject) args[1].asScriptObjectIfPresent().get()).get();
+            String snbt = args.length > 2 ? args[2].asString() : null;
+
+            NbtCompound compound = new NbtCompound();
+            if (snbt != null) {
+                try {
+                    compound = StringNbtReader.parse(snbt);
+                } catch (CommandSyntaxException cse) {
+                    Luafy.LOGGER.error("Could not parse SNBT ({}): " + cse, snbt);
+                }
+            }
+            compound.putString("id", entityId);
+
+            ServerWorld world = script.source.getWorld();
+            Entity entity = EntityType.loadEntityWithPassengers(compound, world, (e) -> {
+                e.refreshPositionAndAngles(pos.x, pos.y, pos.z, e.getYaw(), e.getPitch());
+                return e;
+            });
+
+            if (entity != null) {
+                world.spawnNewEntityAndPassengers(entity);
+            }
+            return null;
+        });
 
         return f;
     }

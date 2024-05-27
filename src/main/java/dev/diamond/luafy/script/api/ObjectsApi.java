@@ -3,29 +3,21 @@ package dev.diamond.luafy.script.api;
 import dev.diamond.luafy.script.abstraction.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.api.AbstractScriptApi;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
+import dev.diamond.luafy.script.api.obj.math.Vec3dScriptObject;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.HashMap;
 
-public class ContextApi extends AbstractScriptApi {
-    public ContextApi(AbstractScript<?> script) {
-        super(script, "context");
+public class ObjectsApi extends AbstractScriptApi {
+    public ObjectsApi(AbstractScript<?> script) {
+        super(script, "objects");
     }
-
 
     @Override
     public HashMap<String, AdaptableFunction> getFunctions() {
         HashMap<String, AdaptableFunction> f = new HashMap<>();
 
-        f.put("get", args -> {
-            if (script.contextMap != null) {
-                return script.contextMap;
-            } else return null;
-        });
-
-        f.put("set_outctx", args ->  {
-            script.outContextMap = args[0].asMap();
-            return null;
-        });
+        f.put("vec", args -> new Vec3dScriptObject(new Vec3d(args[0].asDouble(), args[1].asDouble(), args[2].asDouble())));
 
         return f;
     }

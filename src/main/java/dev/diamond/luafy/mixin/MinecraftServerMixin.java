@@ -1,9 +1,7 @@
 package dev.diamond.luafy.mixin;
 
 import dev.diamond.luafy.script.ScriptManager;
-import dev.diamond.luafy.script.api.CommandApi;
 import dev.diamond.luafy.script.callback.ScriptCallbacks;
-import dev.diamond.luafy.script.old.LuafyLua;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
@@ -23,7 +21,6 @@ import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 @Mixin(MinecraftServer.class)
@@ -70,9 +67,10 @@ public abstract class MinecraftServerMixin {
 
 
     @Inject(method = "startServer", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
-    private static <S extends MinecraftServer> void luafy$startScriptThread(
+    private static <S extends MinecraftServer> void luafy$startScriptThreadAndRunLoad(
             Function<Thread, S> serverFactory, CallbackInfoReturnable<S> cir, AtomicReference atomicReference,
             Thread thread, MinecraftServer minecraftServer) {
         ScriptManager.startScriptThread();
+        ScriptManager.executeEventCallbacks(ScriptCallbacks.LOAD, minecraftServer.getCommandSource(), null);
     }
 }

@@ -1,9 +1,10 @@
-package dev.diamond.luafy.script.api.obj;
+package dev.diamond.luafy.script.api.obj.entity;
 
 import dev.diamond.luafy.script.ScriptManager;
 import dev.diamond.luafy.script.abstraction.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.obj.IScriptObject;
 import dev.diamond.luafy.script.api.CommandApi;
+import dev.diamond.luafy.script.api.obj.math.Vec3dScriptObject;
 import dev.diamond.luafy.script.nbt.OptionallyExplicitNbtElement;
 import dev.diamond.luafy.util.HexId;
 import dev.diamond.luafy.util.LuafyUtil;
@@ -33,20 +34,10 @@ public class EntityScriptObject implements IScriptObject {
         set.put("get_nbt", args -> new OptionallyExplicitNbtElement(null, NbtPredicate.entityToNbt(entity)));
         set.put("get_type", args -> Registries.ENTITY_TYPE.getId(entity.getType()).toString());
 
-        set.put("get_position", args -> {
-            Collection<Double> doubles = new ArrayList<>();
-            doubles.add(entity.getX());
-            doubles.add(entity.getY());
-            doubles.add(entity.getZ());
-            return doubles;
-        });
+        set.put("get_position", args -> new Vec3dScriptObject(entity.getPos()));
 
-        set.put("get_rotation", args -> {
-            Collection<Float> floats = new ArrayList<>();
-            floats.add(entity.getPitch());
-            floats.add(entity.getYaw());
-            return floats;
-        });
+        set.put("get_pitch", args -> entity.getPitch());
+        set.put("get_yaw", args -> entity.getYaw());
 
         set.put("parse_command_as_at", args -> parseAsAt(args[0].asString(), args[1] == null ? 0 : args[1].asInt()));
 
@@ -70,8 +61,8 @@ public class EntityScriptObject implements IScriptObject {
 
         var parsed = CommandApi.parseCommand(command, source);
 
-        HexId hexid = HexId.makeNewUnique(ScriptManager.Caches.PREPARSED_COMMANDS.keySet());
-        ScriptManager.Caches.PREPARSED_COMMANDS.put(hexid, parsed);
+        HexId hexid = HexId.makeNewUnique(ScriptManager.ScriptCaches.PREPARSED_COMMANDS.keySet());
+        ScriptManager.ScriptCaches.PREPARSED_COMMANDS.put(hexid, parsed);
         return hexid;
     }
 }

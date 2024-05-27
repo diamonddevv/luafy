@@ -24,7 +24,7 @@ public class CallbackScriptResourceLoader implements SimpleSynchronousResourceRe
     @Override
     public void reload(ResourceManager manager) {
         // Clear Cache Phase
-        ScriptManager.CALLBACKS.clear();
+        ScriptManager.CALLBACK_FILES.clear();
 
         // Read Phase - path is root
         for (Identifier id : manager.findResources(PATH, path -> path.getPath().endsWith(".json")).keySet()) {
@@ -37,7 +37,7 @@ public class CallbackScriptResourceLoader implements SimpleSynchronousResourceRe
 
                     ScriptCallbacks.CallbackScriptBean bean = GSON.fromJson(s, ScriptCallbacks.CallbackScriptBean.class);
 
-                    ScriptManager.CALLBACKS.add(bean);
+                    ScriptManager.CALLBACK_FILES.add(bean);
                     ScriptManager.populateEventCallbacks();
                 } catch (Exception e) {
                     Luafy.LOGGER.error("Error occurred while loading Callbacks " + id.toString(), e);

@@ -18,6 +18,7 @@ public class ScriptCallbacks {
     public static final ScriptCallbackEvent ON_ITEM_USED =              new ScriptCallbackEvent(Luafy.id("item_used"));
     public static final ScriptCallbackEvent ON_STAT_CHANGED =           new ScriptCallbackEvent(Luafy.id("stat_changes"));
     public static final ScriptCallbackEvent ON_GAME_EVENT =             new ScriptCallbackEvent(Luafy.id("game_event_emits"));
+    public static final ScriptCallbackEvent TRY_ATTACK =                new ScriptCallbackEvent(Luafy.id("try_attack"));
 
     public static void registerAll() {
         TICK.register();
@@ -31,6 +32,7 @@ public class ScriptCallbacks {
         ON_ITEM_USED.register();
         ON_STAT_CHANGED.register();
         ON_GAME_EVENT.register();
+        TRY_ATTACK.register();
     }
 
 

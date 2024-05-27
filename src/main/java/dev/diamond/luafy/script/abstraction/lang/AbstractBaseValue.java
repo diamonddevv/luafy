@@ -35,6 +35,10 @@ public abstract class AbstractBaseValue
     public Collection<BaseValue> asCollection() { return null; }
 
     public <T> T as(Class<T> clazz) { return clazz.cast(value); }
+    public <T extends IScriptObject> T asScriptObjectAssertive(Class<T> clazz) {
+        return asScriptObjectIfPresent().map(clazz::cast).orElse(null);
+    }
+
 
     public AbstractBaseValue<?, ?> asBase() { return this; }
     public abstract Object asJavaObject();

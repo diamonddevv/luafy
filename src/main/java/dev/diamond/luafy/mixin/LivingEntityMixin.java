@@ -1,7 +1,7 @@
 package dev.diamond.luafy.mixin;
 
 import dev.diamond.luafy.script.ScriptManager;
-import dev.diamond.luafy.script.api.obj.LivingEntityScriptObject;
+import dev.diamond.luafy.script.api.obj.entity.LivingEntityScriptObject;
 import dev.diamond.luafy.script.callback.ScriptCallbacks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -23,11 +23,9 @@ public abstract class LivingEntityMixin extends Entity {
     }
 
     @Unique
-    private HashMap<?, ?> buildContext(Void v) {
-        HashMap<String, LivingEntityScriptObject> c = new HashMap<>();
-        c.put("this", new LivingEntityScriptObject(getThis()));
-        c.put("last_attacker", new LivingEntityScriptObject(getThis().getLastAttacker()));
-        return c;
+    private void buildContext(HashMap<String, Object> v) {
+        v.put("this", new LivingEntityScriptObject(getThis()));
+        v.put("last_attacker", new LivingEntityScriptObject(getThis().getLastAttacker()));
     }
 
     @Unique

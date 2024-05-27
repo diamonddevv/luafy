@@ -7,7 +7,7 @@ import dev.diamond.luafy.script.abstraction.BaseValueConversions;
 import dev.diamond.luafy.script.abstraction.lang.AbstractBaseValue;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
 import dev.diamond.luafy.script.nbt.OptionallyExplicitNbtElement;
-import dev.diamond.luafy.script.api.obj.StorageScriptObject;
+import dev.diamond.luafy.script.api.obj.util.StorageScriptObject;
 import net.minecraft.command.DataCommandStorage;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;

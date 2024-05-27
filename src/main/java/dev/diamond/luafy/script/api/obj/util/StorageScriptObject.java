@@ -1,4 +1,4 @@
-package dev.diamond.luafy.script.api.obj;
+package dev.diamond.luafy.script.api.obj.util;
 
 import dev.diamond.luafy.script.ScriptManager;
 import dev.diamond.luafy.script.abstraction.AdaptableFunction;

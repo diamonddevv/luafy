@@ -16,14 +16,10 @@ import net.minecraft.server.command.ServerCommandSource;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 public class CommandApi extends AbstractScriptApi {
-
-
-    public static ArrayList<Consumer<Void>> COMMAND_QUEUE = new ArrayList<>();
 
     public CommandApi(AbstractScript<?> script) {
         super(script, "command");
@@ -40,34 +36,34 @@ public class CommandApi extends AbstractScriptApi {
 
         f.put("parse", args -> {
             var parsed = parseCommand(args[0].asString(), script.source);
-            var hexid = HexId.makeNewUnique(ScriptManager.Caches.PREPARSED_COMMANDS.keySet());
-            ScriptManager.Caches.PREPARSED_COMMANDS.put(hexid, parsed);
+            var hexid = HexId.makeNewUnique(ScriptManager.ScriptCaches.PREPARSED_COMMANDS.keySet());
+            ScriptManager.ScriptCaches.PREPARSED_COMMANDS.put(hexid, parsed);
 
             return hexid;
         });
 
         f.put("get_preparsed_argument", args -> {
             var hi = HexId.fromString(args[0].asString());
-            var parsed = hi.getHashed(ScriptManager.Caches.PREPARSED_COMMANDS);
+            var parsed = hi.getHashed(ScriptManager.ScriptCaches.PREPARSED_COMMANDS);
             return getArgument(parsed, args[1].asString());
         });
 
         f.put("modify_preparsed_argument", args -> {
             var hi = HexId.fromString(args[0].asString());
-            var parsed = hi.getHashed(ScriptManager.Caches.PREPARSED_COMMANDS);
+            var parsed = hi.getHashed(ScriptManager.ScriptCaches.PREPARSED_COMMANDS);
             modifyArgument(parsed, args[1].asString(), args[2]);
             return null;
         });
 
         f.put("execute_preparsed", args -> {
             var hi = HexId.fromString(args[0].asString());
-            var parse = hi.getHashed(ScriptManager.Caches.PREPARSED_COMMANDS);
+            var parse = hi.getHashed(ScriptManager.ScriptCaches.PREPARSED_COMMANDS);
             return executeCommand(parse, script.source);
         });
 
         f.put("free_preparsed", args -> {
             var hi = HexId.fromString(args[0].asString());
-            hi.removeHashed(ScriptManager.Caches.PREPARSED_COMMANDS);
+            hi.removeHashed(ScriptManager.ScriptCaches.PREPARSED_COMMANDS);
             return null;
         });
 

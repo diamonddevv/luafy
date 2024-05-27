@@ -1,7 +1,7 @@
 package dev.diamond.luafy.mixin;
 
 import dev.diamond.luafy.script.ScriptManager;
-import dev.diamond.luafy.script.api.obj.AdvancementEntryScriptObject;
+import dev.diamond.luafy.script.api.obj.util.AdvancementEntryScriptObject;
 import dev.diamond.luafy.script.callback.ScriptCallbacks;
 import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.advancement.PlayerAdvancementTracker;
@@ -24,10 +24,8 @@ public class PlayerAdvancementTrackerMixin {
     private void luafy$runAdvancementCallbacks(AdvancementEntry advancement, String criterionName, CallbackInfoReturnable<Boolean> cir) {
         // this is executed after the check if all criteria are completed
 
-        ScriptManager.executeEventCallbacks(ScriptCallbacks.ON_ADVANCEMENT_OBTAINED, owner.getCommandSource().withLevel(2), voidArg -> {
-            HashMap<String, AdvancementEntryScriptObject> ctx = new HashMap<>();
-            ctx.put("advancement", new AdvancementEntryScriptObject(advancement));
-            return ctx;
+        ScriptManager.executeEventCallbacks(ScriptCallbacks.ON_ADVANCEMENT_OBTAINED, owner.getCommandSource().withLevel(2), v -> {
+            v.put("advancement", new AdvancementEntryScriptObject(advancement));
         });
     }
 }
