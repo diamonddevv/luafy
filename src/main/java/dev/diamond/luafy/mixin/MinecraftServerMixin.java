@@ -2,6 +2,7 @@ package dev.diamond.luafy.mixin;
 
 import dev.diamond.luafy.script.ScriptManager;
 import dev.diamond.luafy.script.callback.ScriptCallbacks;
+import dev.diamond.luafy.util.RemovalMarkedRunnable;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
@@ -59,11 +60,13 @@ public abstract class MinecraftServerMixin {
 
     }
 
-//    @Inject(method = "tick", at = @At("TAIL"))
-//    private void luafy$executeCachedCommands(BooleanSupplier shouldKeepTicking, CallbackInfo ci) {
-//        CommandApi.COMMAND_QUEUE.forEach((c) -> c.accept(null));
-//        CommandApi.COMMAND_QUEUE.clear();
-//    }
+    @Inject(method = "runServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;tick(Ljava/util/function/BooleanSupplier;)V"))
+    private void luafy$executeServerExecutions(CallbackInfo ci) {
+        if (!ScriptManager.SERVER_THREAD_EXECUTIONS.isEmpty()) {
+            ScriptManager.SERVER_THREAD_EXECUTIONS.forEach(RemovalMarkedRunnable::run);
+        }
+        ScriptManager.SERVER_THREAD_EXECUTIONS.removeIf(RemovalMarkedRunnable::markedForRemoval);
+    }
 
 
     @Inject(method = "startServer", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)

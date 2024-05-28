@@ -1,6 +1,7 @@
 package dev.diamond.luafy.script.abstraction.lang;
 
 import com.google.gson.JsonElement;
+import dev.diamond.luafy.script.abstraction.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.BaseValueConversions;
 import dev.diamond.luafy.script.abstraction.obj.IScriptObject;
 import dev.diamond.luafy.script.abstraction.obj.ScriptObjectProvider;
@@ -26,13 +27,16 @@ public abstract class AbstractBaseValue
 
     public abstract String asString();
     public abstract Object getLangNull();
+    public abstract AdaptableFunction asFunction();
+    public abstract HashMap<BaseValue, BaseValue> asMap();
+    public abstract Collection<BaseValue> asCollection();
+    public abstract Object asJavaObject();
+
     public int asInt() { return 0; }
     public long asLong() { return 0; }
     public float asFloat() { return 0; }
     public double asDouble() { return 0; }
     public boolean asBoolean() { return false; }
-    public HashMap<BaseValue, BaseValue> asMap() { return null; }
-    public Collection<BaseValue> asCollection() { return null; }
 
     public <T> T as(Class<T> clazz) { return clazz.cast(value); }
     public <T extends IScriptObject> T asScriptObjectAssertive(Class<T> clazz) {
@@ -41,18 +45,20 @@ public abstract class AbstractBaseValue
 
 
     public AbstractBaseValue<?, ?> asBase() { return this; }
-    public abstract Object asJavaObject();
 
-    public boolean isString() { return false; }
-    public boolean isInt() { return false; }
-    public boolean isLong() { return false; }
-    public boolean isFloat() { return false; }
-    public boolean isDouble() { return false; }
-    public boolean isBool() { return false; }
-    public boolean isMap() { return false; }
-    public boolean isCollection() { return false; }
+
+    public abstract boolean isString();
+    public abstract boolean isInt();
+    public abstract boolean isLong();
+    public abstract boolean isFloat();
+    public abstract boolean isDouble();
+    public abstract boolean isBool();
+    public abstract boolean isMap();
+    public abstract boolean isCollection();
+    public abstract boolean isFunction();
+
+
     public boolean isNull() { return value == null || value == getLangNull(); }
-
     public <T> boolean is(Class<T> clazz) {
         return value.getClass() == clazz;
     }

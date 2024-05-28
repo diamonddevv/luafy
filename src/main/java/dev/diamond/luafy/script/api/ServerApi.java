@@ -6,11 +6,13 @@ import dev.diamond.luafy.Luafy;
 import dev.diamond.luafy.script.ScriptManager;
 import dev.diamond.luafy.script.abstraction.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.api.AbstractScriptApi;
+import dev.diamond.luafy.script.abstraction.lang.AbstractBaseValue;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
 import dev.diamond.luafy.script.api.obj.entity.EntityScriptObject;
 import dev.diamond.luafy.script.api.obj.entity.PlayerEntityScriptObject;
 import dev.diamond.luafy.script.api.obj.math.Vec3dScriptObject;
 import dev.diamond.luafy.util.HexId;
+import dev.diamond.luafy.util.RemovalMarkedRunnable;
 import net.minecraft.command.EntitySelector;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.Entity;
@@ -86,31 +88,12 @@ public class ServerApi extends AbstractScriptApi {
         f.put("get_world_time", args -> script.source.getWorld().getTime());
         f.put("get_days", args -> script.source.getWorld().getTimeOfDay() / 24000L);
 
-        f.put("create_entity", args -> {
-            String entityId = args[0].asString();
-            Vec3d pos = ((Vec3dScriptObject) args[1].asScriptObjectIfPresent().get()).get();
-            String snbt = args.length > 2 ? args[2].asString() : null;
-
-            NbtCompound compound = new NbtCompound();
-            if (snbt != null) {
-                try {
-                    compound = StringNbtReader.parse(snbt);
-                } catch (CommandSyntaxException cse) {
-                    Luafy.LOGGER.error("Could not parse SNBT ({}): " + cse, snbt);
-                }
-            }
-            compound.putString("id", entityId);
-
-            ServerWorld world = script.source.getWorld();
-            Entity entity = EntityType.loadEntityWithPassengers(compound, world, (e) -> {
-                e.refreshPositionAndAngles(pos.x, pos.y, pos.z, e.getYaw(), e.getPitch());
-                return e;
-            });
-
-            if (entity != null) {
-                world.spawnNewEntityAndPassengers(entity);
-            }
-            return null;
+        f.put("run_on_server_thread", args -> {
+           AdaptableFunction function = args[0].asFunction();
+           AbstractBaseValue<?, ?>[] callArgs = new AbstractBaseValue<?, ?>[args.length - 1];
+           System.arraycopy(args, 1, callArgs, 0, callArgs.length);
+           ScriptManager.SERVER_THREAD_EXECUTIONS.add(RemovalMarkedRunnable.of(() -> function.call(callArgs)));
+           return null;
         });
 
         return f;

@@ -21,7 +21,7 @@ public class SandboxStrategies {
     private static final String[] ALL =
             {
                     "lua_base", "lua_package", "lua_bit32", "lua_table", "lua_string", "lua_coroutine", "lua_math", "lua_io", "lua_os", "lua_luajava",
-                    "luafy", "command", "server", "context", "storage", "script"
+                    "luafy", "command", "server", "context", "storage", "script", "threads"
             };
 
     private static List<String> parseStrategy(Strategy strategy) {
@@ -66,7 +66,7 @@ public class SandboxStrategies {
                 case "context" ->       script.addApi(ContextApi::new);
                 case "storage" ->       script.addApi(StorageApi::new);
                 case "script" ->        script.addApi(ScriptApi::new);
-                case "objects" ->           script.addApi(ObjectsApi::new);
+                case "threads" ->       script.addApi(ThreadsApi::new);
 
             }
         }

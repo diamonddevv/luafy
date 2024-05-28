@@ -59,9 +59,18 @@ public class LuaBaseValue extends AbstractBaseValue<LuaValue, LuaBaseValue> {
         }
         return collection;
     }
+    @Override public AdaptableFunction asFunction() {
+        var f = value.checkfunction();
+        return args -> {
+            LuaValue[] values = new LuaValue[args.length];
+            for (int i = 0; i < values.length; i++) {
+                values[i] = (LuaValue) args[i].value;
+            }
+            return f.invoke(values);
+        };
+    }
 
-    @Override
-    public Object asJavaObject() {
+    @Override public Object asJavaObject() {
         return LuaTypeConversions.luaToObj(value);
     }
 
@@ -99,6 +108,9 @@ public class LuaBaseValue extends AbstractBaseValue<LuaValue, LuaBaseValue> {
             }
             return allNumbers;
         }
+    }
+    @Override public boolean isFunction() {
+        return value.isfunction();
     }
 
     @Override

@@ -9,13 +9,13 @@ import dev.diamond.luafy.script.callback.CallbackEventSubscription;
 import dev.diamond.luafy.script.callback.ScriptCallbackEvent;
 import dev.diamond.luafy.script.callback.ScriptCallbacks;
 import dev.diamond.luafy.util.HexId;
+import dev.diamond.luafy.util.RemovalMarkedRunnable;
 import net.minecraft.server.command.ServerCommandSource;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class ScriptManager {
 
@@ -52,6 +52,8 @@ public class ScriptManager {
 
     // Script Threading
     public static final ConcurrentLinkedQueue<ScriptExecution> SCRIPT_THREAD_EXECUTIONS = new ConcurrentLinkedQueue<>();
+    public static final ConcurrentLinkedQueue<RemovalMarkedRunnable> SERVER_THREAD_EXECUTIONS = new ConcurrentLinkedQueue<>();
+
     private static final Thread scriptThread = new Thread(null, () -> {
        while (true) {
            if (!SCRIPT_THREAD_EXECUTIONS.isEmpty()) {
@@ -69,6 +71,7 @@ public class ScriptManager {
         return true;
     }
     public static boolean execute(String script, ServerCommandSource src, HashMap<?, ?> ctx, boolean ownThread) {
+
         if (LuafyConfig.GLOBAL_CONFIG.scriptThreading) {
             if (ownThread) {
 

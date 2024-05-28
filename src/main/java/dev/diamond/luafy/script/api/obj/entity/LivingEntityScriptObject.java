@@ -27,6 +27,14 @@ public class LivingEntityScriptObject extends EntityScriptObject {
         set.put("get_chest_stack", args -> getStack(EquipmentSlot.CHEST));
         set.put("get_legs_stack", args -> getStack(EquipmentSlot.LEGS));
         set.put("get_feet_stack", args -> getStack(EquipmentSlot.FEET));
+
+
+        set.put("ignite", args -> {
+            living.setFireTicks(args[0].asInt());
+            living.setOnFire(true);
+            return null;
+        });
+        set.put("extinguish", args -> { living.setOnFire(false); return null; });
     }
 
 
