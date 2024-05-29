@@ -4,8 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import dev.diamond.luafy.Luafy;
 import dev.diamond.luafy.script.ScriptManager;
-import dev.diamond.luafy.script.old.LuafyLua;
-import dev.diamond.luafy.script.SandboxStrategies;
+import dev.diamond.luafy.script.registry.sandbox.Strategy;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
@@ -37,8 +36,8 @@ public class SandboxStrategyResourceLoader implements SimpleSynchronousResourceR
                 try (InputStream stream = manager.getResource(id).get().getInputStream()) {
                     // Consume stream
 
-                    SandboxStrategies.Strategy strategy =
-                            gson.fromJson(new JsonReader(new InputStreamReader(stream)), SandboxStrategies.Strategy.class);
+                    Strategy strategy =
+                            gson.fromJson(new JsonReader(new InputStreamReader(stream)), Strategy.class);
 
 
                     int pfLen = (PATH + "/").length();

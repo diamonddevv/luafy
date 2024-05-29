@@ -2,7 +2,7 @@ package dev.diamond.luafy.mixin;
 
 import dev.diamond.luafy.script.ScriptManager;
 import dev.diamond.luafy.script.api.obj.entity.PlayerEntityScriptObject;
-import dev.diamond.luafy.script.callback.ScriptCallbacks;
+import dev.diamond.luafy.script.registry.callback.ScriptCallbacks;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Hand;

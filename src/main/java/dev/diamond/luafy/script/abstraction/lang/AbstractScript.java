@@ -3,6 +3,7 @@ package dev.diamond.luafy.script.abstraction.lang;
 import dev.diamond.luafy.script.abstraction.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.api.ApiProvider;
 import dev.diamond.luafy.script.abstraction.obj.ScriptObjectProvider;
+import dev.diamond.luafy.script.registry.lang.ScriptLanguage;
 import net.minecraft.server.command.FunctionCommand;
 import net.minecraft.server.command.ServerCommandSource;
 
@@ -19,6 +20,7 @@ public abstract class AbstractScript
     public ServerCommandSource source;
     public HashMap<?, ?> contextMap;
     public HashMap<?, ?> outContextMap;
+    public String name;
 
     public BaseValue execute(ServerCommandSource source, HashMap<?, ?> contextMap) {
         this.source = FunctionCommand.createFunctionCommandSource(source);
@@ -49,6 +51,7 @@ public abstract class AbstractScript
      */
     public abstract void addApi(ApiProvider api);
 
-
     public abstract BaseValue getNullBaseValue();
+
+    public abstract ScriptLanguage<?> getLanguage();
 }

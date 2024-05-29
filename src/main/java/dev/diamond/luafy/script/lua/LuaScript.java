@@ -5,7 +5,9 @@ import dev.diamond.luafy.script.abstraction.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.api.AbstractScriptApi;
 import dev.diamond.luafy.script.abstraction.api.ApiProvider;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
-import dev.diamond.luafy.script.SandboxStrategies;
+import dev.diamond.luafy.script.registry.lang.ScriptLanguage;
+import dev.diamond.luafy.script.registry.lang.ScriptLanguages;
+import dev.diamond.luafy.script.registry.sandbox.Apis;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
@@ -21,7 +23,7 @@ public class LuaScript extends AbstractScript<LuaBaseValue> {
         this.scriptString = scriptString;
 
         this.scriptGlobals = new Globals();
-        SandboxStrategies.applyAbstractSandbox(this);
+        Apis.applyAbstractSandbox(this);
 
 
         this.script = this.scriptGlobals.load(scriptString);
@@ -51,6 +53,11 @@ public class LuaScript extends AbstractScript<LuaBaseValue> {
     @Override
     public LuaBaseValue getNullBaseValue() {
         return new LuaBaseValue(null);
+    }
+
+    @Override
+    public ScriptLanguage<?> getLanguage() {
+        return ScriptLanguages.LUA;
     }
 
 

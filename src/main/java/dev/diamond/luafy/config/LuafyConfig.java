@@ -6,8 +6,7 @@ import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonReader;
 import dev.diamond.luafy.Luafy;
 import dev.diamond.luafy.script.ScriptManager;
-import dev.diamond.luafy.script.old.LuafyLua;
-import dev.diamond.luafy.script.SandboxStrategies;
+import dev.diamond.luafy.script.registry.sandbox.Strategy;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.*;
@@ -18,26 +17,17 @@ public class LuafyConfig {
 
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    private static final String DEFUALT_FALLBACK_JSON =
-            """
-            {
-                "blacklist": true,
-                "modules": [ "lua_io", "lua_os", "luajava" ]
-            }
-            """;
+    private static final Strategy DEFUALT_STRATEGY = Strategy.of(true,
+            "luafy:lua_io", "luafy:lua_os", "luafy:lua_luajava");
 
-    private static final SandboxStrategies.Strategy DEFUALT_FALLBACK = GSON.fromJson(DEFUALT_FALLBACK_JSON, SandboxStrategies.Strategy.class);
 
 
     public static Config GLOBAL_CONFIG;
 
     public static class Config {
 
-        @SerializedName("sandbox_strategy_id")
-        public String sandboxStrategy = "luafy:default";
-
-        @SerializedName("fallback_sandbox_strategy")
-        public SandboxStrategies.Strategy fallbackStrategy = DEFUALT_FALLBACK;
+        @SerializedName("sandbox_strategy")
+        public Strategy strategy = DEFUALT_STRATEGY;
 
 
         @SerializedName("script_threading_allowed")
@@ -46,16 +36,8 @@ public class LuafyConfig {
         @SerializedName("parsed_command_modification-command_api")
         public boolean allowParsedCommandEditing = true;
 
-        public SandboxStrategies.Strategy getStrategy() {
-            if (sandboxStrategy != null && ScriptManager.SANDBOX_STRATEGIES.containsKey(sandboxStrategy)) {
-                return ScriptManager.SANDBOX_STRATEGIES.get(sandboxStrategy);
-            } else {
-                if (fallbackStrategy == null) {
-                    throw new RuntimeException("No fallback Lua sandbox was provided. Please provide a fallback sandbox in the config!");
-                } else {
-                    return fallbackStrategy;
-                }
-            }
+        public Strategy getStrategy() {
+            return strategy;
         }
     }
 

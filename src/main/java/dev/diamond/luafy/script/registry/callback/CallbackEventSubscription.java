@@ -1,4 +1,4 @@
-package dev.diamond.luafy.script.callback;
+package dev.diamond.luafy.script.registry.callback;
 
 public interface CallbackEventSubscription {
     String getScriptId();

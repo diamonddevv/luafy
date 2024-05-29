@@ -14,6 +14,7 @@ import net.minecraft.predicate.NbtPredicate;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,6 +35,7 @@ public class EntityScriptObject implements IScriptObject {
         set.put("get_nbt", args -> new OptionallyExplicitNbtElement(null, NbtPredicate.entityToNbt(entity)));
         set.put("get_type", args -> Registries.ENTITY_TYPE.getId(entity.getType()).toString());
 
+        set.put("get_motion", args -> new Vec3dScriptObject(entity.getVelocity()));
         set.put("get_position", args -> new Vec3dScriptObject(entity.getPos()));
 
         set.put("get_pitch", args -> entity.getPitch());
@@ -48,6 +50,29 @@ public class EntityScriptObject implements IScriptObject {
 
         set.put("as_player", args -> new PlayerEntityScriptObject((ServerPlayerEntity) entity));
         set.put("as_living", args -> new LivingEntityScriptObject((LivingEntity) entity));
+
+
+        // motion
+        set.put("set_motion", args -> {
+            Vec3d vec3d = args[0].asScriptObjectAssertive(Vec3dScriptObject.class).get();
+            entity.setVelocity(vec3d);
+            return null;
+        });
+
+        set.put("add_motion", args -> {
+            Vec3d vec3d = args[0].asScriptObjectAssertive(Vec3dScriptObject.class).get();
+            entity.addVelocity(vec3d);
+            return null;
+        });
+
+        set.put("multiply_motion", args -> {
+            Vec3d vec3d = args[0].asScriptObjectAssertive(Vec3dScriptObject.class).get();
+            entity.setVelocity(entity.getVelocity().multiply(vec3d));
+            return null;
+        });
+
+
+
     }
 
 

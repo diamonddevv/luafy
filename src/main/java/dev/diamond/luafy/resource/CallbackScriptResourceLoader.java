@@ -3,7 +3,7 @@ package dev.diamond.luafy.resource;
 import com.google.gson.Gson;
 import dev.diamond.luafy.Luafy;
 import dev.diamond.luafy.script.ScriptManager;
-import dev.diamond.luafy.script.callback.ScriptCallbacks;
+import dev.diamond.luafy.script.registry.callback.ScriptCallbacks;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;

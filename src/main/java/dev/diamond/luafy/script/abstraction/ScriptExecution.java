@@ -14,12 +14,12 @@ public abstract class ScriptExecution {
         return markedForRemoval;
     }
 
-    public static ScriptExecution of(String scriptId, ServerCommandSource source, HashMap<?, ?> ctx) {
+    public static ScriptExecution of(String scriptId, ServerCommandSource source, HashMap<?, ?> ctx, String caller) {
         return new ScriptExecution() {
             @Override
             public void execute() {
 
-                ScriptManager.executeCurrentThread(scriptId, source, ctx);
+                ScriptManager.executeCurrentThread(scriptId, source, ctx, caller);
                 this.markedForRemoval = true;
             }
         };

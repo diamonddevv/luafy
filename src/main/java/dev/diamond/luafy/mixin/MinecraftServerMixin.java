@@ -1,7 +1,7 @@
 package dev.diamond.luafy.mixin;
 
 import dev.diamond.luafy.script.ScriptManager;
-import dev.diamond.luafy.script.callback.ScriptCallbacks;
+import dev.diamond.luafy.script.registry.callback.ScriptCallbacks;
 import dev.diamond.luafy.util.RemovalMarkedRunnable;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.MinecraftServer;

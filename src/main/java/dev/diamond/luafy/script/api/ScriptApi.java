@@ -4,7 +4,7 @@ import dev.diamond.luafy.script.ScriptManager;
 import dev.diamond.luafy.script.abstraction.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.api.AbstractScriptApi;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
-import dev.diamond.luafy.script.callback.ScriptCallbackEvent;
+import dev.diamond.luafy.script.registry.callback.ScriptCallbackEvent;
 import net.minecraft.server.command.ServerCommandSource;
 
 import java.util.HashMap;
@@ -21,12 +21,16 @@ public class ScriptApi extends AbstractScriptApi {
 
         f.put("invoke", args -> {
             String id = args[0].asString();
-            HashMap<?, ?> ctx = args[1].asMap();
-            boolean thread = args[2].asBoolean();
+            HashMap<?, ?> ctx = new HashMap<>();
+            boolean thread = false;
+
+            if (args.length > 1) ctx = args[1].asMap();
+            if (args.length > 2) thread = args[2].asBoolean();
+
 
             ServerCommandSource src = script.source;
             AbstractScript<?> s = ScriptManager.getScript(id);
-            ScriptManager.execute(id, src, ctx, thread);
+            ScriptManager.execute(id, src, ctx, thread, script.name);
             return s.outContextMap == null ? null : s.outContextMap;
         });
 

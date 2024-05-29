@@ -1,4 +1,4 @@
-package dev.diamond.luafy.script.callback;
+package dev.diamond.luafy.script.registry.callback;
 
 import com.google.gson.annotations.SerializedName;
 import dev.diamond.luafy.Luafy;

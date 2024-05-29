@@ -1,4 +1,0 @@
-{
-    "blacklist": true,
-    "modules": [ "lua_io", "lua_os", "luajava" ]
-}

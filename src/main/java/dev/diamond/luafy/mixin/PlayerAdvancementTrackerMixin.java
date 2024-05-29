@@ -2,7 +2,7 @@ package dev.diamond.luafy.mixin;
 
 import dev.diamond.luafy.script.ScriptManager;
 import dev.diamond.luafy.script.api.obj.util.AdvancementEntryScriptObject;
-import dev.diamond.luafy.script.callback.ScriptCallbacks;
+import dev.diamond.luafy.script.registry.callback.ScriptCallbacks;
 import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.advancement.PlayerAdvancementTracker;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -11,8 +11,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.HashMap;
 
 @Mixin(PlayerAdvancementTracker.class)
 public class PlayerAdvancementTrackerMixin {

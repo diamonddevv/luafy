@@ -4,12 +4,14 @@ import dev.diamond.luafy.Luafy;
 import dev.diamond.luafy.script.ScriptManager;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
 import dev.diamond.luafy.script.lua.LuaScript;
+import dev.diamond.luafy.script.registry.lang.ScriptLanguage;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ScriptResourceLoader implements SimpleSynchronousResourceReloadListener {
@@ -45,21 +47,24 @@ public class ScriptResourceLoader implements SimpleSynchronousResourceReloadList
                         String fixedPath = id.getPath().substring(pfLen);
                         fixedPath = fixedPath.substring(0, fixedPath.length() - ext.length() - 1);
                         String newId = id.getNamespace() + ":" + fixedPath;
-
-
+                        script.name = newId;
                         ScriptManager.SCRIPTS.put(newId, script);
+                    } else {
+                        Luafy.LOGGER.warn("There was no registered script language using the file extension {}!", ext);
                     }
                 } catch (Exception e) {
-                    Luafy.LOGGER.error("Error occurred while loading '." + ext + "' Script " + id.toString(), e);
+                    Luafy.LOGGER.error("Error occurred while loading '" + ext + "' Script " + id.toString(), e);
                 }
             }
         }
     }
 
     public static AbstractScript<?> loadScript(String extension, String scriptContent) {
-        return switch (extension) {
-            case "lua" -> new LuaScript(scriptContent);
-            default -> null;
-        };
+        for (ScriptLanguage<?> s : Luafy.SCRIPT_LANG_REGISTRY) {
+            if (Arrays.asList(s.getFileExtensions()).contains(extension)) {
+                return s.readScript(scriptContent);
+            }
+        }
+        return null;
     }
 }

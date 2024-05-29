@@ -5,9 +5,10 @@ import dev.diamond.luafy.config.LuafyConfig;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
 import dev.diamond.luafy.script.abstraction.ScriptExecution;
 import dev.diamond.luafy.script.api.obj.entity.EntityScriptObject;
-import dev.diamond.luafy.script.callback.CallbackEventSubscription;
-import dev.diamond.luafy.script.callback.ScriptCallbackEvent;
-import dev.diamond.luafy.script.callback.ScriptCallbacks;
+import dev.diamond.luafy.script.registry.callback.CallbackEventSubscription;
+import dev.diamond.luafy.script.registry.callback.ScriptCallbackEvent;
+import dev.diamond.luafy.script.registry.callback.ScriptCallbacks;
+import dev.diamond.luafy.script.registry.sandbox.Strategy;
 import dev.diamond.luafy.util.HexId;
 import dev.diamond.luafy.util.RemovalMarkedRunnable;
 import net.minecraft.server.command.ServerCommandSource;
@@ -45,7 +46,7 @@ public class ScriptManager {
     // Script-Related Resource Caches
     public static final HashMap<String, AbstractScript<?>> SCRIPTS = new HashMap<>();
     public static final Collection<ScriptCallbacks.CallbackScriptBean> CALLBACK_FILES = new ArrayList<>();
-    public static final HashMap<String, SandboxStrategies.Strategy> SANDBOX_STRATEGIES = new HashMap<>();
+    public static final HashMap<String, Strategy> SANDBOX_STRATEGIES = new HashMap<>();
 
     // Callbacks
     public static final HashMap<ScriptCallbackEvent, Collection<CallbackEventSubscription>> EVENT_CALLBACKS = new HashMap<>();
@@ -65,18 +66,22 @@ public class ScriptManager {
 
 
     // Script Executors
-    public static boolean executeCurrentThread(String script, ServerCommandSource src, HashMap<?, ?> ctx) {
+    public static boolean executeCurrentThread(String script, ServerCommandSource src, HashMap<?, ?> ctx, String caller) {
         if (!hasScript(script)) return false;
+
+        if (ctx == null) ctx = new HashMap<>();
+        ((HashMap<String, Object>)ctx).put("caller", caller);
+
         SCRIPTS.get(script).execute(src, ctx);
         return true;
     }
-    public static boolean execute(String script, ServerCommandSource src, HashMap<?, ?> ctx, boolean ownThread) {
+    public static boolean execute(String script, ServerCommandSource src, HashMap<?, ?> ctx, boolean ownThread, String caller) {
 
         if (LuafyConfig.GLOBAL_CONFIG.scriptThreading) {
             if (ownThread) {
 
                 Thread t = new Thread(null, () -> {
-                    executeCurrentThread(script, src, ctx);
+                    executeCurrentThread(script, src, ctx, caller);
                 }, "Script Thread");
 
                 t.setDaemon(true);
@@ -85,11 +90,11 @@ public class ScriptManager {
                 return true;
             }
         }
-        SCRIPT_THREAD_EXECUTIONS.add(ScriptExecution.of(script, src, ctx));
+        SCRIPT_THREAD_EXECUTIONS.add(ScriptExecution.of(script, src, ctx, caller));
         return true;
     }
-    public static boolean execute(String script, ServerCommandSource src, boolean ownThread) {
-        return execute(script, src, null, ownThread);
+    public static boolean execute(String script, ServerCommandSource src, boolean ownThread, String caller) {
+        return execute(script, src, null, ownThread, caller);
     }
 
     // Script Cache
@@ -129,7 +134,7 @@ public class ScriptManager {
         if (!ScriptManager.EVENT_CALLBACKS.containsKey(event)) return;
 
         ScriptManager.EVENT_CALLBACKS.get(event)
-                .forEach(s -> ScriptManager.execute(s.getScriptId(), src, ctx, s.usesOwnThread()));
+                .forEach(s -> ScriptManager.execute(s.getScriptId(), src, ctx, s.usesOwnThread(), "$server"));
     }
 
     public static void subscribeEvent(ScriptCallbackEvent event, String scriptId, boolean usesOwnThread) {

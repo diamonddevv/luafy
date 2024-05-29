@@ -7,7 +7,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import dev.diamond.luafy.script.ScriptManager;
 import dev.diamond.luafy.script.abstraction.BaseValueConversions;
-import dev.diamond.luafy.script.callback.ScriptCallbackEvent;
+import dev.diamond.luafy.script.registry.callback.ScriptCallbackEvent;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.NbtCompoundArgumentType;
 import net.minecraft.nbt.NbtCompound;
@@ -101,7 +101,8 @@ public class LuafyCommand {
                 id,
                 ctx.getSource(),
                 nbtContext == null ? null : BaseValueConversions.nbtObjToBase(nbtContext, s -> script.getNullBaseValue().adapt(s)),
-                threaded
+                threaded,
+                "$command"
         );
 
         return true;

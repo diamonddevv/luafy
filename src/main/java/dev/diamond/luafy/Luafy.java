@@ -5,8 +5,12 @@ import dev.diamond.luafy.config.LuafyConfig;
 import dev.diamond.luafy.resource.CallbackScriptResourceLoader;
 import dev.diamond.luafy.resource.ScriptResourceLoader;
 import dev.diamond.luafy.resource.SandboxStrategyResourceLoader;
-import dev.diamond.luafy.script.callback.ScriptCallbackEvent;
-import dev.diamond.luafy.script.callback.ScriptCallbacks;
+import dev.diamond.luafy.script.registry.callback.ScriptCallbackEvent;
+import dev.diamond.luafy.script.registry.callback.ScriptCallbacks;
+import dev.diamond.luafy.script.registry.lang.ScriptLanguage;
+import dev.diamond.luafy.script.registry.lang.ScriptLanguages;
+import dev.diamond.luafy.script.registry.sandbox.SandboxableApi;
+import dev.diamond.luafy.script.registry.sandbox.Apis;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
@@ -26,10 +30,15 @@ public class Luafy implements ModInitializer {
 
 	public static final ScriptResourceLoader LUA_SCRIPT_RESOURCES = new ScriptResourceLoader();
 	public static final CallbackScriptResourceLoader CALLBACK_RESOURCES = new CallbackScriptResourceLoader();
-	public static final SandboxStrategyResourceLoader SANDBOXES = new SandboxStrategyResourceLoader();
+	//public static final SandboxStrategyResourceLoader SANDBOXES = new SandboxStrategyResourceLoader();
 
 	public static RegistryKey<Registry<ScriptCallbackEvent>> CALLBACK_REGISTRY_KEY;
+	public static RegistryKey<Registry<SandboxableApi<?>>> API_REGISTRY_KEY;
+	public static RegistryKey<Registry<ScriptLanguage<?>>> SCRIPT_LANG_REGISTRY_KEY;
+
 	public static Registry<ScriptCallbackEvent> CALLBACK_REGISTRY;
+	public static Registry<SandboxableApi<?>> API_REGISTRY;
+	public static Registry<ScriptLanguage<?>> SCRIPT_LANG_REGISTRY;
 
 	@Override
 	public void onInitialize() {
@@ -38,15 +47,22 @@ public class Luafy implements ModInitializer {
 		CommandRegistrationCallback.EVENT.register(LuafyCommand::registerLuaCommand);
 
 		CALLBACK_REGISTRY_KEY = RegistryKey.ofRegistry(id("callback_events"));
+		API_REGISTRY_KEY = RegistryKey.ofRegistry(id("sandboxable_apis"));
+		SCRIPT_LANG_REGISTRY_KEY = RegistryKey.ofRegistry(id("script_languages"));
+
 		CALLBACK_REGISTRY = FabricRegistryBuilder.createSimple(CALLBACK_REGISTRY_KEY).buildAndRegister();
+		API_REGISTRY = FabricRegistryBuilder.createSimple(API_REGISTRY_KEY).buildAndRegister();
+		SCRIPT_LANG_REGISTRY = FabricRegistryBuilder.createSimple(SCRIPT_LANG_REGISTRY_KEY).buildAndRegister();
 
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(LUA_SCRIPT_RESOURCES);
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(CALLBACK_RESOURCES);
-		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(SANDBOXES);
+		//ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(SANDBOXES);
 
 		LuafyConfig.initializeConfig();
 
 		ScriptCallbacks.registerAll();
+		ScriptLanguages.registerAll();
+		Apis.registerAll();
 	}
 
 
