@@ -28,6 +28,9 @@ public class Vec3dScriptObject implements IScriptObject {
         set.put("distance", args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::distanceTo)));
         set.put("dot",      args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::dotProduct)));
         set.put("cross",    args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::crossProduct)));
+
+
+        set.put("to_string", args -> vec.toString());
     }
 
     private Object withOther(AbstractBaseValue<?, ?>[] args, Function<Vec3d, Object> f) {

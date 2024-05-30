@@ -8,6 +8,7 @@ import dev.diamond.luafy.script.api.obj.math.Vec3dScriptObject;
 import dev.diamond.luafy.script.nbt.OptionallyExplicitNbtElement;
 import dev.diamond.luafy.util.HexId;
 import dev.diamond.luafy.util.LuafyUtil;
+import net.minecraft.command.argument.LookingPosArgument;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.predicate.NbtPredicate;
@@ -52,22 +53,31 @@ public class EntityScriptObject implements IScriptObject {
         set.put("as_living", args -> new LivingEntityScriptObject((LivingEntity) entity));
 
 
+        set.put("get_relative_directional_vector", args -> {
+            Vec3d vec = new Vec3d(args[0].asDouble(), args[1].asDouble(), args[2].asDouble());
+
+            return new Vec3dScriptObject(vec);
+        });
+
         // motion
         set.put("set_motion", args -> {
             Vec3d vec3d = args[0].asScriptObjectAssertive(Vec3dScriptObject.class).get();
             entity.setVelocity(vec3d);
+            entity.velocityModified = true;
             return null;
         });
 
         set.put("add_motion", args -> {
             Vec3d vec3d = args[0].asScriptObjectAssertive(Vec3dScriptObject.class).get();
             entity.addVelocity(vec3d);
+            entity.velocityModified = true;
             return null;
         });
 
         set.put("multiply_motion", args -> {
             Vec3d vec3d = args[0].asScriptObjectAssertive(Vec3dScriptObject.class).get();
             entity.setVelocity(entity.getVelocity().multiply(vec3d));
+            entity.velocityModified = true;
             return null;
         });
 

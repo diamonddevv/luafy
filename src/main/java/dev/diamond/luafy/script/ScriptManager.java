@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class ScriptManager {
 
@@ -121,7 +122,7 @@ public class ScriptManager {
             }
         }
     }
-    public static void executeEventCallbacks(ScriptCallbackEvent event, ServerCommandSource src, @Nullable Consumer<HashMap<String, Object>> ctxBuilder) {
+    public static void executeEventCallbacks(ScriptCallbackEvent event, Supplier<ServerCommandSource> src, @Nullable Consumer<HashMap<String, Object>> ctxBuilder) {
 
         HashMap<String, Object> ctx;
         if (ctxBuilder != null) {
@@ -134,7 +135,7 @@ public class ScriptManager {
         if (!ScriptManager.EVENT_CALLBACKS.containsKey(event)) return;
 
         ScriptManager.EVENT_CALLBACKS.get(event)
-                .forEach(s -> ScriptManager.execute(s.getScriptId(), src, ctx, s.usesOwnThread(), "$server"));
+                .forEach(s -> ScriptManager.execute(s.getScriptId(), src.get(), ctx, s.usesOwnThread(), "$server"));
     }
 
     public static void subscribeEvent(ScriptCallbackEvent event, String scriptId, boolean usesOwnThread) {

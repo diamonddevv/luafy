@@ -22,7 +22,7 @@ public class PlayerAdvancementTrackerMixin {
     private void luafy$runAdvancementCallbacks(AdvancementEntry advancement, String criterionName, CallbackInfoReturnable<Boolean> cir) {
         // this is executed after the check if all criteria are completed
 
-        ScriptManager.executeEventCallbacks(ScriptCallbacks.ON_ADVANCEMENT_OBTAINED, owner.getCommandSource().withLevel(2), v -> {
+        ScriptManager.executeEventCallbacks(ScriptCallbacks.ON_ADVANCEMENT_OBTAINED, () ->  owner.getCommandSource().withLevel(2), v -> {
             v.put("advancement", new AdvancementEntryScriptObject(advancement));
         });
     }

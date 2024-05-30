@@ -3,11 +3,13 @@
     "package": "dev.diamond.luafy.mixin",
     "compatibilityLevel": "JAVA_17",
     "mixins": [
+        "EntityMixin",
         "ItemMixin",
         "LivingEntityMixin",
         "MinecraftServerMixin",
         "ParsedArgumentAccessor",
         "PlayerAdvancementTrackerMixin",
+        "PlayerEntityMixin",
         "ServerPlayerEntityMixin",
         "ServerStatHandlerMixin",
         "ServerWorldMixin"

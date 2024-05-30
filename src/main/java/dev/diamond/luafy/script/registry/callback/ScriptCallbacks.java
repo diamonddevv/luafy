@@ -18,7 +18,18 @@ public class ScriptCallbacks {
     public static final ScriptCallbackEvent ON_ITEM_USED =              new ScriptCallbackEvent(Luafy.id("item_used"));
     public static final ScriptCallbackEvent ON_STAT_CHANGED =           new ScriptCallbackEvent(Luafy.id("stat_changes"));
     public static final ScriptCallbackEvent ON_GAME_EVENT =             new ScriptCallbackEvent(Luafy.id("game_event_emits"));
-    public static final ScriptCallbackEvent TRY_ATTACK =                new ScriptCallbackEvent(Luafy.id("try_attack"));
+    public static final ScriptCallbackEvent HAND_SWINGS =               new ScriptCallbackEvent(Luafy.id("hand_swings"));
+    public static final ScriptCallbackEvent TRY_ATTACK =                new ScriptCallbackEvent(Luafy.id("attack_tried"));
+    public static final ScriptCallbackEvent EFFECT_APPLIED =            new ScriptCallbackEvent(Luafy.id("effect_applied"));
+    public static final ScriptCallbackEvent EFFECT_LOST =               new ScriptCallbackEvent(Luafy.id("effect_lost"));
+    public static final ScriptCallbackEvent REGENERATES_HEALTH =        new ScriptCallbackEvent(Luafy.id("health_regenerated"));
+    public static final ScriptCallbackEvent EATS =                      new ScriptCallbackEvent(Luafy.id("eats"));
+    public static final ScriptCallbackEvent EXHAUST =                   new ScriptCallbackEvent(Luafy.id("exhuasts"));
+    public static final ScriptCallbackEvent SPAWN =                     new ScriptCallbackEvent(Luafy.id("spawns"));
+    public static final ScriptCallbackEvent TICK_ENTITY =               new ScriptCallbackEvent(Luafy.id("entity_ticks"));
+    public static final ScriptCallbackEvent CONNECTS_TO_SERVER =        new ScriptCallbackEvent(Luafy.id("connects_to_server"));
+    public static final ScriptCallbackEvent DISCONNECTS_FROM_SERVER =   new ScriptCallbackEvent(Luafy.id("disconnects_from_server"));
+    public static final ScriptCallbackEvent SERVER_CLOSES =             new ScriptCallbackEvent(Luafy.id("server_closes"));
 
     public static void registerAll() {
         TICK.register();
@@ -32,7 +43,19 @@ public class ScriptCallbacks {
         ON_ITEM_USED.register();
         ON_STAT_CHANGED.register();
         ON_GAME_EVENT.register();
+        HAND_SWINGS.register();
         TRY_ATTACK.register();
+
+        EFFECT_APPLIED.register();
+        EFFECT_LOST.register();
+        REGENERATES_HEALTH.register();
+        EATS.register();
+        EXHAUST.register();
+        SPAWN.register();
+        TICK_ENTITY.register();
+        CONNECTS_TO_SERVER.register();
+        DISCONNECTS_FROM_SERVER.register();
+        SERVER_CLOSES.register();
     }
 
 
