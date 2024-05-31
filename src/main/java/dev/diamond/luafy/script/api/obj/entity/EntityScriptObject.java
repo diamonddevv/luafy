@@ -78,11 +78,15 @@ public class EntityScriptObject implements IScriptObject {
 
             double dz = target.z - pos.z;
             double dx = target.x - pos.x;
+            double hyp = Math.sqrt((dx * dx) + (dz * dz));
+            double angleHor = Math.atan2(dz, dx);
 
-            double angle = Math.atan(dx / dz);
+
+            double dy = target.y - pos.y;
+            double angleVer = Math.atan2(dy, hyp);
 
 
-            Vec3d vec = new Vec3d(Math.cos(angle), 0, Math.sin(angle));
+            Vec3d vec = new Vec3d(Math.cos(angleHor), Math.sin(angleVer), Math.sin(angleHor));
 
             return new Vec3dScriptObject(vec);
         });
