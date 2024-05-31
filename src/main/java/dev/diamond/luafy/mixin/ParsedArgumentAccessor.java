@@ -9,6 +9,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface ParsedArgumentAccessor {
 
     @Mutable
-    @Accessor("result")
+    @Accessor(value = "result", remap = false)
     void setResult(Object o);
 }

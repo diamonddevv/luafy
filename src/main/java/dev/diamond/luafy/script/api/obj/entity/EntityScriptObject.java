@@ -8,7 +8,6 @@ import dev.diamond.luafy.script.api.obj.math.Vec3dScriptObject;
 import dev.diamond.luafy.script.nbt.OptionallyExplicitNbtElement;
 import dev.diamond.luafy.util.HexId;
 import dev.diamond.luafy.util.LuafyUtil;
-import net.minecraft.command.argument.LookingPosArgument;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.predicate.NbtPredicate;
@@ -17,8 +16,6 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Vec3d;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 
 public class EntityScriptObject implements IScriptObject {
@@ -53,12 +50,6 @@ public class EntityScriptObject implements IScriptObject {
         set.put("as_living", args -> new LivingEntityScriptObject((LivingEntity) entity));
 
 
-        set.put("get_relative_directional_vector", args -> {
-            Vec3d vec = new Vec3d(args[0].asDouble(), args[1].asDouble(), args[2].asDouble());
-
-            return new Vec3dScriptObject(vec);
-        });
-
         // motion
         set.put("set_motion", args -> {
             Vec3d vec3d = args[0].asScriptObjectAssertive(Vec3dScriptObject.class).get();
@@ -66,14 +57,12 @@ public class EntityScriptObject implements IScriptObject {
             entity.velocityModified = true;
             return null;
         });
-
         set.put("add_motion", args -> {
             Vec3d vec3d = args[0].asScriptObjectAssertive(Vec3dScriptObject.class).get();
             entity.addVelocity(vec3d);
             entity.velocityModified = true;
             return null;
         });
-
         set.put("multiply_motion", args -> {
             Vec3d vec3d = args[0].asScriptObjectAssertive(Vec3dScriptObject.class).get();
             entity.setVelocity(entity.getVelocity().multiply(vec3d));
@@ -81,7 +70,22 @@ public class EntityScriptObject implements IScriptObject {
             return null;
         });
 
+        // vector
+        set.put("angle_towards", args -> {
+            Vec3d pos = entity.getPos();
+            Vec3d target = args[0].asScriptObjectAssertive(Vec3dScriptObject.class).get();
 
+
+            double dz = target.z - pos.z;
+            double dx = target.x - pos.x;
+
+            double angle = Math.atan(dx / dz);
+
+
+            Vec3d vec = new Vec3d(Math.cos(angle), 0, Math.sin(angle));
+
+            return new Vec3dScriptObject(vec);
+        });
 
     }
 
@@ -99,5 +103,9 @@ public class EntityScriptObject implements IScriptObject {
         HexId hexid = HexId.makeNewUnique(ScriptManager.ScriptCaches.PREPARSED_COMMANDS.keySet());
         ScriptManager.ScriptCaches.PREPARSED_COMMANDS.put(hexid, parsed);
         return hexid;
+    }
+
+    private static double mag(Vec3d vec) {
+        return Math.sqrt((vec.x * vec.x) + (vec.y * vec.y) + (vec.z * vec.z));
     }
 }

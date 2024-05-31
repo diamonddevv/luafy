@@ -13,6 +13,8 @@ import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 
+import java.util.Arrays;
+
 public class LuaScript extends AbstractScript<LuaBaseValue> {
 
     private final String scriptString;
@@ -83,6 +85,7 @@ public class LuaScript extends AbstractScript<LuaBaseValue> {
                 var returned = adaptableFunction.call(values);
                 LuaBaseValue result = new LuaBaseValue(null);
                 result.adaptAndSetOrThrow(returned);
+
                 return result.isNull() ? LuaValue.NIL : result.getValue();
             }
         };

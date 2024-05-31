@@ -18,6 +18,7 @@ public class ObjectsApi extends AbstractScriptApi {
         HashMap<String, AdaptableFunction> f = new HashMap<>();
 
         f.put("vec3d", args -> new Vec3dScriptObject(new Vec3d(args[0].asDouble(), args[1].asDouble(), args[2].asDouble())));
+        f.put("vec3d_u", args -> new Vec3dScriptObject(new Vec3d(args[0].asDouble(), args[0].asDouble(), args[0].asDouble())));
 
         return f;
     }

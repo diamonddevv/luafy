@@ -14,6 +14,7 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Objects;
@@ -233,6 +234,7 @@ public class LuaTypeConversions {
 
             table.set(key, value);
         }
+
         return table;
     }
 

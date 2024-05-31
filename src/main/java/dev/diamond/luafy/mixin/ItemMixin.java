@@ -21,7 +21,7 @@ public class ItemMixin {
     @Inject(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/TypedActionResult;pass(Ljava/lang/Object;)Lnet/minecraft/util/TypedActionResult;"))
     private void luafy$callbackOnUse(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
         if (user instanceof ServerPlayerEntity spe) {
-            ScriptManager.executeEventCallbacks(ScriptCallbacks.ON_ITEM_USED, spe.getCommandSource().withLevel(2), v -> {
+            ScriptManager.executeEventCallbacks(ScriptCallbacks.ON_ITEM_USED, () -> spe.getCommandSource().withLevel(2), v -> {
                 v.put("stack", new ItemStackScriptObject(spe.getStackInHand(hand)));
                 v.put("user", new PlayerEntityScriptObject(spe));
             });

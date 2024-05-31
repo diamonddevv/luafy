@@ -43,6 +43,7 @@ public class Apis {
     public static final SandboxableApi<?> SCRIPT =                  new SandboxableApi<>(null, s -> s.addApi(ScriptApi::new));
     public static final SandboxableApi<?> THREADS =                 new SandboxableApi<>(null, s -> s.addApi(ThreadsApi::new));
     public static final SandboxableApi<?> OBJECTS =                 new SandboxableApi<>(null, s -> s.addApi(ObjectsApi::new));
+    public static final SandboxableApi<?> WEB =                     new SandboxableApi<>(null, s -> s.addApi(WebApi::new));
 
     public static void registerAll() {
         Registry.register(Luafy.API_REGISTRY, Luafy.id("lua_base"), LUA_BASE);
@@ -65,6 +66,7 @@ public class Apis {
         Registry.register(Luafy.API_REGISTRY, Luafy.id("script"), SCRIPT);
         Registry.register(Luafy.API_REGISTRY, Luafy.id("threads"), THREADS);
         Registry.register(Luafy.API_REGISTRY, Luafy.id("objects"), OBJECTS);
+        Registry.register(Luafy.API_REGISTRY, Luafy.id("web"), WEB);
     }
 
 

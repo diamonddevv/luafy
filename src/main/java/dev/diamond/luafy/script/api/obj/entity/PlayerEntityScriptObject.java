@@ -26,6 +26,7 @@ public class PlayerEntityScriptObject extends LivingEntityScriptObject {
         set.put("dump_statistics", args -> dumpStats());
         set.put("get_ender_items", args -> getEnderItems());
         set.put("get_inventory_items", args -> getInventory());
+        set.put("is_sneaking", args -> entity.isSneaky());
     }
 
     private JsonObject dumpStats() {

@@ -23,11 +23,17 @@ public class Vec3dScriptObject implements IScriptObject {
         set.put("get_z", args -> vec.z);
 
 
-        set.put("add",      args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::add)));
-        set.put("multiply", args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::multiply)));
-        set.put("distance", args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::distanceTo)));
-        set.put("dot",      args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::dotProduct)));
-        set.put("cross",    args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::crossProduct)));
+        set.put("add",          args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::add)));
+        set.put("multiply",     args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::multiply)));
+        set.put("distance",     args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::distanceTo)));
+        set.put("sqr_distance", args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::squaredDistanceTo)));
+        set.put("dot",          args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::dotProduct)));
+        set.put("cross",        args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::crossProduct)));
+        set.put("relativize",   args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::relativize)));
+        set.put("lerp",         args -> new Vec3dScriptObject((Vec3d) withOther(args, v -> vec.lerp(v, args[2].asDouble()))));
+
+        set.put("normalize", args -> new Vec3dScriptObject(vec.normalize()));
+        set.put("negate", args -> new Vec3dScriptObject(vec.negate()));
 
 
         set.put("to_string", args -> vec.toString());

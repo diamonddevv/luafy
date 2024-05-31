@@ -20,6 +20,8 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.registry.Registries;
+import net.minecraft.scoreboard.ScoreHolder;
+import net.minecraft.scoreboard.ScoreboardObjective;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
@@ -95,6 +97,7 @@ public class ServerApi extends AbstractScriptApi {
            ScriptManager.SERVER_THREAD_EXECUTIONS.add(RemovalMarkedRunnable.of(() -> function.call(callArgs)));
            return null;
         });
+
 
         return f;
     }

@@ -85,9 +85,6 @@ public class BaseValueConversions {
         else if (value.isString())      t = STRING;
         else throw new RuntimeException("Couldn't convert base value of " + value.value + " to NBT.");
 
-        System.out.println(value.isDouble());
-        System.out.println(value.value);
-
         return explicit_baseToNbt(t, value);
     }
     public static NbtElement explicit_baseToNbt(ScriptManager.ExplicitType type, AbstractBaseValue<?, ?> value) {
