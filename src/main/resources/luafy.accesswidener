@@ -19,3 +19,11 @@ mutable field net/minecraft/command/argument/LookingPosArgument z D
 
 accessible field net/minecraft/command/argument/CoordinateArgument relative Z
 mutable field net/minecraft/command/argument/CoordinateArgument relative Z
+
+accessible method net/minecraft/entity/decoration/DisplayEntity setTransformation (Lnet/minecraft/util/math/AffineTransformation;)V
+accessible method net/minecraft/entity/decoration/DisplayEntity getTransformation (Lnet/minecraft/entity/data/DataTracker;)Lnet/minecraft/util/math/AffineTransformation;
+
+accessible field net/minecraft/util/math/AffineTransformation translation Lorg/joml/Vector3f;
+accessible field net/minecraft/util/math/AffineTransformation leftRotation Lorg/joml/Quaternionf;
+accessible field net/minecraft/util/math/AffineTransformation scale Lorg/joml/Vector3f;
+accessible field net/minecraft/util/math/AffineTransformation rightRotation Lorg/joml/Quaternionf;

@@ -11,7 +11,7 @@
 		"\n\n\n",
 		"Other Credits/Thanks:\n",
 		"FiguraMC: Maintaining of LuaJ",
-		"Mulverine: Support and guidance in knowledge of commands"
+		"Mulverine: Support and guidance in knowledge of commands, implementation of JavaScript Language"
 	],
 	"contact": {
 		"homepage": "https://diamonddevv.github.io/",
@@ -23,6 +23,15 @@
 	"entrypoints": {
 		"main": [
             "dev.diamond.luafy.Luafy"
+		],
+		"cardinal-components": [
+			"dev.diamond.luafy.cca.LuafyCCA"
+		]
+	},
+
+	"custom": {
+		"cardinal-components": [
+			"luafy:shared"
 		]
 	},
 

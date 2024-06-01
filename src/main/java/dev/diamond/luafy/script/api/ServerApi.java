@@ -17,18 +17,24 @@ import net.minecraft.command.EntitySelector;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.decoration.DisplayEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.scoreboard.ScoreHolder;
 import net.minecraft.scoreboard.ScoreboardObjective;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Position;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public class ServerApi extends AbstractScriptApi {
     public ServerApi(AbstractScript<?> script) {
@@ -98,6 +104,25 @@ public class ServerApi extends AbstractScriptApi {
            return null;
         });
 
+        // ADD ENTITIES
+        f.put("spawn_entity", args -> {
+            String entityId = args[0].asString();
+            Vec3d pos = args[1].asScriptObjectAssertive(Vec3dScriptObject.class).get();
+
+            var entityType = Registries.ENTITY_TYPE.get(new Identifier(entityId));
+
+            ServerWorld w = script.source.getWorld();
+            Entity e = entityType.create(w);
+
+            e.setPos(pos.x, pos.y, pos.z);
+            e.setYaw(0);
+            e.setPitch(0);
+
+            w.spawnEntity(e);
+
+            return new EntityScriptObject(e);
+
+        });
 
         return f;
     }

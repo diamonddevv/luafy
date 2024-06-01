@@ -18,6 +18,11 @@ repositories {
 	// for more information about repositories.
 
 	maven { url 'https://jitpack.io' }
+
+	maven {
+		name = 'Ladysnake Mods'
+		url = 'https://maven.ladysnake.org/releases'
+	}
 }
 
 loom {
@@ -41,6 +46,10 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+	// cca
+	include modImplementation("dev.onyxstudios.cardinal-components-api:cardinal-components-base:${project.cardinal_components_version}")
+	include modImplementation("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${project.cardinal_components_version}")
 
 	//
 	include implementation("com.github.FiguraMC.luaj:luaj-core:${project.FIGURA_LUAJ_VERSION}-figura")

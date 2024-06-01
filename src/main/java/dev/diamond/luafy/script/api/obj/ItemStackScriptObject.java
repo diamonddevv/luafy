@@ -28,4 +28,9 @@ public class ItemStackScriptObject implements IScriptObject {
             return null;
         });
     }
+
+
+    public ItemStack get() {
+        return stack;
+    }
 }
