@@ -1,7 +1,7 @@
 package dev.diamond.luafy.mixin;
 
 import dev.diamond.luafy.script.ScriptManager;
-import dev.diamond.luafy.script.api.obj.ItemStackScriptObject;
+import dev.diamond.luafy.script.api.obj.minecraft.ItemStackScriptObject;
 import dev.diamond.luafy.script.api.obj.entity.LivingEntityScriptObject;
 import dev.diamond.luafy.script.registry.callback.ScriptCallbacks;
 import net.minecraft.entity.Entity;
@@ -14,7 +14,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

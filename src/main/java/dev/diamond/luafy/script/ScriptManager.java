@@ -1,5 +1,6 @@
 package dev.diamond.luafy.script;
 
+import com.google.gson.JsonObject;
 import com.mojang.brigadier.ParseResults;
 import dev.diamond.luafy.config.LuafyConfig;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
@@ -48,6 +49,7 @@ public class ScriptManager {
     public static final HashMap<String, AbstractScript<?>> SCRIPTS = new HashMap<>();
     public static final Collection<ScriptCallbacks.CallbackScriptBean> CALLBACK_FILES = new ArrayList<>();
     public static final HashMap<String, Strategy> SANDBOX_STRATEGIES = new HashMap<>();
+    public static final HashMap<String, JsonObject> STATIC_RESOURCES = new HashMap<>();
 
     // Callbacks
     public static final HashMap<ScriptCallbackEvent, Collection<CallbackEventSubscription>> EVENT_CALLBACKS = new HashMap<>();

@@ -1,7 +1,7 @@
 package dev.diamond.luafy.mixin;
 
 import dev.diamond.luafy.script.ScriptManager;
-import dev.diamond.luafy.script.api.obj.ItemStackScriptObject;
+import dev.diamond.luafy.script.api.obj.minecraft.ItemStackScriptObject;
 import dev.diamond.luafy.script.api.obj.entity.PlayerEntityScriptObject;
 import dev.diamond.luafy.script.registry.callback.ScriptCallbacks;
 import net.minecraft.entity.player.PlayerEntity;

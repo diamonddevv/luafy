@@ -117,7 +117,7 @@ public class EntityScriptObject implements IScriptObject {
             AdaptableFunction function = args[1].asFunction();
 
             var nbt = LuafyCCA.EntityScriptDataManager.get(entity, subkey);
-            var r = function.call(new AbstractBaseValue[] { BaseValueConversions.implicit_nbtToBase(nbt, args[0]::adapt) });
+            var r = function.call(BaseValueConversions.implicit_nbtToBase(nbt, args[0]::adapt));
             nbt = BaseValueConversions.mapToCompound((HashMap<AbstractBaseValue<?, ?>, AbstractBaseValue<?, ?>>) args[0].adapt(r).asMap());
             LuafyCCA.EntityScriptDataManager.set(entity, subkey, nbt);
 

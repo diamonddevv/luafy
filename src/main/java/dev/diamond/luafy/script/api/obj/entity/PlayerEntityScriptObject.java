@@ -3,7 +3,7 @@ package dev.diamond.luafy.script.api.obj.entity;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dev.diamond.luafy.script.abstraction.AdaptableFunction;
-import dev.diamond.luafy.script.api.obj.ItemStackScriptObject;
+import dev.diamond.luafy.script.api.obj.minecraft.ItemStackScriptObject;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.Arrays;
@@ -12,7 +12,7 @@ import java.util.HashMap;
 
 public class PlayerEntityScriptObject extends LivingEntityScriptObject {
 
-    private final ServerPlayerEntity player;
+    public final ServerPlayerEntity player;
 
     public PlayerEntityScriptObject(ServerPlayerEntity entity) {
         super(entity);

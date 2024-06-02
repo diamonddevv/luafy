@@ -5,6 +5,7 @@ import dev.diamond.luafy.config.LuafyConfig;
 import dev.diamond.luafy.resource.CallbackScriptResourceLoader;
 import dev.diamond.luafy.resource.ScriptResourceLoader;
 import dev.diamond.luafy.resource.SandboxStrategyResourceLoader;
+import dev.diamond.luafy.resource.StaticScriptResourceResourceLoader;
 import dev.diamond.luafy.script.registry.callback.ScriptCallbackEvent;
 import dev.diamond.luafy.script.registry.callback.ScriptCallbacks;
 import dev.diamond.luafy.script.registry.lang.ScriptLanguage;
@@ -31,6 +32,7 @@ public class Luafy implements ModInitializer {
 	public static final ScriptResourceLoader LUA_SCRIPT_RESOURCES = new ScriptResourceLoader();
 	public static final CallbackScriptResourceLoader CALLBACK_RESOURCES = new CallbackScriptResourceLoader();
 	//public static final SandboxStrategyResourceLoader SANDBOXES = new SandboxStrategyResourceLoader();
+	public static final StaticScriptResourceResourceLoader STATIC_RESOURCES = new StaticScriptResourceResourceLoader();
 
 	public static RegistryKey<Registry<ScriptCallbackEvent>> CALLBACK_REGISTRY_KEY;
 	public static RegistryKey<Registry<SandboxableApi<?>>> API_REGISTRY_KEY;
@@ -57,6 +59,7 @@ public class Luafy implements ModInitializer {
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(LUA_SCRIPT_RESOURCES);
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(CALLBACK_RESOURCES);
 		//ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(SANDBOXES);
+		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(STATIC_RESOURCES);
 
 		LuafyConfig.initializeConfig();
 

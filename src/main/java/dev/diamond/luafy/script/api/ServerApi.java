@@ -11,6 +11,7 @@ import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
 import dev.diamond.luafy.script.api.obj.entity.EntityScriptObject;
 import dev.diamond.luafy.script.api.obj.entity.PlayerEntityScriptObject;
 import dev.diamond.luafy.script.api.obj.math.Vec3dScriptObject;
+import dev.diamond.luafy.script.api.obj.minecraft.WorldScriptObject;
 import dev.diamond.luafy.util.HexId;
 import dev.diamond.luafy.util.RemovalMarkedRunnable;
 import net.minecraft.command.EntitySelector;
@@ -104,25 +105,19 @@ public class ServerApi extends AbstractScriptApi {
            return null;
         });
 
-        // ADD ENTITIES
-        f.put("spawn_entity", args -> {
-            String entityId = args[0].asString();
-            Vec3d pos = args[1].asScriptObjectAssertive(Vec3dScriptObject.class).get();
+        f.put("get_source_world", args -> new WorldScriptObject(script.source.getWorld()));
+        f.put("get_dimension", args -> {
 
-            var entityType = Registries.ENTITY_TYPE.get(new Identifier(entityId));
+            Identifier dimensionId = new Identifier(args[0].asString());
 
-            ServerWorld w = script.source.getWorld();
-            Entity e = entityType.create(w);
+            var worldKey = script.source.getWorldKeys().stream().filter(w -> w.getValue() == dimensionId).findFirst();
 
-            e.setPos(pos.x, pos.y, pos.z);
-            e.setYaw(0);
-            e.setPitch(0);
-
-            w.spawnEntity(e);
-
-            return new EntityScriptObject(e);
-
+            if (worldKey.isPresent()) {
+                ServerWorld world = script.source.getServer().getWorld(worldKey.get());
+                return new WorldScriptObject(world);
+            } return null;
         });
+
 
         return f;
     }

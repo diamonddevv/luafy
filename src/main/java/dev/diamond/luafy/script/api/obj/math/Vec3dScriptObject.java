@@ -40,7 +40,11 @@ public class Vec3dScriptObject implements IScriptObject {
     }
 
     private Object withOther(AbstractBaseValue<?, ?>[] args, Function<Vec3d, Object> f) {
-        var vecSo = args[0].asScriptObjectAssertive(Vec3dScriptObject.class);
+        Vec3dScriptObject vecSo = null;
+
+        if (args[0].isScriptObjectAssertive(Vec3dScriptObject.class)) {
+            vecSo = args[0].asScriptObjectAssertive(Vec3dScriptObject.class);
+        }
 
         Vec3d vec;
         if (vecSo == null) {

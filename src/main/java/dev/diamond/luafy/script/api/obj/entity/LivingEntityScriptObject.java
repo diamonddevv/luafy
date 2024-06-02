@@ -1,7 +1,7 @@
 package dev.diamond.luafy.script.api.obj.entity;
 
 import dev.diamond.luafy.script.abstraction.AdaptableFunction;
-import dev.diamond.luafy.script.api.obj.ItemStackScriptObject;
+import dev.diamond.luafy.script.api.obj.minecraft.ItemStackScriptObject;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 
@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 public class LivingEntityScriptObject extends EntityScriptObject {
 
-    private final LivingEntity living;
+    public final LivingEntity living;
 
     public LivingEntityScriptObject(LivingEntity entity) {
         super(entity);

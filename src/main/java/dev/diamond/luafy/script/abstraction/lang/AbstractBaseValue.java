@@ -38,7 +38,9 @@ public abstract class AbstractBaseValue
     public double asDouble() { return 0; }
     public boolean asBoolean() { return false; }
 
-    public <T> T as(Class<T> clazz) { return clazz.cast(value); }
+    public <T> T as(Class<T> clazz) {
+        return clazz.cast(value);
+    }
     public <T extends IScriptObject> T asScriptObjectAssertive(Class<T> clazz) {
         return asScriptObjectIfPresent().map(clazz::cast).orElse(null);
     }
@@ -62,6 +64,9 @@ public abstract class AbstractBaseValue
     public <T> boolean is(Class<T> clazz) {
         return value.getClass() == clazz;
     }
+    public <T extends IScriptObject> boolean isScriptObjectAssertive(Class<T> clazz) {
+        return asScriptObjectAssertive(clazz) != null;
+    }
 
 
     public LangValue getValue() { return value; }
@@ -71,6 +76,10 @@ public abstract class AbstractBaseValue
         value = (LangValue) adapt(obj).value;
     }
     public BaseValue adapt(Object obj) {
+
+        if (obj instanceof Enum<?> enumVal) {
+            return adapt(enumVal.name());
+        }
 
         if (obj instanceof AbstractBaseValue<?,?> baseValue){
             return (BaseValue) baseValue;
