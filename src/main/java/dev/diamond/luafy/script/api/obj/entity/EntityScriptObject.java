@@ -89,20 +89,14 @@ public class EntityScriptObject implements IScriptObject {
             Vec3d pos = entity.getPos();
             Vec3d target = args[0].asScriptObjectAssertive(Vec3dScriptObject.class).get();
 
+            return new Vec3dScriptObject(angleTo(pos, target));
+        });
 
-            double dz = target.z - pos.z;
-            double dx = target.x - pos.x;
-            double hyp = Math.sqrt((dx * dx) + (dz * dz));
-            double angleHor = Math.atan2(dz, dx);
+        set.put("angle_towards_entity", args -> {
+            Vec3d pos = entity.getPos();
+            Vec3d target = args[0].asScriptObjectAssertive(EntityScriptObject.class).entity.getPos();
 
-
-            double dy = target.y - pos.y;
-            double angleVer = Math.atan2(dy, hyp);
-
-
-            Vec3d vec = new Vec3d(Math.cos(angleHor), Math.sin(angleVer), Math.sin(angleHor));
-
-            return new Vec3dScriptObject(vec);
+            return new Vec3dScriptObject(angleTo(pos, target));
         });
 
         // cca
@@ -142,7 +136,16 @@ public class EntityScriptObject implements IScriptObject {
         return hexid;
     }
 
-    private static double mag(Vec3d vec) {
-        return Math.sqrt((vec.x * vec.x) + (vec.y * vec.y) + (vec.z * vec.z));
+    private static Vec3d angleTo(Vec3d pos, Vec3d target) {
+        double dz = target.z - pos.z;
+        double dx = target.x - pos.x;
+        double hyp = Math.sqrt((dx * dx) + (dz * dz));
+        double angleHor = Math.atan2(dz, dx);
+
+
+        double dy = target.y - pos.y;
+        double angleVer = Math.atan2(dy, hyp);
+
+        return new Vec3d(Math.cos(angleHor), Math.sin(angleVer), Math.sin(angleHor));
     }
 }
