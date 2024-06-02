@@ -49,7 +49,7 @@ public class ScriptManager {
     public static final HashMap<String, AbstractScript<?>> SCRIPTS = new HashMap<>();
     public static final Collection<ScriptCallbacks.CallbackScriptBean> CALLBACK_FILES = new ArrayList<>();
     public static final HashMap<String, Strategy> SANDBOX_STRATEGIES = new HashMap<>();
-    public static final HashMap<String, JsonObject> STATIC_RESOURCES = new HashMap<>();
+    public static final HashMap<String, byte[]> STATIC_RESOURCES = new HashMap<>();
 
     // Callbacks
     public static final HashMap<ScriptCallbackEvent, Collection<CallbackEventSubscription>> EVENT_CALLBACKS = new HashMap<>();

@@ -15,8 +15,6 @@ import java.io.InputStreamReader;
 public class StaticScriptResourceResourceLoader implements SimpleSynchronousResourceReloadListener {
 
     public static final String PATH = "luafy/resources";
-    public static final String EXTENSION = ".json";
-    public static final Gson GSON = new Gson();
 
     @Override
     public Identifier getFabricId() {
@@ -29,19 +27,20 @@ public class StaticScriptResourceResourceLoader implements SimpleSynchronousReso
         ScriptManager.STATIC_RESOURCES.clear();
 
         // Read Phase
-        for (Identifier id : manager.findResources(PATH, id -> id.toString().endsWith(EXTENSION)).keySet()) {
+        for (Identifier id : manager.findResources(PATH, id -> true).keySet()) {
             if (manager.getResource(id).isPresent()) {
                 try (InputStream stream = manager.getResource(id).get().getInputStream()) {
                     // Consume
-                    JsonObject json = GSON.fromJson(new JsonReader(new InputStreamReader(stream)), JsonObject.class);
+                    byte[] bytes = stream.readAllBytes();
 
                     String[] s = id.toString().split(":");
-                    s[1] = s[1].substring(0, s[1].length() - EXTENSION.length());
+                    String ext = s[1].split("\\.")[1];
+                    s[1] = s[1].substring(0, s[1].length() - (ext.length() + 1));
                     s[1] = s[1].substring(PATH.length() + 1);
                     String strippedId = s[0] + ":" + s[1];
 
 
-                    ScriptManager.STATIC_RESOURCES.put(strippedId, json);
+                    ScriptManager.STATIC_RESOURCES.put(strippedId, bytes);
                 } catch (Exception e) {
                     Luafy.LOGGER.error("Error occurred while loading static resource " + id.toString(), e);
                 }

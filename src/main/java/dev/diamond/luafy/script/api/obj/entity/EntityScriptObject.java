@@ -45,6 +45,17 @@ public class EntityScriptObject implements IScriptObject {
 
         set.put("get_pitch", args -> entity.getPitch());
         set.put("get_yaw", args -> entity.getYaw());
+        set.put("get_facing_vector", args -> {
+            var yaw = entity.getYaw(); // xz
+            var pitch = entity.getPitch(); // y
+
+
+            if (yaw < 0) yaw = 360 + yaw;
+            if (pitch < 0) pitch = 360 + pitch;
+
+            return new Vec3dScriptObject(new Vec3d(Math.cos(Math.toRadians(yaw + 90)), Math.sin(Math.toRadians(pitch + 90)), Math.sin(Math.toRadians(yaw + 90))));
+        });
+
 
         set.put("parse_command_as_at", args -> parseAsAt(args[0].asString(), args[1] == null ? 0 : args[1].asInt()));
 
