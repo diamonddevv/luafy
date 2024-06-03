@@ -27,3 +27,5 @@ accessible field net/minecraft/util/math/AffineTransformation translation Lorg/j
 accessible field net/minecraft/util/math/AffineTransformation leftRotation Lorg/joml/Quaternionf;
 accessible field net/minecraft/util/math/AffineTransformation scale Lorg/joml/Vector3f;
 accessible field net/minecraft/util/math/AffineTransformation rightRotation Lorg/joml/Quaternionf;
+
+accessible method net/minecraft/entity/decoration/DisplayEntity$TextDisplayEntity setText (Lnet/minecraft/text/Text;)V

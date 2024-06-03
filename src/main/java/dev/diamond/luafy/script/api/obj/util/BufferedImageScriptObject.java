@@ -22,4 +22,8 @@ public class BufferedImageScriptObject implements IScriptObject {
            return image.getRGB(x, y);
         });
     }
+
+    public BufferedImage get() {
+        return image;
+    }
 }
