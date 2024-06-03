@@ -12,7 +12,7 @@ public class ScriptCallbackEvent {
         this.id = id;
     }
     public void register() {
-        Registry.register(Luafy.CALLBACK_REGISTRY, this.id, this);
+        Registry.register(Luafy.Registries.CALLBACK_REGISTRY, this.id, this);
     }
 
     @Override
@@ -21,7 +21,7 @@ public class ScriptCallbackEvent {
     }
 
     public static ScriptCallbackEvent fromStringId(String id) {
-        ScriptCallbackEvent event = Luafy.CALLBACK_REGISTRY.getOrEmpty(new Identifier(id)).orElse(null);
+        ScriptCallbackEvent event = Luafy.Registries.CALLBACK_REGISTRY.getOrEmpty(new Identifier(id)).orElse(null);
 
         if (event == null) Luafy.LOGGER.error("Couldn't locate callback event '{}'. Available options are: {}", id, getAll().stream().map(ScriptCallbackEvent::toString).toList());
 
@@ -29,6 +29,6 @@ public class ScriptCallbackEvent {
     }
 
     public static Collection<ScriptCallbackEvent> getAll() {
-        return Luafy.CALLBACK_REGISTRY.stream().toList();
+        return Luafy.Registries.CALLBACK_REGISTRY.stream().toList();
     }
 }

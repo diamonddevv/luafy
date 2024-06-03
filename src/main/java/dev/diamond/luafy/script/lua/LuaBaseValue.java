@@ -27,6 +27,10 @@ public class LuaBaseValue extends AbstractBaseValue<LuaValue, LuaBaseValue> {
     @Override public Object getLangNull() {
         return LuaValue.NIL;
     }
+
+    @Override public byte asByte() {
+        return (byte) value.checkint();
+    }
     @Override public int asInt() {
         return value.checkint();
     }
@@ -76,6 +80,10 @@ public class LuaBaseValue extends AbstractBaseValue<LuaValue, LuaBaseValue> {
 
     @Override public boolean isString() {
         return value.isstring();
+    }
+
+    @Override public boolean isByte() {
+        return value.isint() && value.checkint() >= 0 && value.checkint() <= 255;
     }
     @Override public boolean isInt() {
         return value.isint();

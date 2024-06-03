@@ -32,6 +32,7 @@ public abstract class AbstractBaseValue
     public abstract Collection<BaseValue> asCollection();
     public abstract Object asJavaObject();
 
+    public byte asByte() { return 0; }
     public int asInt() { return 0; }
     public long asLong() { return 0; }
     public float asFloat() { return 0; }
@@ -50,6 +51,7 @@ public abstract class AbstractBaseValue
 
 
     public abstract boolean isString();
+    public abstract boolean isByte();
     public abstract boolean isInt();
     public abstract boolean isLong();
     public abstract boolean isFloat();

@@ -3,7 +3,6 @@ package dev.diamond.luafy.resource;
 import dev.diamond.luafy.Luafy;
 import dev.diamond.luafy.script.ScriptManager;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
-import dev.diamond.luafy.script.lua.LuaScript;
 import dev.diamond.luafy.script.registry.lang.ScriptLanguage;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.ResourceManager;
@@ -12,7 +11,6 @@ import net.minecraft.util.Identifier;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class ScriptResourceLoader implements SimpleSynchronousResourceReloadListener {
 
@@ -60,7 +58,7 @@ public class ScriptResourceLoader implements SimpleSynchronousResourceReloadList
     }
 
     public static AbstractScript<?> loadScript(String extension, String scriptContent) {
-        for (ScriptLanguage<?> s : Luafy.SCRIPT_LANG_REGISTRY) {
+        for (ScriptLanguage<?> s : Luafy.Registries.SCRIPT_LANG_REGISTRY) {
             if (Arrays.asList(s.getFileExtensions()).contains(extension)) {
                 return s.readScript(scriptContent);
             }

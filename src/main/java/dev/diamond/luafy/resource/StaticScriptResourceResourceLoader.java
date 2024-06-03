@@ -1,8 +1,5 @@
 package dev.diamond.luafy.resource;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.stream.JsonReader;
 import dev.diamond.luafy.Luafy;
 import dev.diamond.luafy.script.ScriptManager;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
@@ -10,7 +7,6 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
 public class StaticScriptResourceResourceLoader implements SimpleSynchronousResourceReloadListener {
 
