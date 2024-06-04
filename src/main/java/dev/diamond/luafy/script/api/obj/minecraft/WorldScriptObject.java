@@ -6,6 +6,7 @@ import dev.diamond.luafy.script.abstraction.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.obj.IScriptObject;
 import dev.diamond.luafy.script.api.obj.entity.EntityScriptObject;
 import dev.diamond.luafy.script.api.obj.math.Vec3dScriptObject;
+import dev.diamond.luafy.script.api.obj.minecraft.block.BlockStateScriptObject;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.StringNbtReader;
@@ -57,24 +58,21 @@ public class WorldScriptObject implements IScriptObject {
             Entity e = entityType.create(world);
 
 
-            if (e != null) {
-                NbtCompound store = new NbtCompound();
-                e.writeNbt(store);
+            e.setPos(pos.x, pos.y, pos.z);
+            e.setYaw(0);
+            e.setPitch(0);
 
-                for (String s : nbt.getKeys()) {
-                    store.put(s, nbt.get(s));
-                }
+            NbtCompound store = new NbtCompound();
+            e.writeNbt(store);
 
-                // fixme : why broken?
+            for (String s : nbt.getKeys()) {
+                store.put(s, nbt.get(s));
+            }
 
-                e.readNbt(store); // this makes no sense, why do you "read" to set it?? mojank moment
-                e.setPos(pos.x, pos.y, pos.z);
-                e.setYaw(0);
-                e.setPitch(0);
-                world.spawnEntity(e);
+            e.readNbt(store); // this makes no sense, why do you "read" to set it?? mojank moment
+            world.spawnEntity(e);
 
-                return new EntityScriptObject(e);
-            } else return null;
+            return new EntityScriptObject(e);
         });
 
         set.put("get_entity_from_uuid", args -> {
@@ -104,5 +102,9 @@ public class WorldScriptObject implements IScriptObject {
 
             return null;
         });
+    }
+
+    public ServerWorld get() {
+        return world;
     }
 }

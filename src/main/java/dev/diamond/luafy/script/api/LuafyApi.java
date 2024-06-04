@@ -4,11 +4,10 @@ import dev.diamond.luafy.script.ScriptManager;
 import dev.diamond.luafy.script.abstraction.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.api.AbstractScriptApi;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
-import dev.diamond.luafy.script.api.obj.entity.display.TextDisplayEntityScriptObject;
+import dev.diamond.luafy.script.api.obj.minecraft.item.MapStateScriptObject;
 import dev.diamond.luafy.script.api.obj.util.ByteBufScriptObject;
 import dev.diamond.luafy.util.HexId;
-import net.minecraft.entity.EntityType;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.item.map.MapState;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -49,14 +48,9 @@ public class LuafyApi extends AbstractScriptApi {
         });
 
         f.put("test", args -> {
-            Vec3d pos = script.source.getPosition();
-            World world = script.source.getWorld();
+            MapStateScriptObject msso = new MapStateScriptObject(MapState.of((byte) 1, true, World.OVERWORLD));
 
-            var e = EntityType.TEXT_DISPLAY.create(world);
-            e.setPosition(pos);
-            world.spawnEntity(e);
-
-            return new TextDisplayEntityScriptObject(e);
+            return msso;
         });
 
         return f;

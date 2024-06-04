@@ -1,4 +1,4 @@
-package dev.diamond.luafy.script.api.obj.minecraft;
+package dev.diamond.luafy.script.api.obj.minecraft.item;
 
 import dev.diamond.luafy.script.abstraction.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.BaseValueConversions;

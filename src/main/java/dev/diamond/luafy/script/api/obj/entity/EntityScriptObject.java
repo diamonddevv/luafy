@@ -9,13 +9,13 @@ import dev.diamond.luafy.script.abstraction.obj.IScriptObject;
 import dev.diamond.luafy.script.api.CommandApi;
 import dev.diamond.luafy.script.api.obj.entity.display.DisplayEntityScriptObject;
 import dev.diamond.luafy.script.api.obj.math.Vec3dScriptObject;
+import dev.diamond.luafy.script.api.obj.minecraft.WorldScriptObject;
 import dev.diamond.luafy.script.nbt.OptionallyExplicitNbtElement;
 import dev.diamond.luafy.util.HexId;
 import dev.diamond.luafy.util.LuafyUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.decoration.DisplayEntity;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.predicate.NbtPredicate;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.command.ServerCommandSource;
@@ -74,6 +74,8 @@ public class EntityScriptObject implements IScriptObject {
             entity.teleport(pos.x, pos.y, pos.z);
             return null;
         });
+
+        set.put("get_world", args -> new WorldScriptObject(entity.getServer().getWorld(entity.getWorld().getRegistryKey())));
 
         // motion
         set.put("set_motion", args -> {

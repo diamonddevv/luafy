@@ -1,7 +1,7 @@
 package dev.diamond.luafy.script.api.obj.entity;
 
 import dev.diamond.luafy.script.abstraction.AdaptableFunction;
-import dev.diamond.luafy.script.api.obj.minecraft.ItemStackScriptObject;
+import dev.diamond.luafy.script.api.obj.minecraft.item.ItemStackScriptObject;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 
