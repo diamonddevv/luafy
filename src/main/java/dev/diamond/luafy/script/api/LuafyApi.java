@@ -4,11 +4,8 @@ import dev.diamond.luafy.script.ScriptManager;
 import dev.diamond.luafy.script.abstraction.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.api.AbstractScriptApi;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
-import dev.diamond.luafy.script.api.obj.minecraft.item.MapStateScriptObject;
 import dev.diamond.luafy.script.api.obj.util.ByteBufScriptObject;
 import dev.diamond.luafy.util.HexId;
-import net.minecraft.item.map.MapState;
-import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,12 +42,6 @@ public class LuafyApi extends AbstractScriptApi {
             });
 
             return ids;
-        });
-
-        f.put("test", args -> {
-            MapStateScriptObject msso = new MapStateScriptObject(MapState.of((byte) 1, true, World.OVERWORLD));
-
-            return msso;
         });
 
         return f;
