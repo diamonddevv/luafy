@@ -16,6 +16,8 @@ public class ScriptCallbacks {
     public static final ScriptCallbackEvent ON_ENTITY_HURTS =           new ScriptCallbackEvent(Luafy.id("entity_hurts"));
     public static final ScriptCallbackEvent ON_ADVANCEMENT_OBTAINED =   new ScriptCallbackEvent(Luafy.id("advancement_obtained"));
     public static final ScriptCallbackEvent ON_ITEM_USED =              new ScriptCallbackEvent(Luafy.id("item_used"));
+    public static final ScriptCallbackEvent ON_ITEM_USED_ON_BLOCK =     new ScriptCallbackEvent(Luafy.id("item_used_on_block"));
+    public static final ScriptCallbackEvent ON_ITEM_USED_ON_ENTITY =    new ScriptCallbackEvent(Luafy.id("item_used_on_entity"));
     public static final ScriptCallbackEvent ON_STAT_CHANGED =           new ScriptCallbackEvent(Luafy.id("stat_changes"));
     public static final ScriptCallbackEvent ON_GAME_EVENT =             new ScriptCallbackEvent(Luafy.id("game_event_emits"));
     public static final ScriptCallbackEvent HAND_SWINGS =               new ScriptCallbackEvent(Luafy.id("hand_swings"));
@@ -41,6 +43,8 @@ public class ScriptCallbacks {
         ON_ENTITY_HURTS.register();
         ON_ADVANCEMENT_OBTAINED.register();
         ON_ITEM_USED.register();
+        ON_ITEM_USED_ON_BLOCK.register();
+        ON_ITEM_USED_ON_ENTITY.register();
         ON_STAT_CHANGED.register();
         ON_GAME_EVENT.register();
         HAND_SWINGS.register();

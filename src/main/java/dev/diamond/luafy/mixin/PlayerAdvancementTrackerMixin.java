@@ -1,6 +1,7 @@
 package dev.diamond.luafy.mixin;
 
 import dev.diamond.luafy.script.ScriptManager;
+import dev.diamond.luafy.script.api.obj.entity.PlayerEntityScriptObject;
 import dev.diamond.luafy.script.api.obj.util.AdvancementEntryScriptObject;
 import dev.diamond.luafy.script.registry.callback.ScriptCallbacks;
 import net.minecraft.advancement.AdvancementEntry;
@@ -24,6 +25,7 @@ public class PlayerAdvancementTrackerMixin {
 
         ScriptManager.executeEventCallbacks(ScriptCallbacks.ON_ADVANCEMENT_OBTAINED, () ->  owner.getCommandSource().withLevel(2), v -> {
             v.put("advancement", new AdvancementEntryScriptObject(advancement));
+            v.put("player", new PlayerEntityScriptObject(owner));
         });
     }
 }
