@@ -1,6 +1,6 @@
 package dev.diamond.luafy.script.api.obj.minecraft.item;
 
-import dev.diamond.luafy.script.abstraction.AdaptableFunction;
+import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.obj.IScriptObject;
 import dev.diamond.luafy.script.api.obj.entity.PlayerEntityScriptObject;
 import dev.diamond.luafy.script.api.obj.minecraft.WorldScriptObject;
@@ -13,7 +13,6 @@ import net.minecraft.item.map.MapState;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
-import net.minecraft.world.World;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

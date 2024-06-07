@@ -2,7 +2,7 @@ package dev.diamond.luafy.script.api.obj.entity;
 
 import dev.diamond.luafy.cca.LuafyCCA;
 import dev.diamond.luafy.script.ScriptManager;
-import dev.diamond.luafy.script.abstraction.AdaptableFunction;
+import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.BaseValueConversions;
 import dev.diamond.luafy.script.abstraction.lang.AbstractBaseValue;
 import dev.diamond.luafy.script.abstraction.obj.IScriptObject;

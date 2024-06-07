@@ -1,7 +1,7 @@
 package dev.diamond.luafy.script.lua;
 
 import dev.diamond.luafy.Luafy;
-import dev.diamond.luafy.script.abstraction.AdaptableFunction;
+import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.api.AbstractScriptApi;
 import dev.diamond.luafy.script.abstraction.api.ApiProvider;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
@@ -12,8 +12,6 @@ import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
-
-import java.util.Arrays;
 
 public class LuaScript extends AbstractScript<LuaBaseValue> {
 

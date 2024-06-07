@@ -2,7 +2,7 @@ package dev.diamond.luafy.script.api.obj.minecraft;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.diamond.luafy.Luafy;
-import dev.diamond.luafy.script.abstraction.AdaptableFunction;
+import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.obj.IScriptObject;
 import dev.diamond.luafy.script.api.obj.entity.EntityScriptObject;
 import dev.diamond.luafy.script.api.obj.math.Vec3dScriptObject;

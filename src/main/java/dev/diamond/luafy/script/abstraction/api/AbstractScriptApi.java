@@ -1,7 +1,7 @@
 package dev.diamond.luafy.script.abstraction.api;
 
 
-import dev.diamond.luafy.script.abstraction.AdaptableFunction;
+import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
 
 import java.util.HashMap;

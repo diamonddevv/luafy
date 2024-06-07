@@ -35,15 +35,15 @@ public class Apis {
     public static final NonSandboxableApi<LuaScript> LUA_LOADSTATE= new NonSandboxableApi<>(ScriptLanguages.LUA, s -> LoadState.install(((LuaScript)s).scriptGlobals));
     public static final NonSandboxableApi<LuaScript> LUA_C =        new NonSandboxableApi<>(ScriptLanguages.LUA, s -> LuaC.install(((LuaScript)s).scriptGlobals));
 
-    public static final SandboxableApi<?> LUAFY =                   new SandboxableApi<>(null, s -> s.addApi(LuafyApi::new));
-    public static final SandboxableApi<?> COMMAND =                 new SandboxableApi<>(null, s -> s.addApi(CommandApi::new));
-    public static final SandboxableApi<?> SERVER =                  new SandboxableApi<>(null, s -> s.addApi(ServerApi::new));
-    public static final SandboxableApi<?> CONTEXT =                 new SandboxableApi<>(null, s -> s.addApi(ContextApi::new));
-    public static final SandboxableApi<?> STORAGE =                 new SandboxableApi<>(null, s -> s.addApi(StorageApi::new));
-    public static final SandboxableApi<?> SCRIPT =                  new SandboxableApi<>(null, s -> s.addApi(ScriptApi::new));
-    public static final SandboxableApi<?> THREADS =                 new SandboxableApi<>(null, s -> s.addApi(ThreadsApi::new));
-    public static final SandboxableApi<?> OBJECTS =                 new SandboxableApi<>(null, s -> s.addApi(ObjectsApi::new));
-    public static final SandboxableApi<?> WEB =                     new SandboxableApi<>(null, s -> s.addApi(WebApi::new));
+    public static final SandboxableLuafyModApi LUAFY =              new SandboxableLuafyModApi(null, LuafyApi::new);
+    public static final SandboxableLuafyModApi COMMAND =            new SandboxableLuafyModApi(null, CommandApi::new);
+    public static final SandboxableLuafyModApi SERVER =             new SandboxableLuafyModApi(null, ServerApi::new);
+    public static final SandboxableLuafyModApi CONTEXT =            new SandboxableLuafyModApi(null, ContextApi::new);
+    public static final SandboxableLuafyModApi STORAGE =            new SandboxableLuafyModApi(null, StorageApi::new);
+    public static final SandboxableLuafyModApi SCRIPT =             new SandboxableLuafyModApi(null, ScriptApi::new);
+    public static final SandboxableLuafyModApi THREADS =            new SandboxableLuafyModApi(null, ThreadsApi::new);
+    public static final SandboxableLuafyModApi OBJECTS =            new SandboxableLuafyModApi(null, ObjectsApi::new);
+    public static final SandboxableLuafyModApi WEB =                new SandboxableLuafyModApi(null, WebApi::new);
 
     public static void registerAll() {
         Registry.register(Luafy.Registries.API_REGISTRY, Luafy.id("lua_base"), LUA_BASE);

@@ -1,7 +1,7 @@
 package dev.diamond.luafy.script.api.obj.util;
 
 import dev.diamond.luafy.script.ScriptManager;
-import dev.diamond.luafy.script.abstraction.AdaptableFunction;
+import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.BaseValueConversions;
 import dev.diamond.luafy.script.abstraction.obj.IScriptObject;
 import dev.diamond.luafy.script.api.StorageApi;

@@ -1,8 +1,7 @@
 package dev.diamond.luafy.script.api.obj.entity.display;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import dev.diamond.luafy.Luafy;
-import dev.diamond.luafy.script.abstraction.AdaptableFunction;
+import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
 import dev.diamond.luafy.script.api.obj.util.BufferedImageScriptObject;
 import net.minecraft.entity.decoration.DisplayEntity;
 import net.minecraft.nbt.NbtCompound;

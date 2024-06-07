@@ -1,8 +1,6 @@
 package dev.diamond.luafy.script.api.obj.argument;
 
-import dev.diamond.luafy.script.abstraction.AdaptableFunction;
-import net.minecraft.command.argument.CoordinateArgument;
-import net.minecraft.command.argument.DefaultPosArgument;
+import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
 import net.minecraft.command.argument.LookingPosArgument;
 
 import java.util.HashMap;

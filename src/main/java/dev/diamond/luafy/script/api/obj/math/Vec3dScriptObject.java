@@ -1,6 +1,6 @@
 package dev.diamond.luafy.script.api.obj.math;
 
-import dev.diamond.luafy.script.abstraction.AdaptableFunction;
+import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.lang.AbstractBaseValue;
 import dev.diamond.luafy.script.abstraction.obj.IScriptObject;
 import net.minecraft.util.math.Vec3d;

@@ -1,6 +1,6 @@
 package dev.diamond.luafy.script.abstraction.obj;
 
-import dev.diamond.luafy.script.abstraction.AdaptableFunction;
+import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
 import dev.diamond.luafy.util.HexId;
 
 import java.util.HashMap;

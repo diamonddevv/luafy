@@ -10,6 +10,7 @@ import dev.diamond.luafy.script.registry.callback.ScriptCallbackEvent;
 import dev.diamond.luafy.script.registry.callback.ScriptCallbacks;
 import dev.diamond.luafy.script.registry.lang.ScriptLanguage;
 import dev.diamond.luafy.script.registry.lang.ScriptLanguages;
+import dev.diamond.luafy.script.registry.sandbox.ApiDocSpitterOutter;
 import dev.diamond.luafy.script.registry.sandbox.SandboxableApi;
 import dev.diamond.luafy.script.registry.sandbox.Apis;
 import net.fabricmc.api.ModInitializer;
@@ -73,6 +74,8 @@ public class Luafy implements ModInitializer {
 		ScriptLanguages.registerAll();
 		Apis.registerAll();
 		ByteBufDecoder.Decoders.registerAll();
+
+		ApiDocSpitterOutter.spitOutDocs();
 	}
 
 

@@ -1,6 +1,6 @@
 package dev.diamond.luafy.script.api.obj.entity.display;
 
-import dev.diamond.luafy.script.abstraction.AdaptableFunction;
+import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
 import dev.diamond.luafy.script.api.obj.minecraft.item.ItemStackScriptObject;
 import net.minecraft.entity.decoration.DisplayEntity.ItemDisplayEntity;
 import net.minecraft.item.ItemStack;

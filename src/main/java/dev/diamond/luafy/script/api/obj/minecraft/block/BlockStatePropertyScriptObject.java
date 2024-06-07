@@ -1,6 +1,6 @@
 package dev.diamond.luafy.script.api.obj.minecraft.block;
 
-import dev.diamond.luafy.script.abstraction.AdaptableFunction;
+import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.obj.IScriptObject;
 import net.minecraft.state.property.Property;
 

@@ -1,12 +1,11 @@
 package dev.diamond.luafy.script.api.obj.math;
 
-import dev.diamond.luafy.script.abstraction.AdaptableFunction;
+import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.obj.IScriptObject;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 

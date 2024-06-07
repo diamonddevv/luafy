@@ -9,15 +9,13 @@ import dev.diamond.luafy.script.ScriptManager;
 import dev.diamond.luafy.script.abstraction.lang.AbstractBaseValue;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
 import dev.diamond.luafy.script.abstraction.api.AbstractScriptApi;
-import dev.diamond.luafy.script.abstraction.AdaptableFunction;
+import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
 import dev.diamond.luafy.script.api.obj.argument.ICommandArgumentScriptObject;
 import dev.diamond.luafy.util.HexId;
 import net.minecraft.server.command.ServerCommandSource;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 
 public class CommandApi extends AbstractScriptApi {
 

@@ -2,7 +2,7 @@ package dev.diamond.luafy.script.api.obj.entity;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import dev.diamond.luafy.script.abstraction.AdaptableFunction;
+import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
 import dev.diamond.luafy.script.api.obj.minecraft.item.ItemStackScriptObject;
 import net.minecraft.server.network.ServerPlayerEntity;
 

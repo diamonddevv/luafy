@@ -1,11 +1,9 @@
 package dev.diamond.luafy.script.api;
 
-import dev.diamond.luafy.script.abstraction.AdaptableFunction;
+import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.api.AbstractScriptApi;
 import dev.diamond.luafy.script.abstraction.lang.AbstractBaseValue;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
-import dev.diamond.luafy.script.api.obj.math.Vec3dScriptObject;
-import net.minecraft.util.math.Vec3d;
 
 import java.util.HashMap;
 
