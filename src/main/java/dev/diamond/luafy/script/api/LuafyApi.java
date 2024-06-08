@@ -30,7 +30,7 @@ public class LuafyApi extends AbstractTypedScriptApi {
                 new NamedParam("id", String.class)
         );
 
-        f.add_WithOptionalParams(
+        f.add_OptionalParams(
                 "get_resource_ids", LuafyApi::getResourceIds,
                 List.class,
                 new NamedParam[] {new NamedParam("includeDataParameter", Boolean.class)},

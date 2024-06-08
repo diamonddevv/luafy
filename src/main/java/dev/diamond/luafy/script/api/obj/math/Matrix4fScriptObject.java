@@ -23,38 +23,38 @@ public class Matrix4fScriptObject extends AbstractTypedScriptObject {
     @Override
     public void getTypedFunctions(TypedFunctionList f) {
 
-        f.add_Void("set_translation", args -> {
+        f.add_Void_Desc("set_translation", args -> {
             Vector3f v = args[0].asScriptObjectAssertive(Vec3dScriptObject.class).get().toVector3f();
             mat.setTranslation(v.x, v.y, v.z);
             return null;
-        }, new NamedParam("translation", Vec3dScriptObject.class));
+        }, "Sets the translation of this matrix.", new NamedParam("translation", Vec3dScriptObject.class));
 
-        f.add_Void("scale", args -> {
+        f.add_Void_Desc("scale", args -> {
             Vector3f v = args[0].asScriptObjectAssertive(Vec3dScriptObject.class).get().toVector3f();
             mat.scale(v.x, v.y, v.z);
             return null;
-        }, new NamedParam("scale", Vec3dScriptObject.class));
+        }, "Scales this matrix.", new NamedParam("scale", Vec3dScriptObject.class));
 
-        f.add_Void("rotate", args -> {
+        f.add_Void_Desc("rotate", args -> {
             Quaternionf quat = args[0].asScriptObjectAssertive(QuaternionfScriptObject.class).get();
             mat.rotate(quat);
             return null;
-        }, new NamedParam("quaternion", QuaternionfScriptObject.class));
+        }, "Rotates this matrix by the given quaternion.", new NamedParam("quaternion", QuaternionfScriptObject.class));
 
-        f.add_NoParams("to_string", args ->
+        f.add_NoParams_Desc("to_string", args ->
                 String.format(
                         "[%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s]",
                         mat.m00(), mat.m01(), mat.m02(), mat.m03(),
                         mat.m10(), mat.m11(), mat.m12(), mat.m13(),
                         mat.m20(), mat.m21(), mat.m22(), mat.m23(),
                         mat.m30(), mat.m31(), mat.m32(), mat.m33()
-                ), String.class);
+                ), "Returns this matrix as a String in the format [a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p].", String.class);
 
-        f.add_NoParams("to_list", args -> Arrays.stream(new Float[] {
+        f.add_NoParams_Desc("to_list", args -> Arrays.stream(new Float[] {
                 mat.m00(), mat.m01(), mat.m02(), mat.m03(),
                 mat.m10(), mat.m11(), mat.m12(), mat.m13(),
                 mat.m20(), mat.m21(), mat.m22(), mat.m23(),
                 mat.m30(), mat.m31(), mat.m32(), mat.m33()
-        }).toList(), List.class);
+        }).toList(), "Returns this matrix as a list of elements.", List.class);
     }
 }

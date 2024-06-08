@@ -36,6 +36,10 @@ public interface TypedFunctions {
             builder.append(") -> ");
             builder.append(kvp.getValue().returnType().map(Class::getSimpleName).orElse("void")); // add return type
 
+            builder.append("\n\t\t- ");
+            builder.append(kvp.getValue().description().orElse("<No Description>")); // Add Desc
+            builder.append("\n"); // Add Desc
+
             if (tabbed) signatures.add("\t" + builder);
             else signatures.add(builder.toString());
 
@@ -63,7 +67,7 @@ public interface TypedFunctions {
 
 
     interface TypeData {
-        static TypeData of(AdaptableFunction a, Optional<Class<?>> r, NamedParam[] p, NamedParam[] op) {
+        static TypeData of(AdaptableFunction a, Optional<Class<?>> r, NamedParam[] p, NamedParam[] op, Optional<String> d) {
             return new TypeData() {
                 @Override public AdaptableFunction function() {
                     return a;
@@ -77,6 +81,9 @@ public interface TypedFunctions {
                 @Override public NamedParam[] optionalParams() {
                     return op;
                 }
+                @Override public Optional<String> description() {
+                    return d;
+                }
             };
         }
 
@@ -84,6 +91,7 @@ public interface TypedFunctions {
         Optional<Class<?>> returnType();
         NamedParam[] params();
         NamedParam[] optionalParams();
+        Optional<String> description();
     }
 
     class NamedParam {
@@ -116,42 +124,68 @@ public interface TypedFunctions {
             this.hash = new LinkedHashMap<>();
         }
 
-        private void add_master(String functionName, AdaptableFunction function, @Nullable Class<?> returnType, @Nullable NamedParam[] params, @Nullable NamedParam[] optionalParams) {
+        private void add_master(String functionName, AdaptableFunction function, @Nullable Class<?> returnType, @Nullable NamedParam[] params, @Nullable NamedParam[] optionalParams, String d) {
 
             hash.put(functionName, TypeData.of(
                     function,
                     returnType == null ? Optional.empty() : Optional.of(returnType),
                     params == null ? new NamedParam[0] : params,
-                    optionalParams == null ? new NamedParam[0] : optionalParams
+                    optionalParams == null ? new NamedParam[0] : optionalParams,
+                    Optional.ofNullable(d)
             ));
 
             fhash.put(functionName, function);
         }
 
         public void add_Void(String functionName, AdaptableFunction function, NamedParam... params) {
-            add_master(functionName, function, null, params, null);
+            add_master(functionName, function, null, params, null, null);
         }
-        public void add_VoidNoParams(String functionName, AdaptableFunction function) {
-            add_master(functionName, function, null, null, null);
+        public void add_Void_NoParams(String functionName, AdaptableFunction function) {
+            add_master(functionName, function, null, null, null, null);
         }
-        public void add_VoidWithOptionalParams(String functionName, AdaptableFunction function, NamedParam[] optionalParams, @Nullable NamedParam... params) {
-            add_master(functionName, function, null, params, optionalParams);
+        public void add_Void_OptionalParams(String functionName, AdaptableFunction function, NamedParam[] optionalParams, @Nullable NamedParam... params) {
+            add_master(functionName, function, null, params, optionalParams, null);
         }
-        public void add_VoidNoParamsWithOptionalParams(String functionName, AdaptableFunction function, NamedParam... optionalParams) {
-            add_master(functionName, function, null, null, optionalParams);
+        public void add_Void_NoParams_OptionalParams(String functionName, AdaptableFunction function, NamedParam... optionalParams) {
+            add_master(functionName, function, null, null, optionalParams, null);
         }
         public void add(String functionName, AdaptableFunction function, Class<?> returnType, NamedParam... params) {
-            add_master(functionName, function, returnType, params, null);
+            add_master(functionName, function, returnType, params, null, null);
         }
         public void add_NoParams(String functionName, AdaptableFunction function, Class<?> returnType) {
-            add_master(functionName, function, returnType, null, null);
+            add_master(functionName, function, returnType, null, null, null);
         }
-        public void add_WithOptionalParams(String functionName, AdaptableFunction function, Class<?> returnType, NamedParam[] optionalParams, @Nullable NamedParam... params) {
-            add_master(functionName, function, returnType, params, optionalParams);
+        public void add_OptionalParams(String functionName, AdaptableFunction function, Class<?> returnType, NamedParam[] optionalParams, @Nullable NamedParam... params) {
+            add_master(functionName, function, returnType, params, optionalParams, null);
         }
-        public void add_NoParamsWithOptionalParams(String functionName, AdaptableFunction function, Class<?> returnType, NamedParam... optionalParams) {
-            add_master(functionName, function, returnType, null, optionalParams);
+        public void add_NoParams_OptionalParams(String functionName, AdaptableFunction function, Class<?> returnType, NamedParam... optionalParams) {
+            add_master(functionName, function, returnType, null, optionalParams, null);
         }
+        public void add_Void_Desc(String functionName, AdaptableFunction function, String desc, NamedParam... params) {
+            add_master(functionName, function, null, params, null, desc);
+        }
+        public void add_Void_NoParams_Desc(String functionName, AdaptableFunction function, String desc) {
+            add_master(functionName, function, null, null, null, desc);
+        }
+        public void add_Void_OptionalParams_Desc(String functionName, AdaptableFunction function, String desc, NamedParam[] optionalParams, @Nullable NamedParam... params) {
+            add_master(functionName, function, null, params, optionalParams, desc);
+        }
+        public void add_Void_NoParams_OptionalParams_Desc(String functionName, AdaptableFunction function, String desc, NamedParam... optionalParams) {
+            add_master(functionName, function, null, null, optionalParams, desc);
+        }
+        public void add_Desc(String functionName, AdaptableFunction function, String desc, Class<?> returnType, NamedParam... params) {
+            add_master(functionName, function, returnType, params, null, desc);
+        }
+        public void add_NoParams_Desc(String functionName, AdaptableFunction function, String desc, Class<?> returnType) {
+            add_master(functionName, function, returnType, null, null, desc);
+        }
+        public void add_OptionalParams_Desc(String functionName, AdaptableFunction function, String desc, Class<?> returnType, NamedParam[] optionalParams, @Nullable NamedParam... params) {
+            add_master(functionName, function, returnType, params, optionalParams, desc);
+        }
+        public void add_NoParams_OptionalParams_Desc(String functionName, AdaptableFunction function, String desc, Class<?> returnType, NamedParam... optionalParams) {
+            add_master(functionName, function, returnType, null, optionalParams, desc);
+        }
+
 
 
 

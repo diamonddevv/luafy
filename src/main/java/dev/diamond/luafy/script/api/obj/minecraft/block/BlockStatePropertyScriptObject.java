@@ -17,6 +17,6 @@ public class BlockStatePropertyScriptObject extends AbstractTypedScriptObject<Pr
 
     @Override
     public void getTypedFunctions(TypedFunctionList f) {
-        f.add_NoParams("get_name", args -> property.getName(), String.class);
+        f.add_NoParams_Desc("get_name", args -> property.getName(), "Returns the name of this property.", String.class);
     }
 }

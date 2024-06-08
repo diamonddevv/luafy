@@ -51,7 +51,7 @@ public class JsonDocsCreator implements DocsCreator {
         }, obj -> obj.getClass().getSimpleName());
 
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
         String s = gson.toJson(json);
         return s.getBytes(StandardCharsets.UTF_8);
     }
@@ -67,6 +67,8 @@ public class JsonDocsCreator implements DocsCreator {
             Registry<R> registry,
             ApiDocSpitterOutter.TypedFunctionsProvider<T, R> provider, Function<T, String> nameFunc)
     {
+        JsonObject obj = new JsonObject();
+
         for (var e : registry) {
 
             Optional<T> ot = provider.provide(e);
@@ -106,13 +108,16 @@ public class JsonDocsCreator implements DocsCreator {
 
                     objJson.addProperty("return_type", kvp.getValue().returnType().map(Class::getSimpleName).orElse("void"));
 
+                    if (kvp.getValue().description().isPresent()) objJson.addProperty("description", kvp.getValue().description().get());
+
                     list.add(objJson);
 
                     Luafy.LOGGER.info("[Function Signature Generator]: Added function " + name + delimiter + kvp.getKey());
                 }
 
-                json.add(type + "_" + name, list);
+                obj.add(name, list);
             }
+            json.add(type, obj);
         }
     }
 }

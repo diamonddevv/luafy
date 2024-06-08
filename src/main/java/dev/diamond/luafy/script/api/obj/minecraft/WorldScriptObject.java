@@ -34,12 +34,12 @@ public class WorldScriptObject extends AbstractTypedScriptObject<ServerWorld> {
 
     @Override
     public void getTypedFunctions(TypedFunctionList f) {
-        f.add("get_blockstate", args -> {
+        f.add_Desc("get_blockstate", args -> {
             Vec3d vec = args[0].asScriptObjectAssertive(Vec3dScriptObject.class).get();
             return new BlockStateScriptObject(world.getBlockState(BlockPos.ofFloored(vec.x, vec.y, vec.z)));
-        }, BlockStateScriptObject.class, new NamedParam("pos", Vec3dScriptObject.class));
+        }, "Gets the blockstate at this position (floored)", BlockStateScriptObject.class, new NamedParam("pos", Vec3dScriptObject.class));
 
-        f.add_WithOptionalParams("spawn_entity", args -> {
+        f.add_OptionalParams_Desc("spawn_entity", args -> {
             String entityId = args[0].asString();
             Vec3d pos = args[1].asScriptObjectAssertive(Vec3dScriptObject.class).get();
             String snbt = null;
@@ -76,21 +76,22 @@ public class WorldScriptObject extends AbstractTypedScriptObject<ServerWorld> {
             world.spawnEntity(e);
 
             return new EntityScriptObject(e);
-        }, EntityScriptObject.class,
+        }, "Spawns the specified entity at the specified position. Optionally takes in entity NBT to add to the entity.",
+                EntityScriptObject.class,
                 new NamedParam[] {new NamedParam("snbt", String.class)},
                 new NamedParam("entityId", String.class),
                 new NamedParam("pos", Vec3dScriptObject.class));
 
-        f.add("get_entity_from_uuid", args -> {
+        f.add_Desc("get_entity_from_uuid", args -> {
             UUID uuid = UUID.fromString(args[0].asString());
             var e = world.getEntity(uuid);
             return new EntityScriptObject(e);
-        }, EntityScriptObject.class, new NamedParam("uuid", String.class));
+        }, "Gets the entity with this UUID.", EntityScriptObject.class, new NamedParam("uuid", String.class));
 
 
-        f.add_NoParams("get_time_of_day", args -> world.getTimeOfDay(), Number.class);
+        f.add_NoParams_Desc("get_time_of_day", args -> world.getTimeOfDay(), "Gets the current time of day.", Number.class);
 
-        f.add_Void("play_sound", args -> {
+        f.add_Void_Desc("play_sound", args -> {
             Vec3d pos = args[0].asScriptObjectAssertive(Vec3dScriptObject.class).get();
             Identifier soundId = new Identifier(args[1].asString());
             String category = args[2].asString();
@@ -110,6 +111,7 @@ public class WorldScriptObject extends AbstractTypedScriptObject<ServerWorld> {
 
             return null;
         },
+                "Plays the specified sound to all players at the specified position with the specified sound category, pitch and volume.",
                 new NamedParam("pos", Vec3dScriptObject.class),
                 new NamedParam("soundId", String.class),
                 new NamedParam("soundCategory", String.class),

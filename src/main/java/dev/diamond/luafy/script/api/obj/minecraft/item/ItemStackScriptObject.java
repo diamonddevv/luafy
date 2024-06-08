@@ -6,7 +6,6 @@ import dev.diamond.luafy.script.abstraction.obj.AbstractTypedScriptObject;
 import dev.diamond.luafy.script.api.obj.entity.PlayerEntityScriptObject;
 import dev.diamond.luafy.script.nbt.OptionallyExplicitNbtElement;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 
@@ -28,31 +27,31 @@ public class ItemStackScriptObject extends AbstractTypedScriptObject<ItemStack> 
 
     @Override
     public void getTypedFunctions(TypedFunctionList f) {
-        f.add_NoParams("get_id", args -> Registries.ITEM.getId(stack.getItem()).toString(), String.class);
-        f.add_NoParams("get_count", args -> stack.getCount(), Number.class);
+        f.add_NoParams_Desc("get_id", args -> Registries.ITEM.getId(stack.getItem()).toString(), "Gets the registry of the item this stack contains.", String.class);
+        f.add_NoParams_Desc("get_count", args -> stack.getCount(), "Gets the size of this stack.", Number.class);
 
-        f.add_NoParams("get_nbt", args -> new OptionallyExplicitNbtElement(null, stack.getOrCreateNbt()), NbtElement.class);
-        f.add_Void("set_nbt", args -> {
+        f.add_NoParams_Desc("get_nbt", args -> new OptionallyExplicitNbtElement(null, stack.getOrCreateNbt()), "Returns this stacks NBT data as a map", Map.class);
+        f.add_Void_Desc("set_nbt", args -> {
             stack.setNbt(BaseValueConversions.mapToCompound((HashMap<AbstractBaseValue<?,?>, AbstractBaseValue<?,?>>) args[0].asMap()));
             return null;
-        }, new NamedParam("nbt", Map.class));
+        }, "Sets this stacks NBT data.", new NamedParam("nbt", Map.class));
 
-        f.add_Void("set_cooldown_ticks", args -> {
+        f.add_Void_Desc("set_cooldown_ticks", args -> {
             ServerPlayerEntity player = args[0].asScriptObjectAssertive(PlayerEntityScriptObject.class).player;
             int ticks = args[1].asInt();
             player.getItemCooldownManager().set(stack.getItem(), ticks);
             return null;
-        }, new NamedParam("player", PlayerEntityScriptObject.class), new NamedParam("ticks", Number.class));
+        }, "Sets the cooldown timer of this item for the player.", new NamedParam("player", PlayerEntityScriptObject.class), new NamedParam("ticks", Number.class));
 
-        f.add("get_cooldown_ticks", args -> {
+        f.add_Desc("get_cooldown_ticks", args -> {
             ServerPlayerEntity player = args[0].asScriptObjectAssertive(PlayerEntityScriptObject.class).player;
             return player.getItemCooldownManager().getCooldownProgress(stack.getItem(), 0f);
-        }, Number.class, new NamedParam("player", PlayerEntityScriptObject.class));
+        },"Gets the remaining cooldown ticks for this item for the player.", Number.class, new NamedParam("player", PlayerEntityScriptObject.class));
 
-        f.add_Void("remove_cooldown", args -> {
+        f.add_Void_Desc("remove_cooldown", args -> {
             ServerPlayerEntity player = args[0].asScriptObjectAssertive(PlayerEntityScriptObject.class).player;
             player.getItemCooldownManager().remove(stack.getItem());
             return null;
-        }, new NamedParam("player", PlayerEntityScriptObject.class));
+        }, "Removes the cooldown of this item for the player.", new NamedParam("player", PlayerEntityScriptObject.class));
     }
 }

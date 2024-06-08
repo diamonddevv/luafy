@@ -18,13 +18,13 @@ public class LookingPosArgumentScriptObject extends AbstractTypedScriptObject<Lo
 
     @Override
     public void getTypedFunctions(TypedFunctionList f) {
-        f.add_NoParams("get_x", args -> arg.x, Number.class);
-        f.add_NoParams("get_y", args -> arg.y, Number.class);
-        f.add_NoParams("get_z", args -> arg.z, Number.class);
+        f.add_NoParams_Desc("get_x", args -> arg.x, "Gets the X component of this argument.", Number.class);
+        f.add_NoParams_Desc("get_y", args -> arg.y, "Gets the Y component of this argument.", Number.class);
+        f.add_NoParams_Desc("get_z", args -> arg.z, "Gets the Z component of this argument.", Number.class);
 
-        f.add_Void("set_x", args -> { arg.x = args[0].asDouble(); return null; }, new NamedParam("value", Number.class));
-        f.add_Void("set_y", args -> { arg.y = args[0].asDouble(); return null; }, new NamedParam("value", Number.class));
-        f.add_Void("set_z", args -> { arg.z = args[0].asDouble(); return null; }, new NamedParam("value", Number.class));
+        f.add_Void_Desc("set_x", args -> { arg.x = args[0].asDouble(); return null; }, "Sets the X component of this argument.", new NamedParam("value", Number.class));
+        f.add_Void_Desc("set_y", args -> { arg.y = args[0].asDouble(); return null; }, "Sets the Y component of this argument.", new NamedParam("value", Number.class));
+        f.add_Void_Desc("set_z", args -> { arg.z = args[0].asDouble(); return null; }, "Sets the Z component of this argument.", new NamedParam("value", Number.class));
     }
 
     @Override

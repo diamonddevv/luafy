@@ -38,22 +38,22 @@ public class Vec3dScriptObject extends AbstractTypedScriptObject<Vec3d> {
     @Override
     public void getTypedFunctions(TypedFunctionList f) {
 
-        f.add_NoParams("get_x", args -> vec.x, Number.class);
-        f.add_NoParams("get_y", args -> vec.y, Number.class);
-        f.add_NoParams("get_z", args -> vec.z, Number.class);
+        f.add_NoParams_Desc("get_x", args -> vec.x, "Gets the X component of the vector.", Number.class);
+        f.add_NoParams_Desc("get_y", args -> vec.y, "Gets the Y component of the vector.", Number.class);
+        f.add_NoParams_Desc("get_z", args -> vec.z, "Gets the Z component of the vector.", Number.class);
 
-        f.add("add",          args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::add)), Vec3dScriptObject.class, new NamedParam("other", Vec3dScriptObject.class));
-        f.add("multiply",     args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::multiply)), Vec3dScriptObject.class, new NamedParam("other", Vec3dScriptObject.class));
-        f.add("distance",     args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::distanceTo)), Vec3dScriptObject.class, new NamedParam("other", Vec3dScriptObject.class));
-        f.add("sqr_distance", args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::squaredDistanceTo)), Vec3dScriptObject.class, new NamedParam("other", Vec3dScriptObject.class));
-        f.add("dot",          args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::dotProduct)), Vec3dScriptObject.class, new NamedParam("other", Vec3dScriptObject.class));
-        f.add("cross",        args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::crossProduct)), Vec3dScriptObject.class, new NamedParam("other", Vec3dScriptObject.class));
-        f.add("relativize",   args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::relativize)), Vec3dScriptObject.class, new NamedParam("other", Vec3dScriptObject.class));
-        f.add("lerp",         args -> new Vec3dScriptObject((Vec3d) withOther(args, v -> vec.lerp(v, args[2].asDouble()))), Vec3dScriptObject.class, new NamedParam("other", Vec3dScriptObject.class));
+        f.add_Desc("add",          args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::add)), "Returns the sum of this vector and another. [sum = other + this]", Vec3dScriptObject.class, new NamedParam("other", Vec3dScriptObject.class));
+        f.add_Desc("multiply",     args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::multiply)), "Returns the product of this vector and another. [product = other * this]",  Vec3dScriptObject.class, new NamedParam("other", Vec3dScriptObject.class));
+        f.add_Desc("distance",     args ->                               withOther(args, vec::distanceTo), "Returns the mathematical distance from this vector to another. [distance = sqrt( (other.x - this.x)^2 + (other.y - this.y)^2 + (other.z - this.z)^2 )]", Number.class, new NamedParam("other", Vec3dScriptObject.class));
+        f.add_Desc("sqr_distance", args ->                               withOther(args, vec::squaredDistanceTo), "Returns the mathematical distance squared from this vector to another. Runs faster than 'distance_to'. [distance = (other.x - this.x)^2 + (other.y - this.y)^2 + (other.z - this.z)^2]",  Number.class, new NamedParam("other", Vec3dScriptObject.class));
+        f.add_Desc("dot",          args ->                               withOther(args, vec::dotProduct), "Returns the dot product of this vector to another. [dotProd = (this.x * other.x) + (this.y * other.y) + (this.z * other.z)]", Number.class, new NamedParam("other", Vec3dScriptObject.class));
+        f.add_Desc("cross",        args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::crossProduct)), "Returns the cross product vector of this vector to another.", Vec3dScriptObject.class, new NamedParam("other", Vec3dScriptObject.class));
+        f.add_Desc("relativize",   args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::relativize)), "Returns a vector representing this vector relative to another. [relativized = other - this]",  Vec3dScriptObject.class, new NamedParam("other", Vec3dScriptObject.class));
+        f.add_Desc("lerp",         args -> new Vec3dScriptObject((Vec3d) withOther(args, v -> vec.lerp(v, args[2].asDouble()))), "", Vec3dScriptObject.class, new NamedParam("other", Vec3dScriptObject.class), new NamedParam("by", Number.class));
 
-        f.add_NoParams("normalize", args -> new Vec3dScriptObject(vec.normalize()), Vec3dScriptObject.class);
-        f.add_NoParams("negate", args -> new Vec3dScriptObject(vec.negate()), Vec3dScriptObject.class);
+        f.add_NoParams_Desc("normalize", args -> new Vec3dScriptObject(vec.normalize()), "Returns a vector with direction equivalent to this, but with its magnitude reduced to 1.", Vec3dScriptObject.class);
+        f.add_NoParams_Desc("negate", args -> new Vec3dScriptObject(vec.negate()), "Negates this vector; in other words, multiplies this vector by -1.", Vec3dScriptObject.class);
 
-        f.add_NoParams("to_string", args -> vec.toString(), String.class);
+        f.add_NoParams_Desc("to_string", args -> vec.toString(), "Returns the string representation of this vector ['(x, y, z)']", String.class);
     }
 }

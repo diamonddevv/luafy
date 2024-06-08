@@ -55,7 +55,7 @@ public class StringDocsCreator implements DocsCreator {
             b.append(line).append("\n");
         }
 
-         return b.toString().getBytes(StandardCharsets.UTF_8);
+        return b.toString().getBytes(StandardCharsets.UTF_8);
     }
 
     @Override
