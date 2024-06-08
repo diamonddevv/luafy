@@ -18,7 +18,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
-public class MapStateScriptObject implements IScriptObject {
+public class MapStateScriptObject implements IScriptObject<MapState> {
 
     public static final int MAX_DIMENSION = 128;
 
@@ -62,5 +62,10 @@ public class MapStateScriptObject implements IScriptObject {
 
             return null;
         });
+    }
+
+    @Override
+    public MapState get() {
+        return map;
     }
 }

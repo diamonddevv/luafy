@@ -1,12 +1,9 @@
 package dev.diamond.luafy.script.api.obj.minecraft.block;
 
-import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
-import dev.diamond.luafy.script.abstraction.obj.IScriptObject;
+import dev.diamond.luafy.script.abstraction.obj.AbstractTypedScriptObject;
 import net.minecraft.state.property.Property;
 
-import java.util.HashMap;
-
-public class BlockStatePropertyScriptObject implements IScriptObject {
+public class BlockStatePropertyScriptObject extends AbstractTypedScriptObject<Property<?>> {
 
     private final Property<?> property;
 
@@ -14,12 +11,12 @@ public class BlockStatePropertyScriptObject implements IScriptObject {
         this.property = property;
     }
 
-    @Override
-    public void addFunctions(HashMap<String, AdaptableFunction> set) {
-        set.put("get_name", args -> property.getName());
-    }
-
     public Property<?> get() {
         return property;
+    }
+
+    @Override
+    public void getTypedFunctions(TypedFunctionList f) {
+        f.add_NoParams("get_name", args -> property.getName(), String.class);
     }
 }

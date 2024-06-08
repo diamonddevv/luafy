@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
-public class ByteBufScriptObject implements IScriptObject {
+public class ByteBufScriptObject implements IScriptObject<Byte[]> {
 
     private final byte[] buf;
 
@@ -42,5 +42,14 @@ public class ByteBufScriptObject implements IScriptObject {
 
             return ints;
         });
+    }
+
+    @Override
+    public Byte[] get() {
+        Byte[] bytes = new Byte[buf.length];
+        for (int i = 0; i < buf.length; i++) {
+            bytes[i] = buf[i];
+        }
+        return bytes;
     }
 }

@@ -1,42 +1,17 @@
 package dev.diamond.luafy.script.api.obj.math;
 
-import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.lang.AbstractBaseValue;
-import dev.diamond.luafy.script.abstraction.obj.IScriptObject;
+import dev.diamond.luafy.script.abstraction.obj.AbstractTypedScriptObject;
 import net.minecraft.util.math.Vec3d;
 
-import java.util.HashMap;
 import java.util.function.Function;
 
-public class Vec3dScriptObject implements IScriptObject {
+public class Vec3dScriptObject extends AbstractTypedScriptObject<Vec3d> {
 
     private final Vec3d vec;
 
     public Vec3dScriptObject(Vec3d vec) {
         this.vec = vec;
-    }
-
-    @Override
-    public void addFunctions(HashMap<String, AdaptableFunction> set) {
-        set.put("get_x", args -> vec.x);
-        set.put("get_y", args -> vec.y);
-        set.put("get_z", args -> vec.z);
-
-
-        set.put("add",          args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::add)));
-        set.put("multiply",     args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::multiply)));
-        set.put("distance",     args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::distanceTo)));
-        set.put("sqr_distance", args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::squaredDistanceTo)));
-        set.put("dot",          args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::dotProduct)));
-        set.put("cross",        args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::crossProduct)));
-        set.put("relativize",   args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::relativize)));
-        set.put("lerp",         args -> new Vec3dScriptObject((Vec3d) withOther(args, v -> vec.lerp(v, args[2].asDouble()))));
-
-        set.put("normalize", args -> new Vec3dScriptObject(vec.normalize()));
-        set.put("negate", args -> new Vec3dScriptObject(vec.negate()));
-
-
-        set.put("to_string", args -> vec.toString());
     }
 
     private Object withOther(AbstractBaseValue<?, ?>[] args, Function<Vec3d, Object> f) {
@@ -58,5 +33,27 @@ public class Vec3dScriptObject implements IScriptObject {
 
     public Vec3d get() {
         return vec;
+    }
+
+    @Override
+    public void getTypedFunctions(TypedFunctionList f) {
+
+        f.add_NoParams("get_x", args -> vec.x, Number.class);
+        f.add_NoParams("get_y", args -> vec.y, Number.class);
+        f.add_NoParams("get_z", args -> vec.z, Number.class);
+
+        f.add("add",          args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::add)), Vec3dScriptObject.class, new NamedParam("other", Vec3dScriptObject.class));
+        f.add("multiply",     args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::multiply)), Vec3dScriptObject.class, new NamedParam("other", Vec3dScriptObject.class));
+        f.add("distance",     args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::distanceTo)), Vec3dScriptObject.class, new NamedParam("other", Vec3dScriptObject.class));
+        f.add("sqr_distance", args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::squaredDistanceTo)), Vec3dScriptObject.class, new NamedParam("other", Vec3dScriptObject.class));
+        f.add("dot",          args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::dotProduct)), Vec3dScriptObject.class, new NamedParam("other", Vec3dScriptObject.class));
+        f.add("cross",        args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::crossProduct)), Vec3dScriptObject.class, new NamedParam("other", Vec3dScriptObject.class));
+        f.add("relativize",   args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::relativize)), Vec3dScriptObject.class, new NamedParam("other", Vec3dScriptObject.class));
+        f.add("lerp",         args -> new Vec3dScriptObject((Vec3d) withOther(args, v -> vec.lerp(v, args[2].asDouble()))), Vec3dScriptObject.class, new NamedParam("other", Vec3dScriptObject.class));
+
+        f.add_NoParams("normalize", args -> new Vec3dScriptObject(vec.normalize()), Vec3dScriptObject.class);
+        f.add_NoParams("negate", args -> new Vec3dScriptObject(vec.negate()), Vec3dScriptObject.class);
+
+        f.add_NoParams("to_string", args -> vec.toString(), String.class);
     }
 }

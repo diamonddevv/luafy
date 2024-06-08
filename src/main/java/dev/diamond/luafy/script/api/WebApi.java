@@ -1,26 +1,22 @@
 package dev.diamond.luafy.script.api;
 
 import dev.diamond.luafy.Luafy;
-import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
-import dev.diamond.luafy.script.abstraction.api.AbstractScriptApi;
+import dev.diamond.luafy.script.abstraction.api.AbstractTypedScriptApi;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 
-public class WebApi extends AbstractScriptApi {
+public class WebApi extends AbstractTypedScriptApi {
     public WebApi(AbstractScript<?> script) {
         super(script, "web");
     }
 
     @Override
-    public HashMap<String, AdaptableFunction> getFunctions() {
-        HashMap<String, AdaptableFunction> f = new HashMap<>();
-
-        f.put("get", args -> {
+    public void getTypedFunctions(TypedFunctionList f) {
+        f.add("get", args -> {
             try {
                 URL url = new URL(args[0].asString());
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -38,8 +34,6 @@ public class WebApi extends AbstractScriptApi {
                 Luafy.LOGGER.warn("Could not make web request: " + e);
             }
             return null;
-        });
-
-        return f;
+        }, String.class, new NamedParam("url", String.class));
     }
 }

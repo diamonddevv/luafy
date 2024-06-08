@@ -5,14 +5,15 @@ import dev.diamond.luafy.util.HexId;
 
 import java.util.HashMap;
 
-@FunctionalInterface
-public interface IScriptObject {
+public interface IScriptObject<T> {
 
-    HashMap<HexId, IScriptObject> CACHE = new HashMap<>();
+    HashMap<HexId, IScriptObject<?>> CACHE = new HashMap<>();
 
     void addFunctions(HashMap<String, AdaptableFunction> set);
 
-    static IScriptObject get(HexId hexid) {
+    T get();
+
+    static IScriptObject<?> getFromCache(HexId hexid) {
         return hexid.getHashed(CACHE);
     }
 }

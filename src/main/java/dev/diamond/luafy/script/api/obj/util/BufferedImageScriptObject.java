@@ -6,7 +6,7 @@ import dev.diamond.luafy.script.abstraction.obj.IScriptObject;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
-public class BufferedImageScriptObject implements IScriptObject {
+public class BufferedImageScriptObject implements IScriptObject<BufferedImage> {
     private final BufferedImage image;
 
     public BufferedImageScriptObject(BufferedImage image) {

@@ -1,11 +1,9 @@
 package dev.diamond.luafy.script.api.obj.argument;
 
-import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
+import dev.diamond.luafy.script.abstraction.obj.AbstractTypedScriptObject;
 import net.minecraft.command.argument.LookingPosArgument;
 
-import java.util.HashMap;
-
-public class LookingPosArgumentScriptObject implements ICommandArgumentScriptObject {
+public class LookingPosArgumentScriptObject extends AbstractTypedScriptObject<LookingPosArgument> implements ICommandArgumentScriptObject {
 
     private final LookingPosArgument arg;
 
@@ -14,18 +12,23 @@ public class LookingPosArgumentScriptObject implements ICommandArgumentScriptObj
     }
 
     @Override
-    public void addFunctions(HashMap<String, AdaptableFunction> set) {
-        set.put("get_x", args -> arg.x);
-        set.put("get_y", args -> arg.y);
-        set.put("get_z", args -> arg.z);
-
-        set.put("set_x", args -> { arg.x = args[0].asDouble(); return null; });
-        set.put("set_y", args -> { arg.y = args[0].asDouble(); return null; });
-        set.put("set_z", args -> { arg.z = args[0].asDouble(); return null; });
+    public Object getArg() {
+        return arg;
     }
 
     @Override
-    public Object getArg() {
+    public void getTypedFunctions(TypedFunctionList f) {
+        f.add_NoParams("get_x", args -> arg.x, Number.class);
+        f.add_NoParams("get_y", args -> arg.y, Number.class);
+        f.add_NoParams("get_z", args -> arg.z, Number.class);
+
+        f.add_Void("set_x", args -> { arg.x = args[0].asDouble(); return null; }, new NamedParam("value", Number.class));
+        f.add_Void("set_y", args -> { arg.y = args[0].asDouble(); return null; }, new NamedParam("value", Number.class));
+        f.add_Void("set_z", args -> { arg.z = args[0].asDouble(); return null; }, new NamedParam("value", Number.class));
+    }
+
+    @Override
+    public LookingPosArgument get() {
         return arg;
     }
 }

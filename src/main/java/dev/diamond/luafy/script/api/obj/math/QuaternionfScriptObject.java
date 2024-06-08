@@ -1,12 +1,9 @@
 package dev.diamond.luafy.script.api.obj.math;
 
-import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
-import dev.diamond.luafy.script.abstraction.obj.IScriptObject;
+import dev.diamond.luafy.script.abstraction.obj.AbstractTypedScriptObject;
 import org.joml.Quaternionf;
 
-import java.util.HashMap;
-
-public class QuaternionfScriptObject implements IScriptObject {
+public class QuaternionfScriptObject extends AbstractTypedScriptObject {
 
     private final Quaternionf quaternion;
 
@@ -14,20 +11,21 @@ public class QuaternionfScriptObject implements IScriptObject {
         this.quaternion = quaternion;
     }
 
-    @Override
-    public void addFunctions(HashMap<String, AdaptableFunction> set) {
-        set.put("get_x", args -> quaternion.x);
-        set.put("get_y", args -> quaternion.y);
-        set.put("get_z", args -> quaternion.z);
-        set.put("get_w", args -> quaternion.w);
-
-        set.put("set_x", args -> quaternion.x = args[0].asFloat());
-        set.put("set_y", args -> quaternion.y = args[0].asFloat());
-        set.put("set_z", args -> quaternion.z = args[0].asFloat() );
-        set.put("set_w", args -> quaternion.w = args[0].asFloat());
-    }
-
     public Quaternionf get() {
         return quaternion;
+    }
+
+    @Override
+    public void getTypedFunctions(TypedFunctionList f) {
+
+        f.add_NoParams("get_x", args -> quaternion.x, Number.class);
+        f.add_NoParams("get_y", args -> quaternion.y, Number.class);
+        f.add_NoParams("get_z", args -> quaternion.z, Number.class);
+        f.add_NoParams("get_w", args -> quaternion.w, Number.class);
+
+        f.add_Void("set_x", args -> quaternion.x = args[0].asFloat(), new NamedParam("value", Number.class));
+        f.add_Void("set_y", args -> quaternion.x = args[0].asFloat(), new NamedParam("value", Number.class));
+        f.add_Void("set_z", args -> quaternion.x = args[0].asFloat(), new NamedParam("value", Number.class));
+        f.add_Void("set_w", args -> quaternion.x = args[0].asFloat(), new NamedParam("value", Number.class));
     }
 }

@@ -2,8 +2,7 @@ package dev.diamond.luafy.script.api.obj.minecraft;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.diamond.luafy.Luafy;
-import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
-import dev.diamond.luafy.script.abstraction.obj.IScriptObject;
+import dev.diamond.luafy.script.abstraction.obj.AbstractTypedScriptObject;
 import dev.diamond.luafy.script.api.obj.entity.EntityScriptObject;
 import dev.diamond.luafy.script.api.obj.math.Vec3dScriptObject;
 import dev.diamond.luafy.script.api.obj.minecraft.block.BlockStateScriptObject;
@@ -18,11 +17,10 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
 
-public class WorldScriptObject implements IScriptObject {
+public class WorldScriptObject extends AbstractTypedScriptObject<ServerWorld> {
 
     private final ServerWorld world;
 
@@ -30,13 +28,18 @@ public class WorldScriptObject implements IScriptObject {
         this.world = world;
     }
 
+    public ServerWorld get() {
+        return world;
+    }
+
     @Override
-    public void addFunctions(HashMap<String, AdaptableFunction> set) {
-        set.put("get_blockstate", args -> {
+    public void getTypedFunctions(TypedFunctionList f) {
+        f.add("get_blockstate", args -> {
             Vec3d vec = args[0].asScriptObjectAssertive(Vec3dScriptObject.class).get();
             return new BlockStateScriptObject(world.getBlockState(BlockPos.ofFloored(vec.x, vec.y, vec.z)));
-        });
-        set.put("spawn_entity", args -> {
+        }, BlockStateScriptObject.class, new NamedParam("pos", Vec3dScriptObject.class));
+
+        f.add_WithOptionalParams("spawn_entity", args -> {
             String entityId = args[0].asString();
             Vec3d pos = args[1].asScriptObjectAssertive(Vec3dScriptObject.class).get();
             String snbt = null;
@@ -73,16 +76,21 @@ public class WorldScriptObject implements IScriptObject {
             world.spawnEntity(e);
 
             return new EntityScriptObject(e);
-        });
+        }, EntityScriptObject.class,
+                new NamedParam[] {new NamedParam("snbt", String.class)},
+                new NamedParam("entityId", String.class),
+                new NamedParam("pos", Vec3dScriptObject.class));
 
-        set.put("get_entity_from_uuid", args -> {
+        f.add("get_entity_from_uuid", args -> {
             UUID uuid = UUID.fromString(args[0].asString());
             var e = world.getEntity(uuid);
             return new EntityScriptObject(e);
-        });
-        set.put("get_time_of_day", args -> world.getTimeOfDay());
+        }, EntityScriptObject.class, new NamedParam("uuid", String.class));
 
-        set.put("play_sound", args -> {
+
+        f.add_NoParams("get_time_of_day", args -> world.getTimeOfDay(), Number.class);
+
+        f.add_Void("play_sound", args -> {
             Vec3d pos = args[0].asScriptObjectAssertive(Vec3dScriptObject.class).get();
             Identifier soundId = new Identifier(args[1].asString());
             String category = args[2].asString();
@@ -101,10 +109,11 @@ public class WorldScriptObject implements IScriptObject {
 
 
             return null;
-        });
-    }
-
-    public ServerWorld get() {
-        return world;
+        },
+                new NamedParam("pos", Vec3dScriptObject.class),
+                new NamedParam("soundId", String.class),
+                new NamedParam("soundCategory", String.class),
+                new NamedParam("pitch", Number.class),
+                new NamedParam("volume", Number.class));
     }
 }

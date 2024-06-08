@@ -1,7 +1,7 @@
-package dev.diamond.luafy.script.registry.sandbox;
+package dev.diamond.luafy.autodocs;
 
 import dev.diamond.luafy.Luafy;
-import dev.diamond.luafy.script.abstraction.api.AbstractTypedScriptApi;
+import dev.diamond.luafy.script.abstraction.TypedFunctions;
 import dev.diamond.luafy.script.abstraction.api.ApiProvider;
 import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.lang.AbstractBaseValue;
@@ -15,8 +15,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Optional;
@@ -147,38 +145,35 @@ public class ApiDocSpitterOutter {
     }
     public static final DummyScript DUMMY = new DummyScript();
 
+    public static final DocsCreator[] CREATORS = new DocsCreator[] {
+            new StringDocsCreator("functions_plaintext.txt"), new JsonDocsCreator("functions_json.json")
+    };
+
     public static void spitOutDocs() {
-        Collection<String> lines = new ArrayList<>();
+        Luafy.LOGGER.info("Starting Function Signature Generation..");
 
-        for (SandboxableApi<?> sa : Luafy.Registries.API_REGISTRY) {
-            if (sa instanceof SandboxableLuafyModApi slmi) {
-                var api = slmi.getApiProvider().provide(DUMMY);
-
-                if (api instanceof AbstractTypedScriptApi t) {
-                    lines.add("API | " + t.name + " : ");
-                    lines.addAll(t.formSignatures(true));
-                }
-            }
-        }
-
-        // do file thing
-        try {
-            File file = FabricLoaderImpl.INSTANCE.getGameDir().getFileSystem().getPath(
-                    FabricLoaderImpl.INSTANCE.getGameDir().toString(),
-                    "functions.txt"
-            ).toFile();
-            boolean ignored = file.createNewFile();
-            try (OutputStream stream = new FileOutputStream(file)) {
-                StringBuilder b = new StringBuilder();
-
-                for (String line : lines) {
-                    b.append(line).append("\n");
+        for (DocsCreator creator : CREATORS) {
+            // do file write
+            try {
+                File file = FabricLoaderImpl.INSTANCE.getGameDir().getFileSystem().getPath(
+                        FabricLoaderImpl.INSTANCE.getGameDir().toString(),
+                        creator.getFilenameToUse()
+                ).toFile();
+                boolean ignored = file.createNewFile();
+                try (OutputStream stream = new FileOutputStream(file)) {
+                    stream.write(creator.getBytesToWriteToFile());
                 }
 
-                stream.write(b.toString().getBytes(StandardCharsets.UTF_8));
+                Luafy.LOGGER.info("Written Function Signatures File.");
+            } catch (IOException e) {
+                Luafy.LOGGER.warn("couldn't write: " + e);
             }
-        } catch (IOException e) {
-            Luafy.LOGGER.warn("AA: " +  e);
         }
     }
+
+
+    @FunctionalInterface public interface TypedFunctionsProvider<T extends TypedFunctions, R> {
+        Optional<T> provide(R r);
+    }
+
 }

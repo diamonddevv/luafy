@@ -2,6 +2,7 @@ package dev.diamond.luafy;
 
 import dev.diamond.luafy.command.LuafyCommand;
 import dev.diamond.luafy.config.LuafyConfig;
+import dev.diamond.luafy.autodocs.ApiDocSpitterOutter;
 import dev.diamond.luafy.resource.CallbackScriptResourceLoader;
 import dev.diamond.luafy.resource.ScriptResourceLoader;
 import dev.diamond.luafy.resource.StaticScriptResourceResourceLoader;
@@ -10,9 +11,10 @@ import dev.diamond.luafy.script.registry.callback.ScriptCallbackEvent;
 import dev.diamond.luafy.script.registry.callback.ScriptCallbacks;
 import dev.diamond.luafy.script.registry.lang.ScriptLanguage;
 import dev.diamond.luafy.script.registry.lang.ScriptLanguages;
-import dev.diamond.luafy.script.registry.sandbox.ApiDocSpitterOutter;
-import dev.diamond.luafy.script.registry.sandbox.SandboxableApi;
+import dev.diamond.luafy.script.registry.objects.ScriptObjectFactory;
+import dev.diamond.luafy.script.registry.objects.ScriptObjectRegistry;
 import dev.diamond.luafy.script.registry.sandbox.Apis;
+import dev.diamond.luafy.script.registry.sandbox.SandboxableApi;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
@@ -40,11 +42,13 @@ public class Luafy implements ModInitializer {
 		public static RegistryKey<Registry<SandboxableApi<?>>> API_REGISTRY_KEY;
 		public static RegistryKey<Registry<ScriptLanguage<?>>> SCRIPT_LANG_REGISTRY_KEY;
 		public static RegistryKey<Registry<ByteBufDecoder>> BYTEBUF_DECODER_REGISTRY_KEY;
+		public static RegistryKey<Registry<ScriptObjectFactory<?>>> SCRIPT_OBJECT_TYPES_REGISTRY_KEY;
 
 		public static Registry<ScriptCallbackEvent> CALLBACK_REGISTRY;
 		public static Registry<SandboxableApi<?>> API_REGISTRY;
 		public static Registry<ScriptLanguage<?>> SCRIPT_LANG_REGISTRY;
 		public static Registry<ByteBufDecoder> BYTEBUF_DECODER_REGISTRY;
+		public static Registry<ScriptObjectFactory<?>> SCRIPT_OBJECTS_REGISTRY;
 	}
 
 	@Override
@@ -57,11 +61,13 @@ public class Luafy implements ModInitializer {
 		Registries.API_REGISTRY_KEY = RegistryKey.ofRegistry(id("sandboxable_apis"));
 		Registries.SCRIPT_LANG_REGISTRY_KEY = RegistryKey.ofRegistry(id("script_languages"));
 		Registries.BYTEBUF_DECODER_REGISTRY_KEY = RegistryKey.ofRegistry(id("bytebuf_decoders"));
+		Registries.SCRIPT_OBJECT_TYPES_REGISTRY_KEY = RegistryKey.ofRegistry(id("script_object_types"));
 
 		Registries.CALLBACK_REGISTRY = FabricRegistryBuilder.createSimple(Registries.CALLBACK_REGISTRY_KEY).buildAndRegister();
 		Registries.API_REGISTRY = FabricRegistryBuilder.createSimple(Registries.API_REGISTRY_KEY).buildAndRegister();
 		Registries.SCRIPT_LANG_REGISTRY = FabricRegistryBuilder.createSimple(Registries.SCRIPT_LANG_REGISTRY_KEY).buildAndRegister();
 		Registries.BYTEBUF_DECODER_REGISTRY = FabricRegistryBuilder.createSimple(Registries.BYTEBUF_DECODER_REGISTRY_KEY).buildAndRegister();
+		Registries.SCRIPT_OBJECTS_REGISTRY = FabricRegistryBuilder.createSimple(Registries.SCRIPT_OBJECT_TYPES_REGISTRY_KEY).buildAndRegister();
 
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(LUA_SCRIPT_RESOURCES);
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(CALLBACK_RESOURCES);
@@ -73,8 +79,10 @@ public class Luafy implements ModInitializer {
 		ScriptCallbacks.registerAll();
 		ScriptLanguages.registerAll();
 		Apis.registerAll();
+		ScriptObjectRegistry.registerAll();
 		ByteBufDecoder.Decoders.registerAll();
 
+		// make docs
 		ApiDocSpitterOutter.spitOutDocs();
 	}
 

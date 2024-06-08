@@ -25,7 +25,7 @@ import net.minecraft.util.math.Vec3d;
 
 import java.util.HashMap;
 
-public class EntityScriptObject implements IScriptObject {
+public class EntityScriptObject implements IScriptObject<Entity> {
 
     public final Entity entity;
 
@@ -131,6 +131,11 @@ public class EntityScriptObject implements IScriptObject {
             return null;
         });
 
+    }
+
+    @Override
+    public Entity get() {
+        return entity;
     }
 
 

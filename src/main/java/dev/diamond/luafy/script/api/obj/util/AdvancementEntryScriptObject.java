@@ -8,7 +8,7 @@ import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
 
-public class AdvancementEntryScriptObject implements IScriptObject {
+public class AdvancementEntryScriptObject implements IScriptObject<AdvancementEntry> {
 
     private final AdvancementEntry entry;
 
@@ -31,5 +31,10 @@ public class AdvancementEntryScriptObject implements IScriptObject {
         set.put("get_reward_exp", args -> entry.value().rewards().experience());
         set.put("get_reward_recipes", args -> entry.value().rewards().recipes().stream().map(Identifier::toString).toList());
         set.put("get_reward_function", args -> entry.value().rewards().function().map(container -> container.getId().toString()).orElse(null));
+    }
+
+    @Override
+    public AdvancementEntry get() {
+        return entry;
     }
 }
