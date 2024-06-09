@@ -1,6 +1,8 @@
 package dev.diamond.luafy.autodocs;
 
 import dev.diamond.luafy.Luafy;
+import dev.diamond.luafy.script.abstraction.NamedParam;
+import dev.diamond.luafy.util.DescriptionProvider;
 import dev.diamond.luafy.script.abstraction.TypedFunctions;
 import dev.diamond.luafy.script.abstraction.api.AbstractTypedScriptApi;
 import dev.diamond.luafy.script.abstraction.obj.AbstractTypedScriptObject;
@@ -63,7 +65,7 @@ public class StringDocsCreator implements DocsCreator {
         return filename;
     }
 
-    private static <T extends TypedFunctions, R> void populateLines(
+    private static <T extends TypedFunctions & DescriptionProvider, R> void populateLines(
             Collection<String> lines,
             String type, String delimiter,
             Registry<R> registry,
@@ -78,10 +80,57 @@ public class StringDocsCreator implements DocsCreator {
                 String name = nameFunc.apply(t);
 
                 lines.add(type + " | " + name + " : ");
-                lines.addAll(t.formStringSignatures(name, delimiter, true));
+                lines.add("\n");
+                lines.add(t.getDescription());
+                lines.add("\n");
+                lines.addAll(formStringSignatures(t, name, delimiter, true));
                 lines.add("\n");
 
             }
         }
+    }
+
+
+    private static Collection<String> formStringSignatures(TypedFunctions t, String setName, String setDelimiter, boolean tabbed) {
+        t.getUntypedFunctions();
+        Collection<String> signatures = new ArrayList<>();
+
+        for (var kvp : t.getTypedFunctionList().getHash().entrySet()) {
+
+            StringBuilder builder = new StringBuilder();
+
+            builder.append(kvp.getKey()); // add method name
+            builder.append("(");
+
+            builder.append(addParamsToStringSignature(kvp.getValue().params(), "", "", kvp.getValue().optionalParams().length > 0));
+            builder.append(addParamsToStringSignature(kvp.getValue().optionalParams(), "[", "]", false));
+
+            builder.append(") -> ");
+            builder.append(kvp.getValue().returnType().map(Class::getSimpleName).orElse("void")); // add return type
+
+            builder.append("\n\t\t- ");
+            builder.append(kvp.getValue().description().orElse("<No Description>")); // Add Desc
+            builder.append("\n"); // Add Desc
+
+            if (tabbed) signatures.add("\t" + builder);
+            else signatures.add(builder.toString());
+        }
+
+        return signatures;
+    }
+    private static String addParamsToStringSignature(NamedParam[] params, String prefix, String suffix, boolean commaLastAnyway) {
+        StringBuilder b = new StringBuilder();
+        int paramCount = params.length;
+        int i = 0;
+        for (var param : params) {
+            b.append(prefix);
+            b.append(param.name);
+            b.append(": ");
+            b.append(param.clazz.getSimpleName());
+            b.append(suffix);
+            i++;
+            if (i < paramCount|| commaLastAnyway) b.append(", ");
+        }
+        return b.toString();
     }
 }

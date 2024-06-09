@@ -146,11 +146,11 @@ public class ApiDocSpitterOutter {
     public static final DummyScript DUMMY = new DummyScript();
 
     public static final DocsCreator[] CREATORS = new DocsCreator[] {
-            new StringDocsCreator("functions_plaintext.txt"), new JsonDocsCreator("functions_json.json")
+            new StringDocsCreator("luafy_docs_plaintext.txt"), new JsonDocsCreator("luafy_docs_json.json")
     };
 
     public static void spitOutDocs() {
-        Luafy.LOGGER.info("Starting Function Signature Generation..");
+        Luafy.LOGGER.info("Generating docs file..");
 
         for (DocsCreator creator : CREATORS) {
             // do file write
@@ -164,16 +164,17 @@ public class ApiDocSpitterOutter {
                     stream.write(creator.getBytesToWriteToFile());
                 }
 
-                Luafy.LOGGER.info("Written Function Signatures File.");
+                Luafy.LOGGER.info("Written " + creator.getFilenameToUse() + " docs file.");
             } catch (IOException e) {
-                Luafy.LOGGER.warn("couldn't write: " + e);
+                Luafy.LOGGER.warn("Couldn't write docs file: " + e);
             }
         }
     }
 
-
     @FunctionalInterface public interface TypedFunctionsProvider<T extends TypedFunctions, R> {
         Optional<T> provide(R r);
     }
+
+
 
 }

@@ -1,10 +1,10 @@
 package dev.diamond.luafy.script;
 
-import com.google.gson.JsonObject;
 import com.mojang.brigadier.ParseResults;
 import dev.diamond.luafy.config.LuafyConfig;
-import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
+import dev.diamond.luafy.script.abstraction.NamedParam;
 import dev.diamond.luafy.script.abstraction.ScriptExecution;
+import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
 import dev.diamond.luafy.script.api.obj.entity.EntityScriptObject;
 import dev.diamond.luafy.script.registry.callback.CallbackEventSubscription;
 import dev.diamond.luafy.script.registry.callback.ScriptCallbackEvent;
@@ -115,7 +115,7 @@ public class ScriptManager {
         for (var v : ScriptCallbackEvent.getAll()) EVENT_CALLBACKS.put(v, new ArrayList<>());
 
         for (var c : CALLBACK_FILES) {
-            for (ScriptCallbacks.CallbackEventBean eventCallback : c.eventCallbacks) {
+            for (ScriptCallbacks.CallbackScriptBean.CallbackEventBean eventCallback : c.eventCallbacks) {
                 ScriptCallbackEvent event = ScriptCallbackEvent.fromStringId(eventCallback.id);
                 if (event != null) {
                     EVENT_CALLBACKS.get(event).addAll(eventCallback.scriptIds.stream().map(s ->
@@ -124,12 +124,35 @@ public class ScriptManager {
             }
         }
     }
+
+    @Deprecated
     public static void executeEventCallbacks(ScriptCallbackEvent event, Supplier<ServerCommandSource> src, @Nullable Consumer<HashMap<String, Object>> ctxBuilder) {
 
         HashMap<String, Object> ctx;
         if (ctxBuilder != null) {
             ctx = new HashMap<>();
             ctxBuilder.accept(ctx);
+        } else {
+            ctx = null;
+        }
+
+        if (!ScriptManager.EVENT_CALLBACKS.containsKey(event)) return;
+
+        ScriptManager.EVENT_CALLBACKS.get(event)
+                .forEach(s -> ScriptManager.execute(s.getScriptId(), src.get(), ctx, s.usesOwnThread(), "$server"));
+    }
+
+    public static void executeEventCallbacks(ScriptCallbackEvent event, Supplier<ServerCommandSource> src, @Nullable Object... ctxObjs) {
+
+        HashMap<String, Object> ctx;
+        if (ctxObjs != null && event.getContextParams() != null) {
+            ctx = new HashMap<>();
+            for (int i = 0; i < event.getContextParams().length; i++) {
+                NamedParam param = event.getContextParams()[i];
+                Object obj = ctxObjs[i];
+
+                ctx.put(param.name, param.clazz.cast(obj));
+            }
         } else {
             ctx = null;
         }

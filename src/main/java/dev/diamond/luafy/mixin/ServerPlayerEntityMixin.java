@@ -21,19 +21,19 @@ public abstract class ServerPlayerEntityMixin extends LivingEntity {
 
     @Inject(method = "swingHand", at = @At("HEAD"))
     private void luafy$invokeTryAttackEventCallbacks(Hand hand, CallbackInfo ci) {
-        ScriptManager.executeEventCallbacks(ScriptCallbacks.HAND_SWINGS, () -> this.getCommandSource().withLevel(2), v -> {
-            v.put("player", new PlayerEntityScriptObject((ServerPlayerEntity)(Object)this));
-            v.put("is_mainhand", this.preferredHand == hand);
-        });
+        ScriptManager.executeEventCallbacks(ScriptCallbacks.HAND_SWINGS, () -> this.getCommandSource().withLevel(2),
+                new PlayerEntityScriptObject((ServerPlayerEntity)(Object)this),
+                this.preferredHand == hand
+        );
     }
 
 
 
     @Inject(method = "onDisconnect", at = @At("HEAD"))
     private void luafy$invokeDisconnectEventCallbacks(CallbackInfo ci) {
-        ScriptManager.executeEventCallbacks(ScriptCallbacks.DISCONNECTS_FROM_SERVER, () -> this.getCommandSource().withLevel(2), v -> {
-            v.put("player", new PlayerEntityScriptObject((ServerPlayerEntity)(Object)this));
-        });
+        ScriptManager.executeEventCallbacks(ScriptCallbacks.DISCONNECTS_FROM_SERVER, () -> this.getCommandSource().withLevel(2),
+            new PlayerEntityScriptObject((ServerPlayerEntity)(Object)this)
+        );
     }
 
 

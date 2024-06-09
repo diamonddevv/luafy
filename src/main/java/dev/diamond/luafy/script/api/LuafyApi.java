@@ -1,6 +1,7 @@
 package dev.diamond.luafy.script.api;
 
 import dev.diamond.luafy.script.ScriptManager;
+import dev.diamond.luafy.script.abstraction.NamedParam;
 import dev.diamond.luafy.script.abstraction.api.AbstractTypedScriptApi;
 import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.lang.AbstractBaseValue;
@@ -54,5 +55,10 @@ public class LuafyApi extends AbstractTypedScriptApi {
         });
 
         return ids;
+    }
+
+    @Override
+    public String getDescription() {
+        return "Provides miscellaneous functions such as access to resources and server hardware-based functions.";
     }
 }

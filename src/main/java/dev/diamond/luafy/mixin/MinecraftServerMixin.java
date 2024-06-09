@@ -18,7 +18,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
@@ -37,7 +36,7 @@ public abstract class MinecraftServerMixin {
 
     @Inject(method = "reloadResources", at = @At("TAIL"))
     public void luafy$runLoadCallbacks(Collection<String> dataPacks, CallbackInfoReturnable<CompletableFuture<Void>> cir) {
-        ScriptManager.executeEventCallbacks(ScriptCallbacks.LOAD, this::getCommandSource, null);
+        ScriptManager.executeEventCallbacks(ScriptCallbacks.LOAD, this::getCommandSource);
     }
 
 
@@ -49,14 +48,14 @@ public abstract class MinecraftServerMixin {
             isDay = getWorld(ServerWorld.OVERWORLD).isDay();
         }
 
-        ScriptManager.executeEventCallbacks(ScriptCallbacks.TICK, this::getCommandSource, null);
+        ScriptManager.executeEventCallbacks(ScriptCallbacks.TICK, this::getCommandSource);
 
         if (!lastIsDay && isDay) {
-            ScriptManager.executeEventCallbacks(ScriptCallbacks.ON_DAY_START, this::getCommandSource, null);
+            ScriptManager.executeEventCallbacks(ScriptCallbacks.ON_DAY_START, this::getCommandSource);
         }
 
         if (lastIsDay && !isDay) {
-            ScriptManager.executeEventCallbacks(ScriptCallbacks.ON_NIGHT_START, this::getCommandSource, null);
+            ScriptManager.executeEventCallbacks(ScriptCallbacks.ON_NIGHT_START, this::getCommandSource);
         }
 
     }
@@ -75,11 +74,11 @@ public abstract class MinecraftServerMixin {
             Function<Thread, S> serverFactory, CallbackInfoReturnable<S> cir, AtomicReference atomicReference,
             Thread thread, MinecraftServer minecraftServer) {
         ScriptManager.startScriptThread();
-        ScriptManager.executeEventCallbacks(ScriptCallbacks.LOAD, minecraftServer::getCommandSource, null);
+        ScriptManager.executeEventCallbacks(ScriptCallbacks.LOAD, minecraftServer::getCommandSource);
     }
 
     @Inject(method = "shutdown", at = @At("HEAD"))
     private void luafy$invokeServerCloseCallbacks(CallbackInfo ci) {
-        ScriptManager.executeEventCallbacks(ScriptCallbacks.SERVER_CLOSES, this::getCommandSource, null);
+        ScriptManager.executeEventCallbacks(ScriptCallbacks.SERVER_CLOSES, this::getCommandSource);
     }
 }

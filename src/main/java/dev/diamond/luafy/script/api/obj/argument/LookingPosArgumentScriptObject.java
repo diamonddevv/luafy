@@ -1,5 +1,6 @@
 package dev.diamond.luafy.script.api.obj.argument;
 
+import dev.diamond.luafy.script.abstraction.NamedParam;
 import dev.diamond.luafy.script.abstraction.obj.AbstractTypedScriptObject;
 import net.minecraft.command.argument.LookingPosArgument;
 

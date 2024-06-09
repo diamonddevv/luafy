@@ -21,9 +21,9 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 
     @Inject(method = "addExhaustion", at = @At("HEAD"))
     private void luafy$invokeExhaustEventCallbacks(float exhaustion, CallbackInfo ci) {
-        ScriptManager.executeEventCallbacks(ScriptCallbacks.EXHAUST, () -> this.getCommandSource().withLevel(2), v -> {
-            v.put("player", new PlayerEntityScriptObject((ServerPlayerEntity)(Object)this));
-            v.put("amount", exhaustion);
-        });
+        ScriptManager.executeEventCallbacks(ScriptCallbacks.EXHAUST, () -> this.getCommandSource().withLevel(2),
+            new PlayerEntityScriptObject((ServerPlayerEntity)(Object)this),
+            exhaustion
+        );
     }
 }

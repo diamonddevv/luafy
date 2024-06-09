@@ -13,4 +13,19 @@ public class LuaScriptLang extends ScriptLanguage<LuaScript> {
     public LuaScript readScript(String scriptCode) {
         return new LuaScript(scriptCode);
     }
+
+    @Override
+    public String getLanguageDocumentationUrl() {
+        return "https://www.lua.org";
+    }
+
+    @Override
+    public String getImplementerCredits() {
+        return "DiamondDev";
+    }
+
+    @Override
+    public String getDescription() {
+        return "The original Luafy Language. Has syntax reminiscent of Python.";
+    }
 }

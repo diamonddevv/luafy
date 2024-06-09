@@ -1,6 +1,7 @@
 package dev.diamond.luafy.mixin;
 
 import dev.diamond.luafy.script.ScriptManager;
+import dev.diamond.luafy.script.api.obj.entity.EntityScriptObject;
 import dev.diamond.luafy.script.registry.callback.ScriptCallbacks;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.command.ServerCommandSource;
@@ -21,8 +22,11 @@ public abstract class EntityMixin {
     @Inject(method = "tick", at = @At("HEAD"))
     private void luafy$invokeTickingCallbacks(CallbackInfo ci) {
         if (age == 0) {
-            ScriptManager.executeEventCallbacks(ScriptCallbacks.SPAWN,
-                    () -> getCommandSource().withLevel(2), null);
+            ScriptManager.executeEventCallbacks(
+                    ScriptCallbacks.SPAWN,
+                    () -> getCommandSource().withLevel(2),
+                    new EntityScriptObject((Entity)(Object)this)
+            );
         }
 
         ScriptManager.executeEventCallbacks(ScriptCallbacks.TICK_ENTITY,

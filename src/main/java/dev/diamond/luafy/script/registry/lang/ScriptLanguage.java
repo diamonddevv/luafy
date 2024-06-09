@@ -1,8 +1,9 @@
 package dev.diamond.luafy.script.registry.lang;
 
+import dev.diamond.luafy.util.DescriptionProvider;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
 
-public abstract class ScriptLanguage<T extends AbstractScript<?>> {
+public abstract class ScriptLanguage<T extends AbstractScript<?>> implements DescriptionProvider {
 
     public ScriptLanguage() {}
 
@@ -12,4 +13,17 @@ public abstract class ScriptLanguage<T extends AbstractScript<?>> {
     public abstract String[] getFileExtensions();
 
     public abstract T readScript(String scriptCode);
+
+    public String getLanguageDocumentationUrl() {
+        return null;
+    }
+
+    public String getImplementerCredits() {
+        return null;
+    }
+
+    @Override
+    public String getDescription() {
+        return null;
+    }
 }

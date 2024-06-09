@@ -1,6 +1,5 @@
 package dev.diamond.luafy.script.abstraction;
 
-import dev.diamond.luafy.Luafy;
 import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,51 +16,6 @@ public interface TypedFunctions {
         setTypedFunctionList(new TypedFunctionList());
         getTypedFunctions(getTypedFunctionList());
         return getTypedFunctionList().getFunctionHash();
-    }
-
-    default Collection<String> formStringSignatures(String setName, String setDelimiter, boolean tabbed) {
-        getUntypedFunctions();
-        Collection<String> signatures = new ArrayList<>();
-
-        for (var kvp : getTypedFunctionList().hash.entrySet()) {
-
-            StringBuilder builder = new StringBuilder();
-
-            builder.append(kvp.getKey()); // add method name
-            builder.append("(");
-
-            builder.append(addParamsToStringSignature(kvp.getValue().params(), "", "", kvp.getValue().optionalParams().length > 0));
-            builder.append(addParamsToStringSignature(kvp.getValue().optionalParams(), "[", "]", false));
-
-            builder.append(") -> ");
-            builder.append(kvp.getValue().returnType().map(Class::getSimpleName).orElse("void")); // add return type
-
-            builder.append("\n\t\t- ");
-            builder.append(kvp.getValue().description().orElse("<No Description>")); // Add Desc
-            builder.append("\n"); // Add Desc
-
-            if (tabbed) signatures.add("\t" + builder);
-            else signatures.add(builder.toString());
-
-            Luafy.LOGGER.info("[Function Signature Generator]: Added function " + setName + setDelimiter + kvp.getKey());
-        }
-
-        return signatures;
-    }
-    private String addParamsToStringSignature(NamedParam[] params, String prefix, String suffix, boolean commaLastAnyway) {
-        StringBuilder b = new StringBuilder();
-        int paramCount = params.length;
-        int i = 0;
-        for (var param : params) {
-            b.append(prefix);
-            b.append(param.name);
-            b.append(": ");
-            b.append(param.clazz.getSimpleName());
-            b.append(suffix);
-            i++;
-            if (i < paramCount|| commaLastAnyway) b.append(", ");
-        }
-        return b.toString();
     }
 
 
@@ -92,26 +46,6 @@ public interface TypedFunctions {
         NamedParam[] params();
         NamedParam[] optionalParams();
         Optional<String> description();
-    }
-
-    class NamedParam {
-        public final String name;
-        public final Class<?> clazz;
-
-        public NamedParam(String name, Class<?> clazz) {
-            this.name = name;
-            this.clazz = clazz;
-        }
-
-        public NamedParam(Class<?> clazz) {
-                this.name = "";
-                this.clazz = clazz;
-        }
-
-        public NamedParam(String name) {
-            this.name = name;
-            this.clazz = Object.class;
-        }
     }
 
 

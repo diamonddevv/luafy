@@ -1,5 +1,6 @@
 package dev.diamond.luafy.script.api.obj.math;
 
+import dev.diamond.luafy.script.abstraction.NamedParam;
 import dev.diamond.luafy.script.abstraction.obj.AbstractTypedScriptObject;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;

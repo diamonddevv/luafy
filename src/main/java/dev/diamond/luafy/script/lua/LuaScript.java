@@ -41,6 +41,7 @@ public class LuaScript extends AbstractScript<LuaBaseValue> {
         AbstractScriptApi api = provider.provide(this);
 
         for (var func : api.getFunctions().entrySet()) {
+
             table.set(func.getKey(), adaptableToArrArg(func.getValue()));
         }
 

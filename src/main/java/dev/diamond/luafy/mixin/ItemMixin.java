@@ -29,34 +29,34 @@ public class ItemMixin {
     @Inject(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/TypedActionResult;pass(Ljava/lang/Object;)Lnet/minecraft/util/TypedActionResult;"))
     private void luafy$callbackOnUse(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
         if (user instanceof ServerPlayerEntity spe) {
-            ScriptManager.executeEventCallbacks(ScriptCallbacks.ON_ITEM_USED, () -> spe.getCommandSource().withLevel(2), v -> {
-                v.put("stack", new ItemStackScriptObject(spe.getStackInHand(hand)));
-                v.put("user", new PlayerEntityScriptObject(spe));
-            });
+            ScriptManager.executeEventCallbacks(ScriptCallbacks.ON_ITEM_USED, () -> spe.getCommandSource().withLevel(2),
+                new ItemStackScriptObject(spe.getStackInHand(hand)),
+                new PlayerEntityScriptObject(spe)
+            );
         }
     }
 
     @Inject(method = "useOnBlock", at = @At("HEAD"))
     private void luafy$callbackOnUseBlock(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
         if (context.getPlayer() instanceof ServerPlayerEntity spe) {
-            ScriptManager.executeEventCallbacks(ScriptCallbacks.ON_ITEM_USED_ON_BLOCK, () -> spe.getCommandSource().withLevel(2), v -> {
-                v.put("stack", new ItemStackScriptObject(context.getStack()));
-                v.put("world", new WorldScriptObject((ServerWorld) context.getWorld()));
-                v.put("pos", new Vec3dScriptObject(context.getBlockPos().toCenterPos()));
-                v.put("block", new BlockStateScriptObject(context.getWorld().getBlockState(context.getBlockPos())));
-                v.put("user", new PlayerEntityScriptObject(spe));
-            });
+            ScriptManager.executeEventCallbacks(ScriptCallbacks.ON_ITEM_USED_ON_BLOCK, () -> spe.getCommandSource().withLevel(2),
+                new ItemStackScriptObject(context.getStack()),
+                new WorldScriptObject((ServerWorld) context.getWorld()),
+                new Vec3dScriptObject(context.getBlockPos().toCenterPos()),
+                new BlockStateScriptObject(context.getWorld().getBlockState(context.getBlockPos())),
+                new PlayerEntityScriptObject(spe)
+            );
         }
     }
 
     @Inject(method = "useOnEntity", at = @At("HEAD"))
     private void luafy$callbackOnUseBlock(ItemStack stack, PlayerEntity user, LivingEntity entity, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         if (user instanceof ServerPlayerEntity spe) {
-            ScriptManager.executeEventCallbacks(ScriptCallbacks.ON_ITEM_USED_ON_ENTITY, () -> spe.getCommandSource().withLevel(2), v -> {
-                v.put("stack", new ItemStackScriptObject(user.getStackInHand(hand)));
-                v.put("entity", new LivingEntityScriptObject(entity));
-                v.put("user", new PlayerEntityScriptObject(spe));
-            });
+            ScriptManager.executeEventCallbacks(ScriptCallbacks.ON_ITEM_USED_ON_ENTITY, () -> spe.getCommandSource().withLevel(2),
+                new ItemStackScriptObject(user.getStackInHand(hand)),
+                new LivingEntityScriptObject(entity),
+                new PlayerEntityScriptObject(spe)
+            );
         }
     }
 }

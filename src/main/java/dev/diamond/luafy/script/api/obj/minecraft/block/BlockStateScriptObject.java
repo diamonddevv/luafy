@@ -1,5 +1,6 @@
 package dev.diamond.luafy.script.api.obj.minecraft.block;
 
+import dev.diamond.luafy.script.abstraction.NamedParam;
 import dev.diamond.luafy.script.abstraction.obj.AbstractTypedScriptObject;
 import net.minecraft.block.BlockState;
 import net.minecraft.registry.Registries;

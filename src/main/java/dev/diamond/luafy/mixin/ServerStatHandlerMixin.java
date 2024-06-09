@@ -17,13 +17,12 @@ public class ServerStatHandlerMixin {
     @Inject(method = "setStat", at = @At("HEAD"))
     private void luafy$invokeStatChangedCallbackEvents(PlayerEntity player, Stat<?> stat, int value, CallbackInfo ci) {
         if (player instanceof ServerPlayerEntity spe) {
-            ScriptManager.executeEventCallbacks(ScriptCallbacks.ON_STAT_CHANGED, () -> player.getCommandSource().withLevel(2), (v) -> {
-                v.put("player", new PlayerEntityScriptObject(spe));
-
-                v.put("stat", stat.getValue().toString());
-                v.put("was", ((ServerPlayerEntity) player).getStatHandler().getStat(stat));
-                v.put("now", value);
-            });
+            ScriptManager.executeEventCallbacks(ScriptCallbacks.ON_STAT_CHANGED, () -> player.getCommandSource().withLevel(2),
+                new PlayerEntityScriptObject(spe),
+                stat.getValue().toString(),
+                ((ServerPlayerEntity) player).getStatHandler().getStat(stat),
+                value
+            );
         }
     }
 }

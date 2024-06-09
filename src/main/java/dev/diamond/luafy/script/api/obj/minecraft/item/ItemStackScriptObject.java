@@ -1,6 +1,7 @@
 package dev.diamond.luafy.script.api.obj.minecraft.item;
 
 import dev.diamond.luafy.script.abstraction.BaseValueConversions;
+import dev.diamond.luafy.script.abstraction.NamedParam;
 import dev.diamond.luafy.script.abstraction.lang.AbstractBaseValue;
 import dev.diamond.luafy.script.abstraction.obj.AbstractTypedScriptObject;
 import dev.diamond.luafy.script.api.obj.entity.PlayerEntityScriptObject;

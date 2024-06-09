@@ -25,18 +25,18 @@ public abstract class ServerWorldMixin {
 
     @Inject(method = "emitGameEvent", at = @At("HEAD"))
     private void luafy$invokeGameEventCallbacks(GameEvent event, Vec3d emitterPos, GameEvent.Emitter emitter, CallbackInfo ci) {
-        ScriptManager.executeEventCallbacks(ScriptCallbacks.ON_GAME_EVENT, () -> this.getServer().getCommandSource().withLevel(2), (v) -> {
-            v.put("emitter_entity", emitter.sourceEntity() == null ? null : new EntityScriptObject(emitter.sourceEntity()));
-            v.put("event_id", Registries.GAME_EVENT.getId(event).toString());
-            v.put("emitter_pos", new Vec3dScriptObject(emitterPos));
-        });
+        ScriptManager.executeEventCallbacks(ScriptCallbacks.ON_GAME_EVENT, () -> this.getServer().getCommandSource().withLevel(2),
+                Registries.GAME_EVENT.getId(event).toString(),
+                emitter.sourceEntity() == null ? null : new EntityScriptObject(emitter.sourceEntity()),
+                new Vec3dScriptObject(emitterPos)
+        );
     }
 
     @Inject(method = "onPlayerConnected", at = @At("HEAD"))
     private void luafy$invokeConnectEventCallbacks(ServerPlayerEntity player, CallbackInfo ci) {
-        ScriptManager.executeEventCallbacks(ScriptCallbacks.CONNECTS_TO_SERVER, () -> player.getCommandSource().withLevel(2), v -> {
-            v.put("player", new PlayerEntityScriptObject(player));
-        });
+        ScriptManager.executeEventCallbacks(ScriptCallbacks.CONNECTS_TO_SERVER, () -> player.getCommandSource().withLevel(2),
+            new PlayerEntityScriptObject(player)
+        );
     }
 
 }

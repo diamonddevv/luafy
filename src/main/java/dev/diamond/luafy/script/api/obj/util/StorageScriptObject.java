@@ -2,6 +2,7 @@ package dev.diamond.luafy.script.api.obj.util;
 
 import dev.diamond.luafy.script.ScriptManager;
 import dev.diamond.luafy.script.abstraction.BaseValueConversions;
+import dev.diamond.luafy.script.abstraction.NamedParam;
 import dev.diamond.luafy.script.abstraction.obj.AbstractTypedScriptObject;
 import dev.diamond.luafy.script.api.StorageApi;
 import dev.diamond.luafy.script.nbt.OptionallyExplicitNbtElement;
