@@ -1,8 +1,8 @@
 package dev.diamond.luafy;
 
+import dev.diamond.luafy.autodocs.AutodocPrinter;
 import dev.diamond.luafy.command.LuafyCommand;
 import dev.diamond.luafy.config.LuafyConfig;
-import dev.diamond.luafy.autodocs.ApiDocSpitterOutter;
 import dev.diamond.luafy.resource.CallbackScriptResourceLoader;
 import dev.diamond.luafy.resource.ScriptResourceLoader;
 import dev.diamond.luafy.resource.StaticScriptResourceResourceLoader;
@@ -19,6 +19,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.loader.impl.FabricLoaderImpl;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.resource.ResourceType;
@@ -83,7 +84,7 @@ public class Luafy implements ModInitializer {
 		ByteBufDecoder.Decoders.registerAll();
 
 		// make docs
-		ApiDocSpitterOutter.spitOutDocs();
+		if (FabricLoaderImpl.INSTANCE.isDevelopmentEnvironment()) AutodocPrinter.printDocs(MODID);
 	}
 
 
