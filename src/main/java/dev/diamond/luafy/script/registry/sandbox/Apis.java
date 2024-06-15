@@ -46,27 +46,27 @@ public class Apis {
     public static final SandboxableLuafyModApi WEB =                new SandboxableLuafyModApi(null, WebApi::new);
 
     public static void registerAll() {
-        Registry.register(Luafy.Registries.API_REGISTRY, Luafy.id("lua_base"), LUA_BASE);
-        Registry.register(Luafy.Registries.API_REGISTRY, Luafy.id("lua_package"), LUA_PACKAGE);
-        Registry.register(Luafy.Registries.API_REGISTRY, Luafy.id("lua_bit32"), LUA_BIT32);
-        Registry.register(Luafy.Registries.API_REGISTRY, Luafy.id("lua_table"), LUA_TABLE);
-        Registry.register(Luafy.Registries.API_REGISTRY, Luafy.id("lua_string"), LUA_STRING);
-        Registry.register(Luafy.Registries.API_REGISTRY, Luafy.id("lua_coroutine"), LUA_COROUTINE);
-        Registry.register(Luafy.Registries.API_REGISTRY, Luafy.id("lua_math"), LUA_MATH);
-        Registry.register(Luafy.Registries.API_REGISTRY, Luafy.id("lua_io"), LUA_IO);
-        Registry.register(Luafy.Registries.API_REGISTRY, Luafy.id("lua_os"), LUA_OS);
-        Registry.register(Luafy.Registries.API_REGISTRY, Luafy.id("lua_luajava"), LUA_LUAJAVA);
-        Registry.register(Luafy.Registries.API_REGISTRY, Luafy.id("lua_loadstate"), LUA_LOADSTATE);
-        Registry.register(Luafy.Registries.API_REGISTRY, Luafy.id("lua_c"), LUA_C);
-        Registry.register(Luafy.Registries.API_REGISTRY, Luafy.id("luafy"), LUAFY);
-        Registry.register(Luafy.Registries.API_REGISTRY, Luafy.id("command"), COMMAND);
-        Registry.register(Luafy.Registries.API_REGISTRY, Luafy.id("server"), SERVER);
-        Registry.register(Luafy.Registries.API_REGISTRY, Luafy.id("context"), CONTEXT);
-        Registry.register(Luafy.Registries.API_REGISTRY, Luafy.id("storage"), STORAGE);
-        Registry.register(Luafy.Registries.API_REGISTRY, Luafy.id("script"), SCRIPT);
-        Registry.register(Luafy.Registries.API_REGISTRY, Luafy.id("threads"), THREADS);
-        Registry.register(Luafy.Registries.API_REGISTRY, Luafy.id("objects"), OBJECTS);
-        Registry.register(Luafy.Registries.API_REGISTRY, Luafy.id("web"), WEB);
+        Registry.register(Luafy.Registries.APIS, Luafy.id("lua_base"), LUA_BASE);
+        Registry.register(Luafy.Registries.APIS, Luafy.id("lua_package"), LUA_PACKAGE);
+        Registry.register(Luafy.Registries.APIS, Luafy.id("lua_bit32"), LUA_BIT32);
+        Registry.register(Luafy.Registries.APIS, Luafy.id("lua_table"), LUA_TABLE);
+        Registry.register(Luafy.Registries.APIS, Luafy.id("lua_string"), LUA_STRING);
+        Registry.register(Luafy.Registries.APIS, Luafy.id("lua_coroutine"), LUA_COROUTINE);
+        Registry.register(Luafy.Registries.APIS, Luafy.id("lua_math"), LUA_MATH);
+        Registry.register(Luafy.Registries.APIS, Luafy.id("lua_io"), LUA_IO);
+        Registry.register(Luafy.Registries.APIS, Luafy.id("lua_os"), LUA_OS);
+        Registry.register(Luafy.Registries.APIS, Luafy.id("lua_luajava"), LUA_LUAJAVA);
+        Registry.register(Luafy.Registries.APIS, Luafy.id("lua_loadstate"), LUA_LOADSTATE);
+        Registry.register(Luafy.Registries.APIS, Luafy.id("lua_c"), LUA_C);
+        Registry.register(Luafy.Registries.APIS, Luafy.id("luafy"), LUAFY);
+        Registry.register(Luafy.Registries.APIS, Luafy.id("command"), COMMAND);
+        Registry.register(Luafy.Registries.APIS, Luafy.id("server"), SERVER);
+        Registry.register(Luafy.Registries.APIS, Luafy.id("context"), CONTEXT);
+        Registry.register(Luafy.Registries.APIS, Luafy.id("storage"), STORAGE);
+        Registry.register(Luafy.Registries.APIS, Luafy.id("script"), SCRIPT);
+        Registry.register(Luafy.Registries.APIS, Luafy.id("threads"), THREADS);
+        Registry.register(Luafy.Registries.APIS, Luafy.id("objects"), OBJECTS);
+        Registry.register(Luafy.Registries.APIS, Luafy.id("web"), WEB);
     }
 
 
@@ -75,7 +75,7 @@ public class Apis {
         List<String> m;
 
         if (strategy.blacklist) {
-            m = Luafy.Registries.API_REGISTRY.getIds().stream().map(Identifier::toString).toList();
+            m = Luafy.Registries.APIS.getIds().stream().map(Identifier::toString).toList();
             List<String> removed = new ArrayList<>();
             for (var e : m) {
                 if (!strategy.apis.contains(e)) removed.add(e);
@@ -85,10 +85,10 @@ public class Apis {
             m = strategy.apis;
         }
 
-        List<SandboxableApi<?>> apis = new ArrayList<>(Luafy.Registries.API_REGISTRY.stream().filter(SandboxableApi::alwaysLoads).toList());
+        List<SandboxableApi<?>> apis = new ArrayList<>(Luafy.Registries.APIS.stream().filter(SandboxableApi::alwaysLoads).toList());
 
         for (Identifier id : m.stream().map(Identifier::new).toList()) {
-            SandboxableApi<?> api = Luafy.Registries.API_REGISTRY.get(id);
+            SandboxableApi<?> api = Luafy.Registries.APIS.get(id);
             if (api != null) {
                 apis.add(api);
             }

@@ -48,10 +48,10 @@ public class ByteBufDecoder {
         });
 
         public static void registerAll() {
-            Registry.register(Luafy.Registries.BYTEBUF_DECODER_REGISTRY, Luafy.id("txt_utf8"), TEXT_UTF8);
-            Registry.register(Luafy.Registries.BYTEBUF_DECODER_REGISTRY, Luafy.id("txt_utf16"), TEXT_UTF16);
-            Registry.register(Luafy.Registries.BYTEBUF_DECODER_REGISTRY, Luafy.id("json"), JSON);
-            Registry.register(Luafy.Registries.BYTEBUF_DECODER_REGISTRY, Luafy.id("png"), PNG);
+            Registry.register(Luafy.Registries.BYTEBUF_DECODERS, Luafy.id("txt_utf8"), TEXT_UTF8);
+            Registry.register(Luafy.Registries.BYTEBUF_DECODERS, Luafy.id("txt_utf16"), TEXT_UTF16);
+            Registry.register(Luafy.Registries.BYTEBUF_DECODERS, Luafy.id("json"), JSON);
+            Registry.register(Luafy.Registries.BYTEBUF_DECODERS, Luafy.id("png"), PNG);
         }
     }
 

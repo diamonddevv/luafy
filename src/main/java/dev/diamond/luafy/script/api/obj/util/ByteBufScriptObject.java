@@ -29,7 +29,7 @@ public class ByteBufScriptObject implements IScriptObject<Byte[]> {
 
         set.put("decode", args -> {
             Identifier id = new Identifier(args[0].asString());
-            var opt = Luafy.Registries.BYTEBUF_DECODER_REGISTRY.getOrEmpty(id);
+            var opt = Luafy.Registries.BYTEBUF_DECODERS.getOrEmpty(id);
             return opt.<Object>map(byteBufDecoder -> byteBufDecoder.decode(buf, args[0]::adapt)).orElse(null);
         });
 

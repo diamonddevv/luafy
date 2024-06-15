@@ -9,6 +9,6 @@ public class ScriptLanguages {
     public static final LuaScriptLang LUA = new LuaScriptLang();
 
     public static void registerAll() {
-        Registry.register(Luafy.Registries.SCRIPT_LANG_REGISTRY, Luafy.id("lua"), LUA);
+        Registry.register(Luafy.Registries.SCRIPT_LANGUAGES, Luafy.id("lua"), LUA);
     }
 }

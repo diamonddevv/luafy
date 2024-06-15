@@ -58,7 +58,7 @@ public class ScriptResourceLoader implements SimpleSynchronousResourceReloadList
     }
 
     public static AbstractScript<?> loadScript(String extension, String scriptContent) {
-        for (ScriptLanguage<?> s : Luafy.Registries.SCRIPT_LANG_REGISTRY) {
+        for (ScriptLanguage<?> s : Luafy.Registries.SCRIPT_LANGUAGES) {
             if (Arrays.asList(s.getFileExtensions()).contains(extension)) {
                 return s.readScript(scriptContent);
             }

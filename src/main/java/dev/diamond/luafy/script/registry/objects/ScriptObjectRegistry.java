@@ -95,6 +95,6 @@ public class ScriptObjectRegistry {
     }
 
     private static void register(ScriptObjectFactory<?> factory, Identifier id) {
-        Registry.register(Luafy.Registries.SCRIPT_OBJECTS_REGISTRY, id, factory);
+        Registry.register(Luafy.Registries.SCRIPT_OBJECTS, id, factory);
     }
 }

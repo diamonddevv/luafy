@@ -20,8 +20,9 @@ public class LuafyApi extends AbstractTypedScriptApi {
 
     @Override
     public void getTypedFunctions(TypedFunctionList f) {
-        f.add_NoParams(
+        f.add_NoParams_Desc(
                 "get_system_rtc", args -> System.currentTimeMillis(),
+                "Gets the Server System RTC (Real Time Clock). This is expressed in Milliseconds since the Epoch. (00:00 UTC, Jan 1 1970)",
                 Long.class
         );
 

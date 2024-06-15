@@ -40,13 +40,8 @@ public class JsonAutodoc implements Autodoc<JsonObject, JsonArray> {
     }
 
     @Override
-    public void addSection(JsonObject head, JsonObject section, String key) {
-        head.add(key, section);
-    }
-
-    @Override
-    public void addList(JsonObject head, JsonArray list, String key) {
-        head.add(key, list);
+    public void addList(JsonObject head, JsonArray list, String snakeCaseKey, String titleCaseKey) {
+        head.add(snakeCaseKey, list);
     }
 
     @Override
@@ -101,7 +96,7 @@ public class JsonAutodoc implements Autodoc<JsonObject, JsonArray> {
     public void addLang(ScriptLanguage<?> lang, JsonArray list) {
         JsonObject object = new JsonObject();
 
-        object.addProperty("id", Luafy.Registries.SCRIPT_LANG_REGISTRY.getId(lang).toString());
+        object.addProperty("id", Luafy.Registries.SCRIPT_LANGUAGES.getId(lang).toString());
         addDesc(lang, object);
 
         JsonArray exts = new JsonArray();
