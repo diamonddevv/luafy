@@ -52,7 +52,7 @@ public class ScriptCallbackEvent implements DescriptionProvider {
     }
 
     public static ScriptCallbackEvent fromStringId(String id) {
-        ScriptCallbackEvent event = Luafy.Registries.EVENT_CALLBACKS.getOrEmpty(new Identifier(id)).orElse(null);
+        ScriptCallbackEvent event = Luafy.Registries.EVENT_CALLBACKS.getOrEmpty(Identifier.of(id)).orElse(null);
 
         if (event == null) Luafy.LOGGER.error("Couldn't locate callback event '{}'. Available options are: {}", id, getAll().stream().map(ScriptCallbackEvent::toString).toList());
 

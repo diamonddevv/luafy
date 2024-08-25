@@ -17,7 +17,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class ScriptManager {
@@ -79,7 +78,6 @@ public class ScriptManager {
         return true;
     }
     public static boolean execute(String script, ServerCommandSource src, HashMap<?, ?> ctx, boolean ownThread, String caller) {
-
         if (LuafyConfig.GLOBAL_CONFIG.scriptThreading) {
             if (ownThread) {
 
@@ -125,23 +123,6 @@ public class ScriptManager {
         }
     }
 
-    @Deprecated
-    public static void executeEventCallbacks(ScriptCallbackEvent event, Supplier<ServerCommandSource> src, @Nullable Consumer<HashMap<String, Object>> ctxBuilder) {
-
-        HashMap<String, Object> ctx;
-        if (ctxBuilder != null) {
-            ctx = new HashMap<>();
-            ctxBuilder.accept(ctx);
-        } else {
-            ctx = null;
-        }
-
-        if (!ScriptManager.EVENT_CALLBACKS.containsKey(event)) return;
-
-        ScriptManager.EVENT_CALLBACKS.get(event)
-                .forEach(s -> ScriptManager.execute(s.getScriptId(), src.get(), ctx, s.usesOwnThread(), "$server"));
-    }
-
     public static void executeEventCallbacks(ScriptCallbackEvent event, Supplier<ServerCommandSource> src, @Nullable Object... ctxObjs) {
 
         HashMap<String, Object> ctx;
@@ -151,16 +132,24 @@ public class ScriptManager {
                 NamedParam param = event.getContextParams()[i];
                 Object obj = ctxObjs[i];
 
-                ctx.put(param.name, param.clazz.cast(obj));
+                if (param.clazz.isFunction()) throw new RuntimeException("Functions are not currently supported as callback context.");
+
+                ctx.put(param.name, param.clazz.clazz.cast(obj));
             }
         } else {
             ctx = null;
         }
 
+        if (ctx == null) ctx = new HashMap<>();
+        ctx.put("callback", event.toString());
+
         if (!ScriptManager.EVENT_CALLBACKS.containsKey(event)) return;
 
+        HashMap<String, Object> finalCtx = ctx;
         ScriptManager.EVENT_CALLBACKS.get(event)
-                .forEach(s -> ScriptManager.execute(s.getScriptId(), src.get(), ctx, s.usesOwnThread(), "$server"));
+                .forEach(s -> {
+                    ScriptManager.execute(s.getScriptId(), src.get(), finalCtx, s.usesOwnThread(), "$server");
+                });
     }
 
     public static void subscribeEvent(ScriptCallbackEvent event, String scriptId, boolean usesOwnThread) {

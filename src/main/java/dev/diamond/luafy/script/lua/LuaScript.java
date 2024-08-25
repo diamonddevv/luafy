@@ -36,6 +36,18 @@ public class LuaScript extends AbstractScript<LuaBaseValue> {
     }
 
     @Override
+    public LuaBaseValue executeScriptFunction(String functionName, LuaBaseValue[] params) {
+        LuaValue[] p = new LuaValue[params.length];
+
+        for (int i = 0; i < params.length; i++) {
+            p[i] = params[i].value;
+        }
+
+        var value = executeFunction(functionName, p);
+        return new LuaBaseValue(value);
+    }
+
+    @Override
     public void addApi(ApiProvider provider) {
         LuaTable table = new LuaTable();
         AbstractScriptApi api = provider.provide(this);
@@ -65,6 +77,15 @@ public class LuaScript extends AbstractScript<LuaBaseValue> {
     private LuaValue execute() {
         try {
             return this.script.call();
+        } catch (LuaError err) {
+            Luafy.LOGGER.error("[LUA: INTERPRETATION] \n" + err.getMessage());
+        }
+        return LuaValue.NIL;
+    }
+
+    private LuaValue executeFunction(String function, LuaValue[] params) {
+        try {
+            return this.script.get(function).invoke(LuaValue.varargsOf(params)).arg1();
         } catch (LuaError err) {
             Luafy.LOGGER.error("[LUA: INTERPRETATION] \n" + err.getMessage());
         }

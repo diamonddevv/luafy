@@ -36,7 +36,11 @@ public class LuafyApi extends AbstractTypedScriptApi {
                 "get_resource_ids", LuafyApi::getResourceIds,
                 List.class,
                 new NamedParam[] {new NamedParam("includeDataParameter", Boolean.class)},
-                new NamedParam("predicate", AdaptableFunction.class)
+                new NamedParam.FunctionParam("predicate",
+                        new NamedParam[0],
+                        new NamedParam[] {new NamedParam("data", ByteBufScriptObject.class)},
+                        Boolean.class
+                )
         );
     }
 

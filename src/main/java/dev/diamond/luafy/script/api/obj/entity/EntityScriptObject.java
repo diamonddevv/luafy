@@ -61,7 +61,7 @@ public class EntityScriptObject implements IScriptObject<Entity> {
 
         set.put("is_living", args -> entity instanceof LivingEntity);
         set.put("is_player", args -> entity instanceof ServerPlayerEntity);
-        set.put("is_type", args -> entity.getType() == Registries.ENTITY_TYPE.get(new Identifier(args[0].asString())));
+        set.put("is_type", args -> entity.getType() == Registries.ENTITY_TYPE.get(Identifier.of(args[0].asString())));
 
         set.put("test_predicate", args -> LuafyUtil.getAndTestPredicate(args[0].asString(), entity));
 
@@ -71,7 +71,9 @@ public class EntityScriptObject implements IScriptObject<Entity> {
 
         set.put("teleport", args -> {
             Vec3d pos = args[0].asScriptObjectAssertive(Vec3dScriptObject.class).get();
-            entity.teleport(pos.x, pos.y, pos.z);
+            entity.requestTeleport(
+                    pos.x, pos.y, pos.z
+            );
             return null;
         });
 

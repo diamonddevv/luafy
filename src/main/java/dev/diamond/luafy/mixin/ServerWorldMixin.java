@@ -6,6 +6,7 @@ import dev.diamond.luafy.script.api.obj.entity.PlayerEntityScriptObject;
 import dev.diamond.luafy.script.api.obj.math.Vec3dScriptObject;
 import dev.diamond.luafy.script.registry.callback.ScriptCallbacks;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -24,9 +25,9 @@ public abstract class ServerWorldMixin {
     @Shadow @NotNull public abstract MinecraftServer getServer();
 
     @Inject(method = "emitGameEvent", at = @At("HEAD"))
-    private void luafy$invokeGameEventCallbacks(GameEvent event, Vec3d emitterPos, GameEvent.Emitter emitter, CallbackInfo ci) {
+    private void luafy$invokeGameEventCallbacks(RegistryEntry<GameEvent> event, Vec3d emitterPos, GameEvent.Emitter emitter, CallbackInfo ci) {
         ScriptManager.executeEventCallbacks(ScriptCallbacks.ON_GAME_EVENT, () -> this.getServer().getCommandSource().withLevel(2),
-                Registries.GAME_EVENT.getId(event).toString(),
+                Registries.GAME_EVENT.getId(event.value()).toString(),
                 emitter.sourceEntity() == null ? null : new EntityScriptObject(emitter.sourceEntity()),
                 new Vec3dScriptObject(emitterPos)
         );

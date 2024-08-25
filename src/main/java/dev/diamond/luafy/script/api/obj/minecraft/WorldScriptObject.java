@@ -57,7 +57,7 @@ public class WorldScriptObject extends AbstractTypedScriptObject<ServerWorld> {
             }
 
 
-            var entityType = Registries.ENTITY_TYPE.get(new Identifier(entityId));
+            var entityType = Registries.ENTITY_TYPE.get(Identifier.of(entityId));
 
             Entity e = entityType.create(world);
 
@@ -94,7 +94,7 @@ public class WorldScriptObject extends AbstractTypedScriptObject<ServerWorld> {
 
         f.add_Void_Desc("play_sound", args -> {
             Vec3d pos = args[0].asScriptObjectAssertive(Vec3dScriptObject.class).get();
-            Identifier soundId = new Identifier(args[1].asString());
+            Identifier soundId = Identifier.of(args[1].asString());
             String category = args[2].asString();
             float pitch = args[3].asFloat();
             float volume = args[4].asFloat();

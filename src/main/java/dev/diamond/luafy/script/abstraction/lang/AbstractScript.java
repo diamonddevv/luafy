@@ -27,7 +27,15 @@ public abstract class AbstractScript
         return this.executeScript();
     }
 
+    public BaseValue executeFunction(ServerCommandSource source, HashMap<?, ?> contextMap, String functionName, BaseValue[] params) {
+        this.source = FunctionCommand.createFunctionCommandSource(source);
+        this.contextMap = contextMap;
+        return this.executeScriptFunction(functionName, params);
+    }
+
     public abstract BaseValue executeScript();
+
+    public abstract BaseValue executeScriptFunction(String functionName, BaseValue[] params);
 
     /**
      *

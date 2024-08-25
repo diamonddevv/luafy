@@ -15,6 +15,7 @@ import dev.diamond.luafy.script.api.obj.math.Vec3dScriptObject;
 import dev.diamond.luafy.script.api.obj.minecraft.WorldScriptObject;
 import dev.diamond.luafy.script.api.obj.minecraft.block.BlockStatePropertyScriptObject;
 import dev.diamond.luafy.script.api.obj.minecraft.block.BlockStateScriptObject;
+import dev.diamond.luafy.script.api.obj.minecraft.item.ComponentMapScriptObject;
 import dev.diamond.luafy.script.api.obj.minecraft.item.ItemStackScriptObject;
 import dev.diamond.luafy.script.api.obj.minecraft.item.MapStateScriptObject;
 import dev.diamond.luafy.script.api.obj.util.AdvancementEntryScriptObject;
@@ -25,6 +26,7 @@ import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.block.BlockState;
 import net.minecraft.command.argument.DefaultPosArgument;
 import net.minecraft.command.argument.LookingPosArgument;
+import net.minecraft.component.ComponentMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.decoration.DisplayEntity;
@@ -63,6 +65,7 @@ public class ScriptObjectRegistry {
     public static final ScriptObjectFactory<ItemStackScriptObject> ITEMSTACK = a -> new ItemStackScriptObject((ItemStack) a[0]);
     public static final ScriptObjectFactory<MapStateScriptObject> MAP_STATE = a -> new MapStateScriptObject((MapState) a[0]);
     public static final ScriptObjectFactory<WorldScriptObject> WORLD = a -> new WorldScriptObject((ServerWorld) a[0]);
+    public static final ScriptObjectFactory<ComponentMapScriptObject> COMPONENTMAP = a -> new ComponentMapScriptObject((ComponentMap) a[0]);
 
     public static final ScriptObjectFactory<AdvancementEntryScriptObject> ADVANCEMENT_ENTRY = a -> new AdvancementEntryScriptObject((AdvancementEntry) a[0]);
     public static final ScriptObjectFactory<BufferedImageScriptObject> BUFFERED_IMAGE = a -> new BufferedImageScriptObject((BufferedImage) a[0]);
@@ -88,6 +91,7 @@ public class ScriptObjectRegistry {
         register(ITEMSTACK, Luafy.id("item_stack"));
         register(MAP_STATE, Luafy.id("map_state"));
         register(WORLD, Luafy.id("world"));
+        register(COMPONENTMAP, Luafy.id("component_map"));
         register(ADVANCEMENT_ENTRY, Luafy.id("advancement_entry"));
         register(BUFFERED_IMAGE, Luafy.id("image"));
         register(BYTEBUF, Luafy.id("bytebuf"));

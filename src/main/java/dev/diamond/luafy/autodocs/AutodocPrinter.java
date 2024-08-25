@@ -35,6 +35,11 @@ public class AutodocPrinter {
         }
 
         @Override
+        public DummyScriptValue executeScriptFunction(String functionName, DummyScriptValue[] params) {
+            return null;
+        }
+
+        @Override
         public void addApi(ApiProvider api) {
         }
 

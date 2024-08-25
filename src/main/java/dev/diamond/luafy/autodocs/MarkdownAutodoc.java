@@ -145,7 +145,7 @@ public class MarkdownAutodoc implements Autodoc<MarkdownAutodoc.Markdown, Markdo
                 a.assign(1, e.getValue().description().orElse(" "));
                 a.assign(2, stringifyNamedParams(e.getValue().params()));
                 a.assign(3, stringifyNamedParams(e.getValue().optionalParams()));
-                a.assign(4, e.getValue().returnType().map(Class::getSimpleName).orElse(" "));
+                a.assign(4, stringifyNamedParamClassWrapper(e.getValue().returnType().orElse(null)));
             });
         }
 
@@ -153,7 +153,7 @@ public class MarkdownAutodoc implements Autodoc<MarkdownAutodoc.Markdown, Markdo
     }
 
     public static String stringifyNamedParam(NamedParam param) {
-        return "`" + param.name + ": " + param.clazz.getSimpleName() + "`";
+        return "`" + param.name + ": " + stringifyNamedParamClassWrapper(param.clazz) + "`";
     }
     public static String stringifyNamedParams(NamedParam[] params) {
         StringBuilder b = new StringBuilder();
@@ -164,6 +164,19 @@ public class MarkdownAutodoc implements Autodoc<MarkdownAutodoc.Markdown, Markdo
 
         if (s.isEmpty()) return null;
         else return s;
+    }
+
+    public static String stringifyNamedParamClassWrapper(NamedParam.NamedParamClassWrapper<?> npcw) {
+
+        if (npcw == null) return " ";
+
+        if (npcw.isFunction()) {
+
+        } else {
+            return npcw.clazz.getSimpleName();
+        }
+
+        return "";
     }
 
     /////////////////////////////////////////////////////

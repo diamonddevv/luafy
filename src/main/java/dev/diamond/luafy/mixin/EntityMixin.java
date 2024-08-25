@@ -29,9 +29,10 @@ public abstract class EntityMixin {
             );
         }
 
-        ScriptManager.executeEventCallbacks(ScriptCallbacks.TICK_ENTITY,
-                () -> getCommandSource().withLevel(2), ctx -> {
-                    ctx.put("age", age);
-                });
+        ScriptManager.executeEventCallbacks(
+                ScriptCallbacks.TICK_ENTITY,
+                () -> getCommandSource().withLevel(2),
+                age
+        );
     }
 }

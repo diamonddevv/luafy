@@ -29,6 +29,6 @@ public class BlockStateScriptObject extends AbstractTypedScriptObject<BlockState
         f.add_NoParams_Desc("get_properties", args -> block.getProperties().stream().map(BlockStatePropertyScriptObject::new).toList(), "Returns a list of BlockStateProperties attached to this block.", List.class);
 
         f.add_Desc("get_property_value", args -> block.get(args[0].asScriptObjectAssertive(BlockStatePropertyScriptObject.class).get()), "Gets the value of the property supplied on this block.", Object.class, new NamedParam("property", BlockStatePropertyScriptObject.class));
-        f.add_Desc("in_tag", args -> block.isIn(TagKey.of(RegistryKeys.BLOCK, new Identifier(args[0].asString()))), "Returns true if this block is in the specified block tag.", Boolean.class, new NamedParam("tagId", String.class));
+        f.add_Desc("in_tag", args -> block.isIn(TagKey.of(RegistryKeys.BLOCK, Identifier.of(args[0].asString()))), "Returns true if this block is in the specified block tag.", Boolean.class, new NamedParam("tagId", String.class));
     }
 }

@@ -1,5 +1,6 @@
 package dev.diamond.luafy;
 
+import com.mojang.serialization.MapCodec;
 import dev.diamond.luafy.autodocs.Autodoc;
 import dev.diamond.luafy.autodocs.AutodocPrinter;
 import dev.diamond.luafy.command.LuafyCommand;
@@ -7,6 +8,7 @@ import dev.diamond.luafy.config.LuafyConfig;
 import dev.diamond.luafy.resource.CallbackScriptResourceLoader;
 import dev.diamond.luafy.resource.ScriptResourceLoader;
 import dev.diamond.luafy.resource.StaticScriptResourceResourceLoader;
+import dev.diamond.luafy.script.ScriptManager;
 import dev.diamond.luafy.script.registry.ByteBufDecoder;
 import dev.diamond.luafy.script.registry.callback.ScriptCallbackEvent;
 import dev.diamond.luafy.script.registry.callback.ScriptCallbacks;
@@ -21,10 +23,15 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.loader.impl.FabricLoaderImpl;
+import net.minecraft.enchantment.EnchantmentEffectContext;
+import net.minecraft.enchantment.effect.EnchantmentEntityEffect;
+import net.minecraft.entity.Entity;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,6 +116,9 @@ public class Luafy implements ModInitializer {
 		ScriptObjectRegistry.registerAll();
 		ByteBufDecoder.Decoders.registerAll();
 
+		// misc
+		addEnchantmentActions();
+
 		// collections
 		AutodocPrinter.addAll();
 
@@ -118,8 +128,37 @@ public class Luafy implements ModInitializer {
 
 
 	public static Identifier id(String path) {
-		return new Identifier(MODID, path);
+		return Identifier.of(MODID, path);
 	}
 
+
+
+	private static void addEnchantmentActions() {
+
+	}
+
+
+	public record LuafyExecuteScriptEnchantmentEffect(String scriptId) implements EnchantmentEntityEffect {
+
+		@Override
+		public void apply(ServerWorld world, int level, EnchantmentEffectContext context, Entity user, Vec3d pos) {
+			if (!ScriptManager.hasScript(scriptId)) {
+				return;
+			}
+
+			ScriptManager.execute(
+					scriptId,
+					user.getCommandSource(),
+					null, // todo add ctx
+					false,
+					"enchantment"
+			);
+		}
+
+		@Override
+		public MapCodec<? extends EnchantmentEntityEffect> getCodec() {
+			return null;
+		}
+	}
 
 }

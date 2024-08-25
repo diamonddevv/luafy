@@ -1,6 +1,7 @@
 package dev.diamond.luafy.cca;
 
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryWrapper;
 
 public class EntityCompound implements ICompoundComponent {
 
@@ -20,12 +21,12 @@ public class EntityCompound implements ICompoundComponent {
     }
 
     @Override
-    public void readFromNbt(NbtCompound tag) {
+    public void readFromNbt(NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
         nbt = tag.getCompound(key);
     }
 
     @Override
-    public void writeToNbt(NbtCompound tag) {
+    public void writeToNbt(NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
         tag.put(key, nbt);
     }
 }

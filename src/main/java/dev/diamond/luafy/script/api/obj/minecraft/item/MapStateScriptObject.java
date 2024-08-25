@@ -2,20 +2,8 @@ package dev.diamond.luafy.script.api.obj.minecraft.item;
 
 import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.obj.IScriptObject;
-import dev.diamond.luafy.script.api.obj.entity.PlayerEntityScriptObject;
-import dev.diamond.luafy.script.api.obj.minecraft.WorldScriptObject;
-import dev.diamond.luafy.script.api.obj.util.BufferedImageScriptObject;
-import dev.diamond.luafy.util.LuafyUtil;
-import net.minecraft.item.FilledMapItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.item.map.MapState;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Hand;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
 public class MapStateScriptObject implements IScriptObject<MapState> {
@@ -31,6 +19,7 @@ public class MapStateScriptObject implements IScriptObject<MapState> {
 
     @Override
     public void addFunctions(HashMap<String, AdaptableFunction> set) {
+        /*
         set.put("set_image", args -> {
             BufferedImage img = args[0].asScriptObjectAssertive(BufferedImageScriptObject.class).get();
             ServerWorld world = args[1].asScriptObjectAssertive(WorldScriptObject.class).get();
@@ -62,6 +51,7 @@ public class MapStateScriptObject implements IScriptObject<MapState> {
 
             return null;
         });
+         */
     }
 
     @Override

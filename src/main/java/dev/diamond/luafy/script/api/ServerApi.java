@@ -93,7 +93,7 @@ public class ServerApi extends AbstractScriptApi {
         f.put("get_source_world", args -> new WorldScriptObject(script.source.getWorld()));
         f.put("get_dimension", args -> {
 
-            Identifier dimensionId = new Identifier(args[0].asString());
+            Identifier dimensionId = Identifier.of(args[0].asString());
 
             var worldKey = script.source.getWorldKeys().stream().filter(w -> w.getValue() == dimensionId).findFirst();
 

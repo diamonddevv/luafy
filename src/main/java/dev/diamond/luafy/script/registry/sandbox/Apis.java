@@ -87,7 +87,7 @@ public class Apis {
 
         List<SandboxableApi<?>> apis = new ArrayList<>(Luafy.Registries.APIS.stream().filter(SandboxableApi::alwaysLoads).toList());
 
-        for (Identifier id : m.stream().map(Identifier::new).toList()) {
+        for (Identifier id : m.stream().map(Identifier::of).toList()) {
             SandboxableApi<?> api = Luafy.Registries.APIS.get(id);
             if (api != null) {
                 apis.add(api);

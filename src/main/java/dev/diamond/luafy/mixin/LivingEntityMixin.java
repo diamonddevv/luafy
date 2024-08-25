@@ -1,10 +1,10 @@
 package dev.diamond.luafy.mixin;
 
 import dev.diamond.luafy.script.ScriptManager;
-import dev.diamond.luafy.script.api.obj.entity.EntityScriptObject;
 import dev.diamond.luafy.script.api.obj.entity.LivingEntityScriptObject;
 import dev.diamond.luafy.script.api.obj.minecraft.item.ItemStackScriptObject;
 import dev.diamond.luafy.script.registry.callback.ScriptCallbacks;
+import net.minecraft.component.type.FoodComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -13,6 +13,7 @@ import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -30,8 +31,10 @@ public abstract class LivingEntityMixin extends Entity {
     }
 
     @Unique
-    private EntityScriptObject attackerSo(Entity s) {
-        return new EntityScriptObject(s);
+    private LivingEntityScriptObject attackerSo(DamageSource s) {
+        if (s.getAttacker() instanceof LivingEntity le) {
+            return new LivingEntityScriptObject(le);
+        } else return null;
     }
 
     @Unique
@@ -50,7 +53,7 @@ public abstract class LivingEntityMixin extends Entity {
         ScriptManager.executeEventCallbacks(ScriptCallbacks.ON_ENTITY_HURTS,
                 () -> getThis().getCommandSource().withLevel(2),
 
-                attackerSo(source.getAttacker()),
+                attackerSo(source),
                 thisSo(),
                 amount,
                 getThis().getDamageSources().registry.getId(source.getType()).toString()
@@ -61,7 +64,7 @@ public abstract class LivingEntityMixin extends Entity {
     private void luafy$invokeOnDieCallbacks(LivingEntity adversary, CallbackInfo ci) {
         ScriptManager.executeEventCallbacks(ScriptCallbacks.ON_ENTITY_DIES,
                 () -> getThis().getCommandSource().withLevel(2),
-                attackerSo(adversary), thisSo()
+                new LivingEntityScriptObject(adversary), thisSo()
         );
     }
 
@@ -79,23 +82,23 @@ public abstract class LivingEntityMixin extends Entity {
         ScriptManager.executeEventCallbacks(ScriptCallbacks.EFFECT_APPLIED,
                 () -> getThis().getCommandSource().withLevel(2),
                 thisSo(),
-                Registries.STATUS_EFFECT.getId(effect.getEffectType()).toString(),
+                Registries.STATUS_EFFECT.getId(effect.getEffectType().value()).toString(),
                 effect.getDuration(),
                 effect.getAmplifier()
         );
     }
 
     @Inject(method = "removeStatusEffect", at = @At("HEAD"))
-    private void luafy$invokeRemoveEffectCallbacks(StatusEffect effect, CallbackInfoReturnable<Boolean> cir) {
+    private void luafy$invokeRemoveEffectCallbacks(RegistryEntry<StatusEffect> effect, CallbackInfoReturnable<Boolean> cir) {
         ScriptManager.executeEventCallbacks(ScriptCallbacks.EFFECT_LOST,
                 () -> getThis().getCommandSource().withLevel(2),
                 thisSo(),
-                Registries.STATUS_EFFECT.getId(effect).toString()
+                Registries.STATUS_EFFECT.getId(effect.value()).toString()
                 );
     }
 
     @Inject(method = "eatFood", at = @At("HEAD"))
-    private void luafy$invokeEatCallbacks(World world, ItemStack stack, CallbackInfoReturnable<ItemStack> cir) {
+    private void luafy$invokeEatCallbacks(World world, ItemStack stack, FoodComponent foodComponent, CallbackInfoReturnable<ItemStack> cir) {
         ScriptManager.executeEventCallbacks(ScriptCallbacks.EATS,
                 () -> getThis().getCommandSource().withLevel(2),
 

@@ -36,7 +36,7 @@ public class TextDisplayEntityScriptObject extends DisplayEntityScriptObject {
 
         set.put("set_text_component", args -> {
             String s = args[0].asString();
-            textDisp.setText(Text.Serialization.fromJson(s));
+            textDisp.setText(Text.Serialization.fromJson(s, entity.getServer().getRegistryManager()));
             return null;
         });
 

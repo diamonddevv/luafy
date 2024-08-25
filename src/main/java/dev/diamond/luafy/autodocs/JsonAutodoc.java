@@ -112,26 +112,46 @@ public class JsonAutodoc implements Autodoc<JsonObject, JsonArray> {
     public static JsonObject functionToJson(String funcName, TypedFunctions.TypeData data) {
         JsonObject f = new JsonObject();
 
+        f.addProperty("name", funcName);
+        f.addProperty("description", data.description().orElse(""));
+        addFunctionParamsToJson(f, data.params(), data.optionalParams(), data.returnType().orElse(null));
+
+        return f;
+    }
+
+    public static void addFunctionParamsToJson(JsonObject f, NamedParam[] pars, NamedParam[] ops, NamedParam.NamedParamClassWrapper<?> rtrn) {
         JsonArray params = new JsonArray();
         JsonArray opParams = new JsonArray();
 
-        for (var p : data.params()) params.add(namedParamToJson(p));
-        for (var p : data.optionalParams()) opParams.add(namedParamToJson(p));
+        for (var p : pars) params.add(namedParamToJson(p));
+        for (var p : ops) opParams.add(namedParamToJson(p));
 
-        f.addProperty("name", funcName);
-        f.addProperty("description", data.description().orElse(""));
         f.add("parameters", params);
         f.add("optional_parameters", opParams);
-        f.addProperty("return_type", data.returnType().map(Class::getSimpleName).orElse(""));
-
-        return f;
+        namedParamFunctionToJson(f,  "return_type", rtrn);
     }
 
     public static JsonObject namedParamToJson(NamedParam p) {
         JsonObject o = new JsonObject();
         o.addProperty("name", p.name);
-        o.addProperty("type", p.clazz.getSimpleName());
+        if (!p.getDescription().isEmpty()) addDesc(p, o);
+        namedParamFunctionToJson(o, "type", p.clazz);
         return o;
+    }
+
+    public static void namedParamFunctionToJson(JsonObject f, String key, NamedParam.NamedParamClassWrapper<?> npcw) {
+
+        if (npcw == null) return;
+        if (npcw.clazz == null) return;
+
+        f.addProperty(key, npcw.clazz.getSimpleName());
+
+        if (npcw.isFunction()) {
+            JsonObject o = new JsonObject();
+            addFunctionParamsToJson(o, npcw.functionParams(), npcw.functionOptionalParams(), npcw.functionReturn());
+
+            f.add("adaptable_function", o);
+        }
     }
 
     public static void addDesc(DescriptionProvider p, JsonObject o) {
@@ -143,4 +163,7 @@ public class JsonAutodoc implements Autodoc<JsonObject, JsonArray> {
     public String getFilename() {
         return filename;
     }
+
+
+
 }

@@ -15,6 +15,7 @@ public interface CallbackEventSubscription {
             public boolean usesOwnThread() {
                 return usesOwnThread;
             }
+
         };
     }
 }
