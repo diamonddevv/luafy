@@ -68,21 +68,25 @@ public class ScriptManager {
 
 
     // Script Executors
-    public static boolean executeCurrentThread(String script, ServerCommandSource src, HashMap<?, ?> ctx, String caller) {
+    public static boolean executeCurrentThread(String script, String function, ServerCommandSource src, HashMap<?, ?> ctx, String caller) {
         if (!hasScript(script)) return false;
 
         if (ctx == null) ctx = new HashMap<>();
         ((HashMap<String, Object>)ctx).put("caller", caller);
 
-        SCRIPTS.get(script).execute(src, ctx);
+        if (function != null)
+            SCRIPTS.get(script).executeFunction(src, ctx, function, null);
+            else SCRIPTS.get(script).execute(src, ctx);
+
+
         return true;
     }
-    public static boolean execute(String script, ServerCommandSource src, HashMap<?, ?> ctx, boolean ownThread, String caller) {
+    public static boolean execute(String script, String function, ServerCommandSource src, HashMap<?, ?> ctx, boolean ownThread, String caller) {
         if (LuafyConfig.GLOBAL_CONFIG.scriptThreading) {
             if (ownThread) {
 
                 Thread t = new Thread(null, () -> {
-                    executeCurrentThread(script, src, ctx, caller);
+                    executeCurrentThread(script, function, src, ctx, caller);
                 }, "Script Thread");
 
                 t.setDaemon(true);
@@ -91,11 +95,11 @@ public class ScriptManager {
                 return true;
             }
         }
-        SCRIPT_THREAD_EXECUTIONS.add(ScriptExecution.of(script, src, ctx, caller));
+        SCRIPT_THREAD_EXECUTIONS.add(ScriptExecution.of(script, function, src, ctx, caller));
         return true;
     }
-    public static boolean execute(String script, ServerCommandSource src, boolean ownThread, String caller) {
-        return execute(script, src, null, ownThread, caller);
+    public static boolean execute(String script, String function, ServerCommandSource src, boolean ownThread, String caller) {
+        return execute(script, function, src, null, ownThread, caller);
     }
 
     // Script Cache
@@ -116,8 +120,18 @@ public class ScriptManager {
             for (ScriptCallbacks.CallbackScriptBean.CallbackEventBean eventCallback : c.eventCallbacks) {
                 ScriptCallbackEvent event = ScriptCallbackEvent.fromStringId(eventCallback.id);
                 if (event != null) {
-                    EVENT_CALLBACKS.get(event).addAll(eventCallback.scriptIds.stream().map(s ->
-                            CallbackEventSubscription.of(s, eventCallback.ownThread)).toList());
+                    if (eventCallback.scriptedFunction == null) {
+                        EVENT_CALLBACKS.get(event).addAll(eventCallback.scriptIds.stream().map(s ->
+                                CallbackEventSubscription.of(s, null, eventCallback.ownThread)).toList());
+                    } else {
+                        EVENT_CALLBACKS.get(event).add(
+                                CallbackEventSubscription.of(
+                                        eventCallback.scriptedFunction.script,
+                                        eventCallback.scriptedFunction.function,
+                                        eventCallback.ownThread
+                                )
+                        );
+                    }
                 }
             }
         }
@@ -148,12 +162,12 @@ public class ScriptManager {
         HashMap<String, Object> finalCtx = ctx;
         ScriptManager.EVENT_CALLBACKS.get(event)
                 .forEach(s -> {
-                    ScriptManager.execute(s.getScriptId(), src.get(), finalCtx, s.usesOwnThread(), "$server");
+                    ScriptManager.execute(s.getScriptId(), s.getFunctionName(), src.get(), finalCtx, s.usesOwnThread(), "$server");
                 });
     }
 
     public static void subscribeEvent(ScriptCallbackEvent event, String scriptId, boolean usesOwnThread) {
-        EVENT_CALLBACKS.get(event).add(CallbackEventSubscription.of(scriptId, usesOwnThread));
+        EVENT_CALLBACKS.get(event).add(CallbackEventSubscription.of(scriptId, null, usesOwnThread));
     }
     public static void unsubscribeEvent(ScriptCallbackEvent event, String scriptId) {
         EVENT_CALLBACKS.get(event).removeIf(e -> Objects.equals(e.getScriptId(), scriptId));

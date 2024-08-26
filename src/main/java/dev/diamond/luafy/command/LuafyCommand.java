@@ -26,14 +26,14 @@ public class LuafyCommand {
     public static void registerLuaCommand(
             CommandDispatcher<ServerCommandSource> dispatcher,
             CommandRegistryAccess access, CommandManager.RegistrationEnvironment environment) {
-        
+
 
         dispatcher.register(
                 literal("luafy").requires(src -> src.hasPermissionLevel(2))
                         .then(
                                 literal("execute")
                                         .then(
-                                                argument("subscription", StringArgumentType.string())
+                                                argument("script", StringArgumentType.string())
                                                         .then(
                                                                 argument("context", NbtCompoundArgumentType.nbtCompound())
                                                                         .executes(s -> luaCommand_executeWithContext(s, false))
@@ -43,6 +43,9 @@ public class LuafyCommand {
                                                         ).then(
                                                                 literal("threaded")
                                                                         .executes(s -> luaCommand_execute(s, true))
+                                                        ).then(
+                                                               argument("function", StringArgumentType.string())
+                                                                       .executes(s -> luaCommand_executeFunction(s, false))
                                                         ).executes(s -> luaCommand_execute(s, false))
                                         ) // execute branch
                         ).then(
@@ -56,16 +59,24 @@ public class LuafyCommand {
         ); // root
     }
 
-
     private static int luaCommand_execute(CommandContext<ServerCommandSource> ctx, boolean threaded) throws CommandSyntaxException {
-        String arg = StringArgumentType.getString(ctx, "subscription");
-        boolean success = execute(arg, ctx, null, threaded);
+        String arg = StringArgumentType.getString(ctx, "script");
+        boolean success = execute(arg, null, ctx, null, threaded);
         return success ? 1 : 0;
     }
+
+    private static int luaCommand_executeFunction(CommandContext<ServerCommandSource> ctx, boolean threaded) throws CommandSyntaxException {
+        String arg = StringArgumentType.getString(ctx, "script");
+        String function = StringArgumentType.getString(ctx, "function");
+
+        boolean success = execute(arg, function, ctx, null, threaded);
+        return success ? 1 : 0;
+    }
+
     private static int luaCommand_executeWithContext(CommandContext<ServerCommandSource> ctx, boolean threaded) throws CommandSyntaxException {
-        String arg = StringArgumentType.getString(ctx, "subscription");
+        String arg = StringArgumentType.getString(ctx, "script");
         NbtCompound nbtContext = NbtCompoundArgumentType.getNbtCompound(ctx, "context");
-        boolean success = execute(arg, ctx, nbtContext, threaded);
+        boolean success = execute(arg, null, ctx, nbtContext, threaded);
         return success ? 1 : 0;
     }
 
@@ -91,7 +102,7 @@ public class LuafyCommand {
     }
 
     //
-    private static boolean execute(String id, CommandContext<ServerCommandSource> ctx, @Nullable NbtCompound nbtContext, boolean threaded) throws CommandSyntaxException {
+    private static boolean execute(String id, String function, CommandContext<ServerCommandSource> ctx, @Nullable NbtCompound nbtContext, boolean threaded) throws CommandSyntaxException {
         if (!ScriptManager.hasScript(id)) {
             throw SCRIPT_NOT_EXIST.create(id);
         }
@@ -99,6 +110,7 @@ public class LuafyCommand {
 
         ScriptManager.execute(
                 id,
+                function,
                 ctx.getSource(),
                 nbtContext == null ? null : BaseValueConversions.nbtObjToBase(nbtContext, s -> script.getNullBaseValue().adapt(s)),
                 threaded,

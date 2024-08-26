@@ -1,9 +1,9 @@
 package dev.diamond.luafy.script.lua;
 
 import dev.diamond.luafy.Luafy;
-import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.api.AbstractScriptApi;
 import dev.diamond.luafy.script.abstraction.api.ApiProvider;
+import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
 import dev.diamond.luafy.script.registry.lang.ScriptLanguage;
 import dev.diamond.luafy.script.registry.lang.ScriptLanguages;
@@ -12,6 +12,9 @@ import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
+
+import java.util.Collection;
+import java.util.List;
 
 public class LuaScript extends AbstractScript<LuaBaseValue> {
 
@@ -36,11 +39,11 @@ public class LuaScript extends AbstractScript<LuaBaseValue> {
     }
 
     @Override
-    public LuaBaseValue executeScriptFunction(String functionName, LuaBaseValue[] params) {
-        LuaValue[] p = new LuaValue[params.length];
-
-        for (int i = 0; i < params.length; i++) {
-            p[i] = params[i].value;
+    public LuaBaseValue executeScriptFunction(String functionName, Collection<LuaBaseValue> params) {
+        LuaValue[] p = new LuaValue[params.size()];
+        List<LuaBaseValue> a = params.stream().toList();
+        for (int i = 0; i < params.size(); i++) {
+            p[i] = a.get(i).value;
         }
 
         var value = executeFunction(functionName, p);
@@ -85,7 +88,8 @@ public class LuaScript extends AbstractScript<LuaBaseValue> {
 
     private LuaValue executeFunction(String function, LuaValue[] params) {
         try {
-            return this.script.get(function).invoke(LuaValue.varargsOf(params)).arg1();
+            LuaTable table = this.script.call().checktable();
+            return table.get(function).invoke(LuaValue.varargsOf(params)).arg1();
         } catch (LuaError err) {
             Luafy.LOGGER.error("[LUA: INTERPRETATION] \n" + err.getMessage());
         }

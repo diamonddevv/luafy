@@ -109,8 +109,16 @@ public class ScriptCallbacks {
             @SerializedName("scripts")
             public List<String> scriptIds;
 
+            @SerializedName("scripted_function")
+            public ScriptFunctionCallBean scriptedFunction;
+
             @SerializedName("use_own_thread")
             public boolean ownThread = false;
+        }
+
+        public static class ScriptFunctionCallBean {
+            @SerializedName("script") public String script;
+            @SerializedName("function") public String function;
         }
     }
 

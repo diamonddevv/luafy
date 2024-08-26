@@ -130,7 +130,7 @@ public abstract class AbstractBaseValue
      * </ul>
      *
      * If a type cant be adapted, you should probably throw an exception.
-     * I reccommend looking at LuaBaseValue to see how I did it there.
+     * I recommend looking at LuaBaseValue to see how I did it there.
      * <br>
      * <h3>Types that are already adapted:<br></h3>
      * <ul>

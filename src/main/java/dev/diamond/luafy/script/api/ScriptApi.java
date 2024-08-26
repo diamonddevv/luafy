@@ -29,7 +29,7 @@ public class ScriptApi extends AbstractTypedScriptApi {
 
             ServerCommandSource src = script.source;
             AbstractScript<?> s = ScriptManager.getScript(id);
-            ScriptManager.execute(id, src, ctx, thread, script.name);
+            ScriptManager.execute(id, null, src, ctx, thread, script.name);
             return s.outContextMap == null ? null : s.outContextMap;
         }, "Calls the given script, optionally with context and on its own thread.", Map.class,
                 new NamedParam[] {

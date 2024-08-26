@@ -1,6 +1,8 @@
 package dev.diamond.luafy;
 
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.diamond.luafy.autodocs.Autodoc;
 import dev.diamond.luafy.autodocs.AutodocPrinter;
 import dev.diamond.luafy.command.LuafyCommand;
@@ -117,7 +119,7 @@ public class Luafy implements ModInitializer {
 		ByteBufDecoder.Decoders.registerAll();
 
 		// misc
-		addEnchantmentActions();
+		// addEnchantmentActions();
 
 		// collections
 		AutodocPrinter.addAll();
@@ -134,11 +136,22 @@ public class Luafy implements ModInitializer {
 
 
 	private static void addEnchantmentActions() {
+		// todo this doesnt work lol
 
+		Registry.register(
+				net.minecraft.registry.Registries.ENCHANTMENT_ENTITY_EFFECT_TYPE,
+				id("callback"),
+				LuafyExecuteScriptEnchantmentEffect.CODEC
+				);
 	}
 
 
-	public record LuafyExecuteScriptEnchantmentEffect(String scriptId) implements EnchantmentEntityEffect {
+	public record LuafyExecuteScriptEnchantmentEffect(String scriptId, boolean threaded) implements EnchantmentEntityEffect {
+		public static final MapCodec<LuafyExecuteScriptEnchantmentEffect> CODEC =
+				RecordCodecBuilder.mapCodec((instance) -> instance.group(
+                        Codec.STRING.fieldOf("script").forGetter(LuafyExecuteScriptEnchantmentEffect::scriptId),
+                        Codec.BOOL.fieldOf("threaded").forGetter(LuafyExecuteScriptEnchantmentEffect::threaded)
+                ).apply(instance, LuafyExecuteScriptEnchantmentEffect::new));
 
 		@Override
 		public void apply(ServerWorld world, int level, EnchantmentEffectContext context, Entity user, Vec3d pos) {
@@ -148,6 +161,7 @@ public class Luafy implements ModInitializer {
 
 			ScriptManager.execute(
 					scriptId,
+					null,
 					user.getCommandSource(),
 					null, // todo add ctx
 					false,
@@ -157,7 +171,7 @@ public class Luafy implements ModInitializer {
 
 		@Override
 		public MapCodec<? extends EnchantmentEntityEffect> getCodec() {
-			return null;
+			return CODEC;
 		}
 	}
 

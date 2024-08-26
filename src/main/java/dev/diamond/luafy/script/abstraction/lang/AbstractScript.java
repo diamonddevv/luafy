@@ -6,6 +6,8 @@ import dev.diamond.luafy.script.registry.lang.ScriptLanguage;
 import net.minecraft.server.command.FunctionCommand;
 import net.minecraft.server.command.ServerCommandSource;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 /**
@@ -27,15 +29,23 @@ public abstract class AbstractScript
         return this.executeScript();
     }
 
-    public BaseValue executeFunction(ServerCommandSource source, HashMap<?, ?> contextMap, String functionName, BaseValue[] params) {
+    public BaseValue executeFunction(ServerCommandSource source, HashMap<?, ?> contextMap, String functionName, Collection<AbstractBaseValue<?, ?>> params) {
         this.source = FunctionCommand.createFunctionCommandSource(source);
         this.contextMap = contextMap;
-        return this.executeScriptFunction(functionName, params);
+
+        if (params == null) {
+            params = new ArrayList<>();
+        }
+        params.add(getNullBaseValue().adapt(contextMap)); // add context as a parameter ; you can use context.get() or just pass a parameter to the function. easy!
+
+
+
+        return this.executeScriptFunction(functionName, getNullBaseValue().adapt(params).asCollection());
     }
 
     public abstract BaseValue executeScript();
 
-    public abstract BaseValue executeScriptFunction(String functionName, BaseValue[] params);
+    public abstract BaseValue executeScriptFunction(String functionName, Collection<BaseValue> params);
 
     /**
      *

@@ -35,7 +35,7 @@ public class AutodocPrinter {
         }
 
         @Override
-        public DummyScriptValue executeScriptFunction(String functionName, DummyScriptValue[] params) {
+        public DummyScriptValue executeScriptFunction(String functionName, Collection<DummyScriptValue> params) {
             return null;
         }
 
