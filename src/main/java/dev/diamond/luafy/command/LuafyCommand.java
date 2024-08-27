@@ -5,8 +5,10 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
+import dev.diamond.luafy.Luafy;
 import dev.diamond.luafy.script.ScriptManager;
 import dev.diamond.luafy.script.abstraction.BaseValueConversions;
+import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
 import dev.diamond.luafy.script.registry.callback.ScriptCallbackEvent;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.NbtCompoundArgumentType;
@@ -14,6 +16,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.server.command.CommandManager.argument;
@@ -54,7 +57,19 @@ public class LuafyCommand {
                                                 literal("scripts").executes(LuafyCommand::luaCommand_listScripts)
                                         ).then(
                                                 literal("events").then(argument("event", StringArgumentType.string()).executes(LuafyCommand::luaCommand_listEvents))
+                                        ).then(
+                                                literal("langs").executes(LuafyCommand::luaCommand_listLangs)
                                         ) // lists
+                        ).then(
+                                literal("eval")
+                                        .then(
+                                                argument("lang", StringArgumentType.string())
+                                                        .then(
+                                                                argument("code", StringArgumentType.greedyString())
+                                                                        .executes(LuafyCommand::luaCommand_eval)
+                                                        )
+
+                                        )
                         ) // subcommands
         ); // root
     }
@@ -63,6 +78,21 @@ public class LuafyCommand {
         String arg = StringArgumentType.getString(ctx, "script");
         boolean success = execute(arg, null, ctx, null, threaded);
         return success ? 1 : 0;
+    }
+
+    private static int luaCommand_eval(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+        Identifier langId = Identifier.of(StringArgumentType.getString(ctx, "lang"));
+        String code = StringArgumentType.getString(ctx, "code");
+
+        var lang = Luafy.Registries.SCRIPT_LANGUAGES.getOrEmpty(langId);
+        if (lang.isPresent()) {
+            AbstractScript<?> script = lang.get().readScript(code);
+            script.execute(ctx.getSource(), null);
+
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
     private static int luaCommand_executeFunction(CommandContext<ServerCommandSource> ctx, boolean threaded) throws CommandSyntaxException {
@@ -98,6 +128,14 @@ public class LuafyCommand {
                 .forEach(subscription -> ctx.getSource()
                         .sendFeedback(() -> Text.literal(subscription.getScriptId()), false)
                 );
+        return 1;
+    }
+
+    private static int luaCommand_listLangs(CommandContext<ServerCommandSource> ctx) {
+        ctx.getSource().sendFeedback(() -> Text.literal("Total: " + Luafy.Registries.SCRIPT_LANGUAGES.size()), false);
+        Luafy.Registries.SCRIPT_LANGUAGES.forEach((lang) ->
+                ctx.getSource().sendFeedback(() ->
+                        Text.literal(Luafy.Registries.SCRIPT_LANGUAGES.getId(lang).toString()), false));
         return 1;
     }
 
