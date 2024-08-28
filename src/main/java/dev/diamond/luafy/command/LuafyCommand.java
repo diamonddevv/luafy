@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import dev.diamond.luafy.Luafy;
 import dev.diamond.luafy.script.ScriptManager;
 import dev.diamond.luafy.script.abstraction.BaseValueConversions;
@@ -12,19 +13,25 @@ import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
 import dev.diamond.luafy.script.registry.callback.ScriptCallbackEvent;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.NbtCompoundArgumentType;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.WritableBookItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.stream.Stream;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public class LuafyCommand {
     private static final DynamicCommandExceptionType SCRIPT_NOT_EXIST = new DynamicCommandExceptionType((o) -> Text.literal("Script '" + o + "' does not exist. Run { /luafy list scripts } to get a list of all scripts."));
-    private static final DynamicCommandExceptionType SANDBOX_STRATEGY_NOT_EXIST = new DynamicCommandExceptionType((o) -> Text.literal("No sandbox strategy with id '" + o + "' was found"));
+    private static final DynamicCommandExceptionType LANG_NOT_EXIST = new DynamicCommandExceptionType((o) -> Text.literal("No script language with id '" + o + "' was found"));
 
     public static void registerLuaCommand(
             CommandDispatcher<ServerCommandSource> dispatcher,
@@ -61,12 +68,15 @@ public class LuafyCommand {
                                                 literal("langs").executes(LuafyCommand::luaCommand_listLangs)
                                         ) // lists
                         ).then(
-                                literal("eval")
+                                literal("eval").requires(src -> src.hasPermissionLevel(4))
                                         .then(
                                                 argument("lang", StringArgumentType.string())
                                                         .then(
                                                                 argument("code", StringArgumentType.greedyString())
                                                                         .executes(LuafyCommand::luaCommand_eval)
+                                                        )
+                                                        .then(
+                                                                literal("book").executes(LuafyCommand::luaCommand_evalButBook)
                                                         )
 
                                         )
@@ -91,7 +101,34 @@ public class LuafyCommand {
 
             return 1;
         } else {
-            return 0;
+            throw LANG_NOT_EXIST.create(langId);
+        }
+    }
+
+    private static int luaCommand_evalButBook(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+        Identifier langId = Identifier.of(StringArgumentType.getString(ctx, "lang"));
+
+        var player = ctx.getSource().getPlayer();
+
+        var ex = new SimpleCommandExceptionType(() -> "This command must be executed as a player entity holding a book and quill in mainhand");
+
+        if (player == null) throw ex.create();
+        if (!(player.getStackInHand(Hand.MAIN_HAND).getItem() instanceof WritableBookItem)) throw ex.create();
+
+        ItemStack baq = player.getStackInHand(Hand.MAIN_HAND);
+
+        Stream<String> content = baq.get(DataComponentTypes.WRITABLE_BOOK_CONTENT).stream(false);
+        // concatenate content strings page by page. new page =/= new line
+        String code = content.reduce((accum, s) -> accum + s).get();
+
+        var lang = Luafy.Registries.SCRIPT_LANGUAGES.getOrEmpty(langId);
+        if (lang.isPresent()) {
+            AbstractScript<?> script = lang.get().readScript(code);
+            script.execute(ctx.getSource(), null);
+
+            return 1;
+        } else {
+            throw LANG_NOT_EXIST.create(langId);
         }
     }
 
