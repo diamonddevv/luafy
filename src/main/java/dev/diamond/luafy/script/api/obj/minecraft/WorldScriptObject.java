@@ -7,6 +7,7 @@ import dev.diamond.luafy.script.abstraction.obj.AbstractTypedScriptObject;
 import dev.diamond.luafy.script.api.obj.entity.EntityScriptObject;
 import dev.diamond.luafy.script.api.obj.math.Vec3dScriptObject;
 import dev.diamond.luafy.script.api.obj.minecraft.block.BlockStateScriptObject;
+import net.minecraft.block.ShapeContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.StringNbtReader;
@@ -15,8 +16,11 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.RaycastContext;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -118,5 +122,45 @@ public class WorldScriptObject extends AbstractTypedScriptObject<ServerWorld> {
                 new NamedParam("soundCategory", String.class),
                 new NamedParam("pitch", Number.class),
                 new NamedParam("volume", Number.class));
+
+        f.add_Desc("raycast", args -> {
+
+            Vec3d from = args[0].asScriptObjectAssertive(Vec3dScriptObject.class).get();
+            Vec3d direction = args[1].asScriptObjectAssertive(Vec3dScriptObject.class).get();
+            float dist = args[2].asFloat();
+            boolean blocks = args[3].asBoolean();
+            boolean entities = args[4].asBoolean();
+
+
+            Vec3d endPosition = from.add(direction.multiply(dist));
+
+            if (blocks) {
+                var result = world.raycast(new RaycastContext(from, endPosition, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, ShapeContext.absent()));
+                if (result.getType() == HitResult.Type.BLOCK) {
+                    return true;
+                }
+            }
+
+            if (entities) {
+                for (float d = 0; d > dist; d += 0.1f) {
+                    Vec3d cp = from.add(direction.multiply(d));
+
+                    var collisions = world.getEntityCollisions(null, new Box(cp, cp)); // check at a point
+                    if (!collisions.isEmpty()) return true;
+                }
+            }
+
+            return false;
+
+        }, "Calculates a raycast from point `origin`. Returns true if collision was detected. `check_blocks` and `check_entities` can be used to control collisions.<br>" +
+                        "`direction` is a vector representing the direction of the raycast.<br>" +
+                        "This direction can be found easily in the form (x, y, z): (`cos(yaw)`, `sin(yaw)`, `sin(pitch)`)<br><br>" +
+                        "finalRaycastPosition = `origin` + (`direction` * `distance`)",
+                Boolean.class,
+                new NamedParam("origin", Vec3dScriptObject.class),
+                new NamedParam("direction", Vec3dScriptObject.class),
+                new NamedParam("distance", Vec3dScriptObject.class),
+                new NamedParam("check_blocks", Boolean.class),
+                new NamedParam("check_entities", Boolean.class));
     }
 }

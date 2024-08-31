@@ -29,6 +29,10 @@ public class Vec3dScriptObject extends AbstractTypedScriptObject<Vec3d> {
             vec = vecSo.get();
         }
 
+        return withOther(vec, f);
+    }
+
+    private Object withOther(Vec3d vec, Function<Vec3d, Object> f) {
         return f.apply(vec);
     }
 
@@ -45,6 +49,7 @@ public class Vec3dScriptObject extends AbstractTypedScriptObject<Vec3d> {
 
         f.add_Desc("add",          args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::add)), "Returns the sum of this vector and another. [sum = other + this]", Vec3dScriptObject.class, new NamedParam("other", Vec3dScriptObject.class));
         f.add_Desc("multiply",     args -> new Vec3dScriptObject((Vec3d) withOther(args, vec::multiply)), "Returns the product of this vector and another. [product = other * this]",  Vec3dScriptObject.class, new NamedParam("other", Vec3dScriptObject.class));
+        f.add_Desc("multiply_u",   args -> new Vec3dScriptObject((Vec3d) withOther(new Vec3d(1, 1, 1).multiply(args[0].asFloat()), vec::multiply)), "Returns the product of this vector and a uniform vector of `f`. [product = other * (`f`, `f`, `f`)]",  Vec3dScriptObject.class, new NamedParam("f", Number.class));
         f.add_Desc("distance",     args ->                               withOther(args, vec::distanceTo), "Returns the mathematical distance from this vector to another. [distance = sqrt( (other.x - this.x)^2 + (other.y - this.y)^2 + (other.z - this.z)^2 )]", Number.class, new NamedParam("other", Vec3dScriptObject.class));
         f.add_Desc("sqr_distance", args ->                               withOther(args, vec::squaredDistanceTo), "Returns the mathematical distance squared from this vector to another. Runs faster than 'distance_to'. [distance = (other.x - this.x)^2 + (other.y - this.y)^2 + (other.z - this.z)^2]",  Number.class, new NamedParam("other", Vec3dScriptObject.class));
         f.add_Desc("dot",          args ->                               withOther(args, vec::dotProduct), "Returns the dot product of this vector to another. [dotProd = (this.x * other.x) + (this.y * other.y) + (this.z * other.z)]", Number.class, new NamedParam("other", Vec3dScriptObject.class));
