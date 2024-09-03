@@ -9,7 +9,7 @@ import org.joml.Vector3f;
 import java.util.Arrays;
 import java.util.List;
 
-public class Matrix4fScriptObject extends AbstractTypedScriptObject {
+public class Matrix4fScriptObject extends AbstractTypedScriptObject<Matrix4f> {
 
     private final Matrix4f mat;
 
@@ -57,5 +57,10 @@ public class Matrix4fScriptObject extends AbstractTypedScriptObject {
                 mat.m20(), mat.m21(), mat.m22(), mat.m23(),
                 mat.m30(), mat.m31(), mat.m32(), mat.m33()
         }).toList(), "Returns this matrix as a list of elements.", List.class);
+    }
+
+    @Override
+    public String getName() {
+        return "Matrix4f";
     }
 }

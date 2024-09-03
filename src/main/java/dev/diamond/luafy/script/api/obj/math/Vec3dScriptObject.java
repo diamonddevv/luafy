@@ -62,4 +62,9 @@ public class Vec3dScriptObject extends AbstractTypedScriptObject<Vec3d> {
 
         f.add_NoParams_Desc("to_string", args -> vec.toString(), "Returns the string representation of this vector ['(x, y, z)']", String.class);
     }
+
+    @Override
+    public String getName() {
+        return "Vec3d";
+    }
 }

@@ -10,7 +10,7 @@ import dev.diamond.luafy.script.abstraction.NamedParam;
 import dev.diamond.luafy.script.abstraction.api.AbstractTypedScriptApi;
 import dev.diamond.luafy.script.abstraction.lang.AbstractBaseValue;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
-import dev.diamond.luafy.script.api.obj.argument.ICommandArgumentScriptObject;
+import dev.diamond.luafy.script.api.obj.argument.CommandArgument;
 import dev.diamond.luafy.util.HexId;
 import net.minecraft.server.command.ServerCommandSource;
 
@@ -46,7 +46,7 @@ public class CommandApi extends AbstractTypedScriptApi {
                     var hi = HexId.fromString(args[0].asString());
                     var parsed = hi.getHashed(ScriptManager.ScriptCaches.PREPARSED_COMMANDS);
                     return getArgument(parsed, args[1].asString());
-                }, ICommandArgumentScriptObject.class, COMMAND_HEXID, new NamedParam("argument", String.class));
+                }, CommandArgument.class, COMMAND_HEXID, new NamedParam("argument", String.class));
 
         f.add_Void(
                 "modify_preparsed_argument", args -> {
@@ -54,7 +54,7 @@ public class CommandApi extends AbstractTypedScriptApi {
                     var parsed = hi.getHashed(ScriptManager.ScriptCaches.PREPARSED_COMMANDS);
                     modifyArgument(parsed, args[1].asString(), args[2]);
                     return null;
-                }, COMMAND_HEXID, new NamedParam("argument_name", String.class), new NamedParam("new_value", ICommandArgumentScriptObject.class));
+                }, COMMAND_HEXID, new NamedParam("argument_name", String.class), new NamedParam("new_value", CommandArgument.class));
 
         f.add_Void("execute_preparsed", args -> {
             var hi = HexId.fromString(args[0].asString());
@@ -95,7 +95,7 @@ public class CommandApi extends AbstractTypedScriptApi {
     }
 
     public AbstractBaseValue<?, ?> getArgument(ParseResults<ServerCommandSource> command, String argument) {
-        return ICommandArgumentScriptObject.adapt(command.getContext().getArguments().get(argument).getResult(),
+        return CommandArgument.adapt(command.getContext().getArguments().get(argument).getResult(),
                 o -> script.getNullBaseValue().adapt(o));
     }
 
@@ -112,7 +112,7 @@ public class CommandApi extends AbstractTypedScriptApi {
 
         var so = value.asScriptObjectIfPresent();
 
-        if (so.isPresent() && so.get() instanceof ICommandArgumentScriptObject icaso)
+        if (so.isPresent() && so.get() instanceof CommandArgument icaso)
             o = icaso.getArg();
         else {
             Class<?> castTo = a.getResult().getClass();

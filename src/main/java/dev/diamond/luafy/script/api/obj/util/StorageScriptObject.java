@@ -58,4 +58,9 @@ public class StorageScriptObject extends AbstractTypedScriptObject<NbtCompound> 
                 Boolean.class,
                 new NamedParam("address", String.class));
     }
+
+    @Override
+    public String getName() {
+        return "NBTStorage";
+    }
 }

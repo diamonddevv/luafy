@@ -45,4 +45,9 @@ public class ItemStackScriptObject extends AbstractTypedScriptObject<ItemStack> 
             return null;
         }, "Removes the cooldown of this item for the player.", new NamedParam("player", PlayerEntityScriptObject.class));
     }
+
+    @Override
+    public String getName() {
+        return "ItemStack";
+    }
 }

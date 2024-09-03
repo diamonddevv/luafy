@@ -5,7 +5,7 @@ import dev.diamond.luafy.script.abstraction.lang.AbstractBaseValue;
 import net.minecraft.command.argument.DefaultPosArgument;
 import net.minecraft.command.argument.LookingPosArgument;
 
-public interface ICommandArgumentScriptObject {
+public interface CommandArgument {
     static AbstractBaseValue<?, ?> adapt(Object o, BaseValueAdapter adapter) {
 
         if (o instanceof DefaultPosArgument dpa)

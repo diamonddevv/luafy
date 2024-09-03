@@ -163,4 +163,9 @@ public class WorldScriptObject extends AbstractTypedScriptObject<ServerWorld> {
                 new NamedParam("check_blocks", Boolean.class),
                 new NamedParam("check_entities", Boolean.class));
     }
+
+    @Override
+    public String getName() {
+        return "World";
+    }
 }

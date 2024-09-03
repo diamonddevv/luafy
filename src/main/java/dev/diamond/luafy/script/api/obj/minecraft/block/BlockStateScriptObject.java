@@ -31,4 +31,9 @@ public class BlockStateScriptObject extends AbstractTypedScriptObject<BlockState
         f.add_Desc("get_property_value", args -> block.get(args[0].asScriptObjectAssertive(BlockStatePropertyScriptObject.class).get()), "Gets the value of the property supplied on this block.", Object.class, new NamedParam("property", BlockStatePropertyScriptObject.class));
         f.add_Desc("in_tag", args -> block.isIn(TagKey.of(RegistryKeys.BLOCK, Identifier.of(args[0].asString()))), "Returns true if this block is in the specified block tag.", Boolean.class, new NamedParam("tagId", String.class));
     }
+
+    @Override
+    public String getName() {
+        return "BlockState";
+    }
 }

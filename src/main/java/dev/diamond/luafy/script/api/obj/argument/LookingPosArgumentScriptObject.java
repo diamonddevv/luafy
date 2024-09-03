@@ -4,7 +4,7 @@ import dev.diamond.luafy.script.abstraction.NamedParam;
 import dev.diamond.luafy.script.abstraction.obj.AbstractTypedScriptObject;
 import net.minecraft.command.argument.LookingPosArgument;
 
-public class LookingPosArgumentScriptObject extends AbstractTypedScriptObject<LookingPosArgument> implements ICommandArgumentScriptObject {
+public class LookingPosArgumentScriptObject extends AbstractTypedScriptObject<LookingPosArgument> implements CommandArgument {
 
     private final LookingPosArgument arg;
 

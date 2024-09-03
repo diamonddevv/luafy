@@ -1,6 +1,9 @@
 package dev.diamond.luafy.script.abstraction;
 
 import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
+import dev.diamond.luafy.script.abstraction.obj.AbstractTypedScriptObject;
+import dev.diamond.luafy.script.abstraction.obj.IScriptObject;
+import dev.diamond.luafy.script.registry.objects.ScriptObjectRegistry;
 import dev.diamond.luafy.util.DescriptionProvider;
 
 public class NamedParam implements DescriptionProvider {
@@ -78,6 +81,21 @@ public class NamedParam implements DescriptionProvider {
             fOpParams = op;
             fReturn = returnValue;
         }
+
+        public String getName() {
+            if (IScriptObject.class.isAssignableFrom(clazz)) {
+                // oh man this is CURSED
+                var provider = ScriptObjectRegistry.getByClass(clazz);
+                if (provider.isPresent()) {
+                    var iso = provider.get().create(new Object[256]);
+                    if (iso instanceof AbstractTypedScriptObject<?> atso) {
+                        return atso.getName();
+                    }
+                }
+            }
+            return clazz.getSimpleName();
+        }
+
 
         public boolean isFunction() {
             return isFunction;

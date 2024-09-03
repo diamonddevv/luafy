@@ -43,34 +43,37 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
 import java.awt.image.BufferedImage;
+import java.util.Optional;
+
+import static dev.diamond.luafy.script.registry.objects.ScriptObjectFactory.of;
 
 public class ScriptObjectRegistry {
 
-    public static final ScriptObjectFactory<DefaultPosArgumentScriptObject> ARG_DEFAULTPOS = a -> new DefaultPosArgumentScriptObject((DefaultPosArgument) a[0]);
-    public static final ScriptObjectFactory<LookingPosArgumentScriptObject> ARG_LOOKINGPOS = a -> new LookingPosArgumentScriptObject((LookingPosArgument) a[0]);
+    public static final ScriptObjectFactory<DefaultPosArgumentScriptObject> ARG_DEFAULTPOS = of(DefaultPosArgumentScriptObject.class, a -> new DefaultPosArgumentScriptObject((DefaultPosArgument) a[0]));
+    public static final ScriptObjectFactory<LookingPosArgumentScriptObject> ARG_LOOKINGPOS = of(LookingPosArgumentScriptObject.class, a -> new LookingPosArgumentScriptObject((LookingPosArgument) a[0]));
 
-    public static final ScriptObjectFactory<EntityScriptObject> ENTITY = a -> new EntityScriptObject((Entity) a[0]);
-    public static final ScriptObjectFactory<LivingEntityScriptObject> LIVING_ENTITY = a -> new LivingEntityScriptObject((LivingEntity) a[0]);
-    public static final ScriptObjectFactory<PlayerEntityScriptObject> PLAYER_ENTITY = a -> new PlayerEntityScriptObject((ServerPlayerEntity) a[0]);
-    public static final ScriptObjectFactory<DisplayEntityScriptObject> DISPLAY_ENTITY = a -> new DisplayEntityScriptObject((DisplayEntity) a[0]);
-    public static final ScriptObjectFactory<ItemDisplayEntityScriptObject> ITEM_DISPLAY_ENTITY = a -> new ItemDisplayEntityScriptObject((DisplayEntity.ItemDisplayEntity) a[0]);
-    public static final ScriptObjectFactory<TextDisplayEntityScriptObject> TEXT_DISPLAY_ENTITY = a -> new TextDisplayEntityScriptObject((DisplayEntity.TextDisplayEntity) a[0]);
+    public static final ScriptObjectFactory<EntityScriptObject> ENTITY = of(EntityScriptObject.class, a -> new EntityScriptObject((Entity) a[0]));
+    public static final ScriptObjectFactory<LivingEntityScriptObject> LIVING_ENTITY = of(LivingEntityScriptObject.class, a -> new LivingEntityScriptObject((LivingEntity) a[0]));
+    public static final ScriptObjectFactory<PlayerEntityScriptObject> PLAYER_ENTITY = of(PlayerEntityScriptObject.class, a -> new PlayerEntityScriptObject((ServerPlayerEntity) a[0]));
+    public static final ScriptObjectFactory<DisplayEntityScriptObject> DISPLAY_ENTITY = of(DisplayEntityScriptObject.class, a -> new DisplayEntityScriptObject((DisplayEntity) a[0]));
+    public static final ScriptObjectFactory<ItemDisplayEntityScriptObject> ITEM_DISPLAY_ENTITY = of(ItemDisplayEntityScriptObject.class, a -> new ItemDisplayEntityScriptObject((DisplayEntity.ItemDisplayEntity) a[0]));
+    public static final ScriptObjectFactory<TextDisplayEntityScriptObject> TEXT_DISPLAY_ENTITY = of(TextDisplayEntityScriptObject.class, a -> new TextDisplayEntityScriptObject((DisplayEntity.TextDisplayEntity) a[0]));
 
-    public static final ScriptObjectFactory<Matrix4fScriptObject> MATRIX = a -> new Matrix4fScriptObject((Matrix4f) a[0]);
-    public static final ScriptObjectFactory<QuaternionfScriptObject> QUATERNION = a -> new QuaternionfScriptObject((Quaternionf) a[0]);
-    public static final ScriptObjectFactory<Vec3dScriptObject> VEC3D = a -> new Vec3dScriptObject((Vec3d) a[0]);
+    public static final ScriptObjectFactory<Matrix4fScriptObject> MATRIX = of(Matrix4fScriptObject.class, a -> new Matrix4fScriptObject((Matrix4f) a[0]));
+    public static final ScriptObjectFactory<QuaternionfScriptObject> QUATERNION = of(QuaternionfScriptObject.class, a -> new QuaternionfScriptObject((Quaternionf) a[0]));
+    public static final ScriptObjectFactory<Vec3dScriptObject> VEC3D = of(Vec3dScriptObject.class, a -> new Vec3dScriptObject((Vec3d) a[0]));
 
-    public static final ScriptObjectFactory<BlockStatePropertyScriptObject> BLOCKSTATE_PROPERTY = a -> new BlockStatePropertyScriptObject((Property<?>) a[0]);
-    public static final ScriptObjectFactory<BlockStateScriptObject> BLOCKSTATE = a -> new BlockStateScriptObject((BlockState) a[0]);
-    public static final ScriptObjectFactory<ItemStackScriptObject> ITEMSTACK = a -> new ItemStackScriptObject((ItemStack) a[0]);
-    public static final ScriptObjectFactory<MapStateScriptObject> MAP_STATE = a -> new MapStateScriptObject((MapState) a[0]);
-    public static final ScriptObjectFactory<WorldScriptObject> WORLD = a -> new WorldScriptObject((ServerWorld) a[0]);
-    public static final ScriptObjectFactory<ComponentMapScriptObject> COMPONENTMAP = a -> new ComponentMapScriptObject((ComponentMap) a[0]);
+    public static final ScriptObjectFactory<BlockStatePropertyScriptObject> BLOCKSTATE_PROPERTY = of(BlockStatePropertyScriptObject.class, a -> new BlockStatePropertyScriptObject((Property<?>) a[0]));
+    public static final ScriptObjectFactory<BlockStateScriptObject> BLOCKSTATE = of(BlockStateScriptObject.class, a -> new BlockStateScriptObject((BlockState) a[0]));
+    public static final ScriptObjectFactory<ItemStackScriptObject> ITEMSTACK = of(ItemStackScriptObject.class, a -> new ItemStackScriptObject((ItemStack) a[0]));
+    public static final ScriptObjectFactory<MapStateScriptObject> MAP_STATE = of(MapStateScriptObject.class, a -> new MapStateScriptObject((MapState) a[0]));
+    public static final ScriptObjectFactory<WorldScriptObject> WORLD = of(WorldScriptObject.class, a -> new WorldScriptObject((ServerWorld) a[0]));
+    public static final ScriptObjectFactory<ComponentMapScriptObject> COMPONENTMAP = of(ComponentMapScriptObject.class, a -> new ComponentMapScriptObject((ComponentMap) a[0]));
 
-    public static final ScriptObjectFactory<AdvancementEntryScriptObject> ADVANCEMENT_ENTRY = a -> new AdvancementEntryScriptObject((AdvancementEntry) a[0]);
-    public static final ScriptObjectFactory<BufferedImageScriptObject> BUFFERED_IMAGE = a -> new BufferedImageScriptObject((BufferedImage) a[0]);
-    public static final ScriptObjectFactory<ByteBufScriptObject> BYTEBUF = a -> new ByteBufScriptObject((byte[]) a[0]);
-    public static final ScriptObjectFactory<StorageScriptObject> STORAGE = a -> new StorageScriptObject((ServerCommandSource) a[0], (Identifier) a[1]);
+    public static final ScriptObjectFactory<AdvancementEntryScriptObject> ADVANCEMENT_ENTRY = of(AdvancementEntryScriptObject.class, a -> new AdvancementEntryScriptObject((AdvancementEntry) a[0]));
+    public static final ScriptObjectFactory<BufferedImageScriptObject> BUFFERED_IMAGE = of(BufferedImageScriptObject.class, a -> new BufferedImageScriptObject((BufferedImage) a[0]));
+    public static final ScriptObjectFactory<ByteBufScriptObject> BYTEBUF = of(ByteBufScriptObject.class, a -> new ByteBufScriptObject((byte[]) a[0]));
+    public static final ScriptObjectFactory<StorageScriptObject> STORAGE = of(StorageScriptObject.class, a -> new StorageScriptObject((ServerCommandSource) a[0], (Identifier) a[1]));
 
 
 
@@ -100,5 +103,9 @@ public class ScriptObjectRegistry {
 
     private static void register(ScriptObjectFactory<?> factory, Identifier id) {
         Registry.register(Luafy.Registries.SCRIPT_OBJECTS, id, factory);
+    }
+
+    public static Optional<ScriptObjectFactory<?>> getByClass(Class<?> clazz) {
+        return Luafy.Registries.SCRIPT_OBJECTS.stream().filter(factory -> factory.representedClass() == clazz).findFirst();
     }
 }

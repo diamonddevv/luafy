@@ -69,4 +69,9 @@ public class ComponentMapScriptObject extends AbstractTypedScriptObject<Componen
     public ComponentType<?> getComponentFromId(Identifier id) {
         return Registries.DATA_COMPONENT_TYPE.get(id);
     }
+
+    @Override
+    public String getName() {
+        return "ComponentMap";
+    }
 }

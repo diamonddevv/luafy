@@ -29,4 +29,9 @@ public class QuaternionfScriptObject extends AbstractTypedScriptObject<Quaternio
         f.add_Void_Desc("set_z", args -> quaternion.x = args[0].asFloat(), "Sets the Z component of this quaternion.", new NamedParam("value", Number.class));
         f.add_Void_Desc("set_w", args -> quaternion.x = args[0].asFloat(), "Sets the W scalar component of this quaternion.", new NamedParam("value", Number.class));
     }
+
+    @Override
+    public String getName() {
+        return "Quaternionf";
+    }
 }

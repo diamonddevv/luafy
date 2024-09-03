@@ -52,4 +52,5 @@ public class ByteBufScriptObject implements IScriptObject<Byte[]> {
         }
         return bytes;
     }
+
 }

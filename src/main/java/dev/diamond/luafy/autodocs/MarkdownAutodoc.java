@@ -82,7 +82,7 @@ public class MarkdownAutodoc implements Autodoc<MarkdownAutodoc.Markdown, Markdo
     public void addTypedObject(AbstractTypedScriptObject<?> obj, MarkdownSection section) {
         var table = getFunctionTable(obj.getTypedFunctionList().getHash().entrySet());
 
-        MarkdownTableSubSection ss = new MarkdownTableSubSection(obj.getClass().getSimpleName(), obj.getDescription(), table);
+        MarkdownTableSubSection ss = new MarkdownTableSubSection(obj.getName(), obj.getDescription(), table);
         section.subsections.add(ss);
     }
 
@@ -173,7 +173,7 @@ public class MarkdownAutodoc implements Autodoc<MarkdownAutodoc.Markdown, Markdo
         if (npcw.isFunction()) {
 
         } else {
-            return npcw.clazz.getSimpleName();
+            return npcw.getName();
         }
 
         return "";

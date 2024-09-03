@@ -63,7 +63,7 @@ public class JsonAutodoc implements Autodoc<JsonObject, JsonArray> {
     public void addTypedObject(AbstractTypedScriptObject<?> obj, JsonArray list) {
         JsonObject o = new JsonObject();
 
-        o.addProperty("name", obj.getClass().getSimpleName());
+        o.addProperty("name", obj.getName());
         addDesc(obj, o);
 
         JsonArray funcs = new JsonArray();
@@ -144,7 +144,7 @@ public class JsonAutodoc implements Autodoc<JsonObject, JsonArray> {
         if (npcw == null) return;
         if (npcw.clazz == null) return;
 
-        f.addProperty(key, npcw.clazz.getSimpleName());
+        f.addProperty(key, npcw.getName());
 
         if (npcw.isFunction()) {
             JsonObject o = new JsonObject();

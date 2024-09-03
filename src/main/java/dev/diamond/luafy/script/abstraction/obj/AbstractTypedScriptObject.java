@@ -3,10 +3,11 @@ package dev.diamond.luafy.script.abstraction.obj;
 import dev.diamond.luafy.util.DescriptionProvider;
 import dev.diamond.luafy.script.abstraction.TypedFunctions;
 import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
+import dev.diamond.luafy.util.DocsObjectNameProvider;
 
 import java.util.HashMap;
 
-public abstract class AbstractTypedScriptObject<T> implements IScriptObject<T>, TypedFunctions, DescriptionProvider {
+public abstract class AbstractTypedScriptObject<T> implements IScriptObject<T>, TypedFunctions, DescriptionProvider, DocsObjectNameProvider {
 
     private TypedFunctionList list;
 
@@ -29,5 +30,10 @@ public abstract class AbstractTypedScriptObject<T> implements IScriptObject<T>, 
     @Override
     public String getDescription() {
         return "";
+    }
+
+    @Override
+    public String getName() {
+        return getClass().getSimpleName();
     }
 }

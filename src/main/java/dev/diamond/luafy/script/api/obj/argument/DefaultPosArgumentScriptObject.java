@@ -4,7 +4,7 @@ import dev.diamond.luafy.script.abstraction.NamedParam;
 import dev.diamond.luafy.script.abstraction.obj.AbstractTypedScriptObject;
 import net.minecraft.command.argument.DefaultPosArgument;
 
-public class DefaultPosArgumentScriptObject extends AbstractTypedScriptObject<DefaultPosArgument> implements ICommandArgumentScriptObject {
+public class DefaultPosArgumentScriptObject extends AbstractTypedScriptObject<DefaultPosArgument> implements CommandArgument {
 
     private final DefaultPosArgument arg;
 
