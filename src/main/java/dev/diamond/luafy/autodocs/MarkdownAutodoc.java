@@ -34,7 +34,7 @@ public class MarkdownAutodoc implements Autodoc<MarkdownAutodoc.Markdown, Markdo
     @Override
     public void preLangs(MarkdownSection sec) {
         var table = new MarkdownTable<>();
-        table.setHeaders("Language Class Name", "Implementer", "Language Documentation", "Description", "File Extensions");
+        table.setHeaders("ScriptLanguage Subclass Name", "Language Name", "Implementer", "Language Documentation", "Description", "File Extensions");
 
         MarkdownTableSubSection sub = new MarkdownTableSubSection("Script Languages", "", table);
         sec.subsections.add(sub);
@@ -57,10 +57,11 @@ public class MarkdownAutodoc implements Autodoc<MarkdownAutodoc.Markdown, Markdo
             var la = (ScriptLanguage<?>) l;
 
             a.assign(0, la.getClass().getSimpleName());
-            a.assign(1, la.getImplementerCredits());
-            a.assign(2, la.getLanguageDocumentationUrl());
-            a.assign(3, la.getDescription());
-            a.assign(4, Arrays.stream(la.getFileExtensions()).reduce((s1, s2) -> s1 + ", " + s2).orElse(""));
+            a.assign(1, la.getLangName());
+            a.assign(2, la.getImplementerCredits());
+            a.assign(3, la.getLanguageDocumentationUrl());
+            a.assign(4, la.getDescription());
+            a.assign(5, Arrays.stream(la.getFileExtensions()).reduce((s1, s2) -> s1 + ", " + s2).orElse(""));
         });
 
     }

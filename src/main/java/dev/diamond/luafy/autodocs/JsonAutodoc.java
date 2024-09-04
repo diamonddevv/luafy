@@ -97,6 +97,7 @@ public class JsonAutodoc implements Autodoc<JsonObject, JsonArray> {
         JsonObject object = new JsonObject();
 
         object.addProperty("id", Luafy.Registries.SCRIPT_LANGUAGES.getId(lang).toString());
+        object.addProperty("name", lang.getLangName());
         addDesc(lang, object);
 
         JsonArray exts = new JsonArray();

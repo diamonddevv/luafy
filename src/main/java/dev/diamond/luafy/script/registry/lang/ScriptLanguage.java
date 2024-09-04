@@ -22,6 +22,8 @@ public abstract class ScriptLanguage<T extends AbstractScript<?>> implements Des
         return null;
     }
 
+    public String getLangName() { return getClass().getSimpleName(); }
+
     @Override
     public String getDescription() {
         return null;

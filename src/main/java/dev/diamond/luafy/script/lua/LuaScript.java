@@ -5,6 +5,7 @@ import dev.diamond.luafy.script.abstraction.api.AbstractScriptApi;
 import dev.diamond.luafy.script.abstraction.api.ApiProvider;
 import dev.diamond.luafy.script.abstraction.function.AdaptableFunction;
 import dev.diamond.luafy.script.abstraction.lang.AbstractScript;
+import dev.diamond.luafy.script.api.LuafyApi;
 import dev.diamond.luafy.script.registry.lang.ScriptLanguage;
 import dev.diamond.luafy.script.registry.lang.ScriptLanguages;
 import dev.diamond.luafy.script.registry.sandbox.Apis;
@@ -56,8 +57,11 @@ public class LuaScript extends AbstractScript<LuaBaseValue> {
         AbstractScriptApi api = provider.provide(this);
 
         for (var func : api.getFunctions().entrySet()) {
-
             table.set(func.getKey(), adaptableToArrArg(func.getValue()));
+        }
+
+        if (api instanceof LuafyApi luafy) {
+            this.scriptGlobals.set("require", adaptableToArrArg(luafy.getFunctions().get("include"))); // override default require
         }
 
         scriptGlobals.set(api.name, table);

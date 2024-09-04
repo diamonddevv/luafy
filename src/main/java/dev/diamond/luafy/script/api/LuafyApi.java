@@ -42,6 +42,20 @@ public class LuafyApi extends AbstractTypedScriptApi {
                         Boolean.class
                 )
         );
+
+        f.add(
+                "include", args -> {
+                    String id = args[0].asString();
+
+                    if (ScriptManager.hasScript(id)) {
+                        AbstractScript<?> s = ScriptManager.getScript(id);
+
+                        return s.execute(script.source, null);
+                    }
+
+                    return null;
+                }, Object.class, new NamedParam("script_identifier", String.class)
+        );
     }
 
     public static Object getResourceIds(AbstractBaseValue<?, ?>... args) {

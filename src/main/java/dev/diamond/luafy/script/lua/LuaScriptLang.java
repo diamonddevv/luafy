@@ -28,4 +28,9 @@ public class LuaScriptLang extends ScriptLanguage<LuaScript> {
     public String getDescription() {
         return "The original Luafy Language. Has syntax reminiscent of Python.";
     }
+
+    @Override
+    public String getLangName() {
+        return "Lua";
+    }
 }
